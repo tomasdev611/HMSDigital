@@ -1,0 +1,88 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - msbuild
+  - visualstudio
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - Fulfillment
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      - Common/CoreSDK
+      exclude:
+      - Fulfillment/README.md
+pr:
+    branches:
+      include:
+      - dev
+    paths:
+      include:
+      - Fulfillment
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      - Common/CoreSDK
+      exclude:
+      - Fulfillment/README.md
+      - Fulfillment/Fulfillment.Deployment
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: Fulfillment/Fulfillment.API/Fulfillment.API.csproj
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish API'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Fulfillment/Fulfillment.API/Fulfillment.API.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish OrderProcessor'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Fulfillment/Fulfillment.OrderProcessor/Fulfillment.OrderProcessor.csproj
+    arguments: '--configuration $(BuildConfiguration) --output Fulfillment\Fulfillment.OrderProcessor\bin\App_Data\Jobs\Triggered\OrderProcessor'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- script: |
+   copy Fulfillment\Fulfillment.Deployment\run.OrderProcessor.cmd Fulfillment\Fulfillment.OrderProcessor\bin\App_Data\Jobs\Triggered\OrderProcessor\run.cmd
+   
+   copy Fulfillment\Fulfillment.Deployment\settings.OrderProcessor.job Fulfillment\Fulfillment.OrderProcessor\bin\App_Data\Jobs\Triggered\OrderProcessor\settings.job
+  displayName: 'Copy OrderProcessor deployment files'
+
+- task: ArchiveFiles@2
+  displayName: 'Package OrderProcessor'
+  inputs:
+    rootFolderOrFile: 'Fulfillment/Fulfillment.OrderProcessor/bin/App_Data'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/OrderProcessor.zip'
+
+- task: CopyFiles@2
+  displayName: 'Copy deployment files to Artifacts staging directory'
+  inputs:
+    SourceFolder: Fulfillment/Fulfillment.Deployment
+    Contents: |
+     *.bat
+     *.json
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

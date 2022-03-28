@@ -1,0 +1,109 @@
+<p-panel header="Move Patient Hospice" [style]="{marginTop: '10px'}">
+  <form [formGroup]="movePatientForm" (ngSubmit)="onSubmit()" autocomplete="nope" *ngIf="patient">
+    <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+      <h4 class="form-section-header">Patient Info</h4>
+      <div class="p-grid p-nogutter">
+        <div class="p-col-2 form-label">Patient Name :</div>
+        <div class="p-col-3 form-data p-mb-1">{{ patient?.firstName }} {{ patient?.lastName }}</div>
+      </div>
+      <div class="p-grid p-nogutter">
+        <div class="p-col-2 form-label">DOB :</div>
+        <div class="p-col-3 form-data p-mb-1">
+          {{ patient?.dateOfBirth | date: 'LL/dd/yyyy' }}
+        </div>
+      </div>
+      <h4 class="form-section-header" [class.p-d-none]="openOrders?.length">Hospice Info</h4>
+      <div class="p-grid" [class.p-d-none]="openOrders?.length">
+        <div class="p-col-2 form-label">Hospice * :</div>
+        <div class="p-col-4">
+          <p-dropdown
+            [options]="hospices"
+            filter="true"
+            name="hospiceId"
+            formControlName="hospiceId"
+            placeholder="Choose Hospice"
+            class="dropdown-panel"
+            (onChange)="onHospiceChange($event)">
+          </p-dropdown>
+        </div>
+        <div class="p-col-2 form-label">Hospice Location * :</div>
+        <div class="p-col-4">
+          <p-dropdown
+            [options]="hospiceLocations"
+            filter="true"
+            name="hospiceLocationId"
+            formControlName="hospiceLocationId"
+            placeholder="Choose Hospice Location"
+            class="dropdown-panel">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="p-grid" [class.p-d-none]="openOrders?.length">
+        <div class="p-col-2 form-label">Hospice Facilities :</div>
+        <div class="p-col-4">
+          <p-dropdown
+            [options]="hospiceFacilities"
+            filter="true"
+            name="hospiceFacilityId"
+            formControlName="facilityId"
+            placeholder="Choose Hospice Facility"
+            class="dropdown-panel"
+            (onChange)="onFacilitiesChange($event)">
+          </p-dropdown>
+        </div>
+        <div class="p-col-2 form-label">Move Date * :</div>
+        <div class="p-col-4">
+          <p-calendar
+            [monthNavigator]="true"
+            placeholder="select date and time"
+            [yearNavigator]="true"
+            formControlName="movementDate"
+            [autoZIndex]="false"
+            yearRange="1901:2040"
+            [minDate]="minMovementDate"
+            [panelStyle]="{'z-index': '11005'}"
+            (onBlur)="updateDate($event)"
+            showTime="true"
+            hourFormat="12"
+            inputStyleClass="inline-edit-calendar">
+          </p-calendar>
+        </div>
+      </div>
+      <div class="p-grid" [class.p-d-none]="openOrders?.length" *ngIf="facilityAddress">
+        <div class="p-col-2 form-label">Facility Address :</div>
+        <div class="p-col-4 form-data">
+          {{ facilityAddress }}
+        </div>
+        <div class="p-col-2 form-label">Room Number :</div>
+        <div class="p-col-4">
+          <p-inputNumber
+            name="roomNumber"
+            formControlName="patientRoomNumber"
+            mode="decimal"
+            [min]="0"
+            placeholder="Room Number">
+          </p-inputNumber>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 btn-right">
+          <div class="p-d-flex p-jc-center error-message" *ngIf="!loading && openOrders?.length">
+            Patient has {{ openOrders?.length }} open order. Please have them fulfilled to proceed
+            with Move Patient Hospice.
+          </div>
+          <button
+            pButton
+            type="submit"
+            label="Submit Move"
+            *ngIf="!openOrders?.length"
+            icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+            [disabled]="
+              formSubmit ||
+              !movePatientForm.valid ||
+              patient.hospiceId === movePatientForm.controls.hospiceId.value
+            "></button>
+        </div>
+      </div>
+    </div>
+  </form>
+</p-panel>

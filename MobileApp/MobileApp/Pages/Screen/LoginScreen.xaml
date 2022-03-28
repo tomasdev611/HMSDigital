@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"             
+             NavigationPage.HasNavigationBar="False"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.Screen.LoginScreen">
+
+    <StackLayout Margin="30,70" VerticalOptions="FillAndExpand">
+        <Image Source="{xct:ImageResource Id=MobileApp.Assets.Images.appLogo.png}" AutomationId="hmstest-login-image_sign_in" ScaleY="2"/>
+        <Entry Margin="0,50,0,0"
+               Keyboard="Email"
+               TextColor="Black"
+               HeightRequest="50"
+               Text="{Binding Email}"
+               AutomationId="hmstest-login-entry_username"
+               Placeholder="Username"
+               PlaceholderColor="Gray">
+            <Entry.Behaviors>
+                <xct:EmailValidationBehavior
+                    x:Name="EmailValidator"
+                    DecorationFlags="Trim"
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"/>
+            </Entry.Behaviors>
+        </Entry>
+        <Entry Margin="0,10,0,20"
+               HeightRequest="50"
+               Grid.Column="0"
+               Text="{Binding Password}"
+               AutomationId="hmstest-login-entry_password"
+               IsPassword="true"
+               PlaceholderColor="Gray"
+               Placeholder="Password">
+        </Entry>
+        <Button HeightRequest="50"
+                AutomationId="hmstest-login-btn_login"
+                FontSize="16"
+                FontAttributes="Bold"
+                Margin="0,10"
+                Text="Log In"
+                BackgroundColor="{StaticResource DarkShade}"
+                TextColor="White"
+                Command="{Binding LoginCommand}"
+                CornerRadius="10"
+                HorizontalOptions="FillAndExpand">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                    <Binding Path="IsValid" Source="{x:Reference EmailValidator}"/>
+                    <Binding Path="Password" Converter="{StaticResource IsNotNullOrEmptyConverter}"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+        <Label x:Name="wrongCredential"
+               FontSize="12"
+               VerticalOptions="End"
+               HorizontalTextAlignment="Center"
+               TextColor="Red"
+               IsVisible="{Binding ShouldShowError}"
+               Text="{Binding ErrorMessage}"/>
+        <Button FontSize="10"
+               Margin="0,0,0,15"
+               Text="Forget Password?"
+               TextColor="Black"
+                HorizontalOptions="Center"
+               Command="{Binding ResetPasswordCommand}"
+               IsEnabled="{Binding IsValid, Source={x:Reference EmailValidator}}"/>
+
+        <Label x:Name="branchVersion" HorizontalOptions="Center" FontSize="10" FontAttributes="Bold" VerticalOptions="End"/>
+        <ActivityIndicator Margin="100,50" x:Name="loader" IsRunning="{Binding IsLoading}"/>
+        <templates:NetworkErrorCard IsVisible="false" Margin="100,50" x:Name="internetIssue"/>
+    </StackLayout>
+</ContentPage>

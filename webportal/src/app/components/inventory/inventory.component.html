@@ -1,0 +1,287 @@
+<!-- Image item fullscreen gallery -->
+<p-galleria
+  [(value)]="imageItemUrlList"
+  [(visible)]="imageItemDisplayFullScreen"
+  [(activeIndex)]="imageItemActiveIndex"
+  [containerStyle]="{'max-width': '850px'}"
+  [numVisible]="7"
+  [circular]="true"
+  [fullScreen]="true"
+  [showItemNavigators]="imageItemDisplayNavigator"
+  [showThumbnails]="imageItemDisplayNavigator"
+  [baseZIndex]="100000">
+  <ng-template pTemplate="item" let-item>
+    <img [src]="item.url" class="full-screen" />
+  </ng-template>
+  <ng-template pTemplate="thumbnail" let-item>
+    <div class="p-grid p-nogutter p-justify-center p-col-2">
+      <img [src]="item.url" />
+    </div>
+  </ng-template>
+</p-galleria>
+<div class="inventory-container">
+  <div class="sub">
+    <app-body-header
+      displayTitle="Inventory"
+      [listCount]="totalRecordCount"
+      actionBtnUrl="./add"
+      [actionBtnText]="hasPermission('Inventory', 'Create') ? 'Add Inventory Item' : false">
+      <app-inventory-filters
+        *ngIf="isCurrentView('inventory')"
+        class="inventory-filters"
+        (filter)="filterInventories($event)"></app-inventory-filters>
+    </app-body-header>
+    <p-tabView (onChange)="onTabChange($event)">
+      <p-tabPanel
+        header="Inventory"
+        leftIcon="pi pi-folder"
+        [selected]="isCurrentView('inventory')"
+        *ngIf="hasPermission('Inventory')">
+        <app-table-virtual-scroll
+          #inventoryTable
+          *ngIf="isCurrentView('inventory')"
+          [list]="inventoryResponse?.records"
+          [pageSize]="inventoryResponse?.pageSize"
+          [loading]="loading"
+          [pageLoadNextOffset]="10"
+          [totalRecords]="inventoryResponse?.totalRecordCount"
+          filterFields="[]"
+          [headers]="headers"
+          [pageNumber]="inventoryResponse?.pageNumber || 0"
+          [totalPage]="inventoryResponse?.totalPageCount || 0"
+          [selection]="true"
+          (fetchNext)="fetchNext($event)"
+          (rowSelected)="showItemDetails($event)"
+          (actionBtnHandler)="redirectToLogs($event)">
+        </app-table-virtual-scroll>
+      </p-tabPanel>
+      <p-tabPanel
+        header="Items"
+        leftIcon="pi pi-briefcase"
+        [selected]="isCurrentView('items')"
+        *ngIf="hasPermission('Inventory')">
+        <app-items
+          #items
+          *ngIf="isCurrentView('items')"
+          (showDetails)="showItemDetails($event)"
+          [showToggleFilter]="true"
+          [searchQuery]="itemSearchQuery"
+          (setTotalRecordCount)="setTotalRecordCount($event)"></app-items>
+      </p-tabPanel>
+      <p-tabPanel
+        header="Categories"
+        leftIcon="pi pi-tags"
+        [selected]="isCurrentView('categories')"
+        *ngIf="hasPermission('Inventory')">
+        <app-item-categories
+          #categories
+          *ngIf="isCurrentView('categories')"
+          [searchQuery]="categorySearchQuery"
+          (setTotalRecordCount)="setTotalRecordCount($event)"></app-item-categories>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+
+  <p-sidebar
+    [(visible)]="detailFlyoutOpen"
+    (onHide)="closeFlyout()"
+    position="right"
+    [modal]="false">
+    <button class="close-icon" (click)="closeFlyout()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="details-label">
+      <span>{{ selectedItem?.name }}</span>
+    </div>
+    <div *ngIf="imageItemUrlList.length > 0" class="p-grid image-item-flyout">
+      <div *ngFor="let image of imageItemUrlList; let index = index" class="p-col-2">
+        <app-image-gallery
+          [url]="image.url"
+          [isClickable]="true"
+          (clickImageReady)="imageItemClick(index)">
+        </app-image-gallery>
+      </div>
+    </div>
+    <div class="location-details">
+      <div>
+        <span class="label">Description</span>
+        <span>
+          {{ selectedItem?.description }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Item Number</span>
+        <span>
+          {{ selectedItem?.itemNumber }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Categories</span>
+        <span>
+          {{ selectedItem?.category }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Sub-categories</span>
+        <span>
+          {{ selectedItem?.subCategory }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Serialized</span>
+        <span>
+          {{ selectedItem?.isSerialized ? 'Yes' : 'No' }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Asset Tag Available</span>
+        <span>
+          {{ selectedItem?.isAssetTagged ? 'Yes' : 'No' }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Average Cost</span>
+        <span>
+          {{ selectedItem?.averageCost }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Lot Number Available</span>
+        <span>
+          {{ selectedItem?.isLotNumbered }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Average Delivery Processing Time</span>
+        <span>
+          {{ selectedItem?.avgDeliveryProcessingTime }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Average Pickup Processing Time</span>
+        <span>
+          {{ selectedItem?.avgPickUpProcessingTime }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Depreciation</span>
+        <span>
+          {{ selectedItem?.depreciation }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Is Consumable</span>
+        <span>
+          {{ selectedItem?.isConsumable }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Is DME</span>
+        <span>
+          {{ selectedItem?.isDME }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Cogs Account</span>
+        <span>
+          {{ selectedItem?.cogsAccountName }}
+        </span>
+      </div>
+      <div *ngIf="!!selectedAssetTag">
+        <span class="label">Asset Tag</span>
+        <div>
+          <span>
+            {{ selectedAssetTag }}
+          </span>
+        </div>
+      </div>
+      <div *ngIf="!!selectedAssetTag" class="barcode-wrapper">
+        <ngx-barcode
+          [bc-value]="selectedAssetTag"
+          bc-display-value="true"
+          bc-height="60"
+          bc-width="2"></ngx-barcode>
+      </div>
+      <div *ngIf="!!selectedSerialNumber">
+        <span class="label">Serial Number</span>
+        <div>
+          <span>
+            {{ selectedSerialNumber }}
+          </span>
+        </div>
+      </div>
+      <div *ngIf="!!selectedSerialNumber" class="barcode-wrapper">
+        <ngx-barcode
+          [bc-value]="selectedSerialNumber"
+          bc-display-value="true"
+          bc-height="60"
+          bc-width="2">
+        </ngx-barcode>
+      </div>
+    </div>
+    <div class="equipment-settings" *ngIf="isCurrentView('items')">
+      <div class="details-title">
+        <h1>Equipment Settings</h1>
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-info eq-conf-btn"
+          (click)="showEquipmentSettingsConfigurationDialog()"></button>
+      </div>
+      <div class="list-container">
+        <ul class="eq-keys-list">
+          <li
+            class="empty-data"
+            *ngIf="
+              !(
+                selectedItem?.equipmentSettingsConfig &&
+                selectedItem?.equipmentSettingsConfig?.length
+              )
+            ">
+            No Equipment Settings configured
+          </li>
+          <li class="eq-key" *ngFor="let eqConfig of selectedItem?.equipmentSettingsConfig">
+            <i class="pi pi-sliders-v"></i>
+            {{ eqConfig.equipmentSettingTypeName }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="equipment-settings" *ngIf="isCurrentView('items')">
+      <div class="details-title">
+        <h1>Add-ons</h1>
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-info eq-conf-btn"
+          [routerLink]="['item', selectedItem?.id, 'addons']"></button>
+      </div>
+      <div class="list-container">
+        <ul class="eq-keys-list">
+          <li
+            class="empty-data"
+            *ngIf="!(selectedItem?.addOnGroups && selectedItem?.addOnGroups?.length)">
+            No Add-on Groups configured
+          </li>
+          <li class="eq-key" *ngFor="let addOnGroup of selectedItem?.addOnGroups">
+            <i class="pi pi-sliders-v"></i>
+            {{ addOnGroup.name }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </p-sidebar>
+</div>
+
+<app-equipment-settings-config
+  [equipmentSettingsConfig]="equipmentSettingsConfig"
+  [isConfigDialogOpen]="isConfigDialogOpen"
+  [item]="selectedItem"
+  (reloadDetailsView)="showItemDetails($event)"
+  (closeEqConfigDialog)="closeEquipmentSettingsConfigurationDialog()">
+</app-equipment-settings-config>

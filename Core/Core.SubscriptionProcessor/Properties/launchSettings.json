@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Core.SubscriptionProcessor": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "local"
+      }
+    }
+  }
+}

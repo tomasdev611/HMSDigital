@@ -1,0 +1,1 @@
+dotnet Core.SubscriptionProcessor.dll

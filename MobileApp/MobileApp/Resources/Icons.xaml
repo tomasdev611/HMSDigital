@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" 
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+                    xmlns:constants="clr-namespace:MobileApp.Assets.Constants">
+
+    <Style x:Key="FAFont" TargetType="Label">
+        <Setter Property="FontFamily"
+                Value="FA"/>
+    </Style>
+    
+    <Style x:Key="ChevronRight" 
+           TargetType="Label"
+           BasedOn="{StaticResource FAFont}">
+        <Setter Property="Text"
+                Value="{x:Static constants:IconCodes.ChevronRight}" />
+    </Style>
+    <Style x:Key="ChevronLeft" 
+           TargetType="Label"
+           BasedOn="{StaticResource FAFont}">
+        <Setter Property="Text"
+                Value="{x:Static constants:IconCodes.ChevronLeft}" />
+    </Style> 
+    <Style x:Key="Times" 
+           TargetType="Label"
+           BasedOn="{StaticResource FAFont}">
+        <Setter Property="Text"
+                Value="{x:Static constants:IconCodes.Times}" />
+    </Style>
+    <Style x:Key="CheckCircle" 
+           TargetType="Label"
+           BasedOn="{StaticResource FAFont}">
+        <Setter Property="Text"
+                Value="{x:Static constants:IconCodes.CheckCircle}" />
+    </Style>
+</ResourceDictionary>

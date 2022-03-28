@@ -1,0 +1,549 @@
+<div
+  [ngClass]="{
+    'patient-container': true,
+    'flyout-open': showAddFacilityFlyer || orderDetailViewOpen
+  }">
+  <div class="sub">
+    <app-body-header
+      displayTitle="Patient {{ editmode ? 'Edit' : 'Add' }}"
+      backText="Back"></app-body-header>
+    <p-tabView (onChange)="tabChanged($event)">
+      <p-tabPanel
+        header="Profile"
+        [headerStyle]="!editmode && {display: 'none'}"
+        [selected]="patientView === 'patient'">
+        <form [formGroup]="patientForm" (ngSubmit)="onSubmitPatient()" autocomplete="nope">
+          <div class="p-grid p-flex-column patient p-p-2">
+            <div class="p-grid" *ngIf="!editmode">
+              <div
+                class="p-col-6 p-md-4 p-lg-2"
+                [style]="{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  alignItems: 'center'
+                }">
+                <button
+                  pButton
+                  label="Secondary"
+                  [style]="{float: 'center'}"
+                  class="p-button p-button-secondary"
+                  type="button"
+                  label="Search for Patients"
+                  (click)="showSearch()"></button>
+                <div [style]="{paddingTop: '10px'}">OR</div>
+                <h4 [style]="{marginTop: '5px'}">Add a new Patient</h4>
+              </div>
+            </div>
+            <div class="p-grid company">
+              <div class="p-col-12 p-md-6" *ngIf="hospices.length">
+                <div class="p-grid p-align-center">
+                  <div class="p-col-12 p-sm-3 p-md-5 p-lg-4 p-text-md-right top-label">
+                    Parent Company * :
+                  </div>
+                  <div class="p-col-12 p-sm-9 p-md-7 p-lg-8">
+                    <p-dropdown
+                      [options]="hospices"
+                      *ngIf="hospices.length !== 1 && !patient?.lastOrderDateTime"
+                      filter="true"
+                      name="hospiceId"
+                      formControlName="hospiceId"
+                      (onChange)="onHospiceChange($event)"
+                      [panelStyle]="{width: '100%'}"
+                      placeholder="Choose Hospice"
+                      class="dropdown-panel">
+                    </p-dropdown>
+                    <span *ngIf="hospices.length === 1">{{ hospices[0]?.label }}</span>
+                    <span *ngIf="hospices.length !== 1 && !!patient?.lastOrderDateTime">
+                      {{ getHospiceNameById(patientForm.controls.hospiceId.value) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="p-col-12 p-sm-3 p-md-4 p-lg-4 p-text-md-right top-label">
+                    Hospice Location * :
+                  </div>
+                  <div class="p-col-12 p-sm-9 p-md-7 p-lg-8">
+                    <p-dropdown
+                      [options]="hospiceLocations"
+                      filter="true"
+                      name="hospiceLocationId"
+                      panelStyleClass="custom-dropdown-panel"
+                      *ngIf="hospiceLocations.length !== 1"
+                      formControlName="hospiceLocationId"
+                      placeholder="Choose Hospice Location"
+                      class="dropdown-panel"></p-dropdown>
+                    <span *ngIf="hospiceLocations.length === 1">{{
+                      hospiceLocations[0]?.label
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-md-6">
+              <div class="p-grid p-mt-2">
+                <div class="top-label p-md-5 p-lg-4 p-text-md-right">Infectious Patient :</div>
+                <div class="p-d-flex p-md-7 p-lg-8">
+                  <p-radioButton
+                    name="isInfectious"
+                    [value]="true"
+                    label="Yes"
+                    formControlName="isInfectious">
+                  </p-radioButton>
+                  <p-radioButton
+                    name="isInfectious"
+                    [value]="false"
+                    label="No"
+                    formControlName="isInfectious"
+                    [style]="{marginLeft: '1em'}"></p-radioButton>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-mt-2">
+              <div class="p-grid" *ngIf="patientId">
+                <div class="p-col-12 p-md-6">
+                  <div class="p-grid p-align-center" [ngClass]="{'p-d-none': statusInvisible}">
+                    <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">Status :</div>
+                    <div class="p-col-9 p-md-7 p-lg-8">
+                      <div [style]="{flex: 1}">
+                        <span [class]="'patient-status ' + patientStatus.status">{{
+                          patientStatus.status
+                        }}</span>
+                        <div
+                          class="contacts-subtext"
+                          style="margin: 0 !important"
+                          *ngIf="patient?.statusChangedDate">
+                          Status last updated on
+                          {{ patient.statusChangedDate | date: "LLL dd, yyyy, h:mm a'" }}
+                        </div>
+                        <div
+                          class="contacts-subtext"
+                          style="margin: 0 !important"
+                          *ngIf="patient?.status === 'Inactive' && patient?.statusReason">
+                          Reason : {{ patient.statusReason }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">First Name * :</div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <input
+                      id="firstName"
+                      type="text"
+                      size="20"
+                      pInputText
+                      formControlName="firstName"
+                      placeholder="Enter First Name"
+                      autocomplete="off" />
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">Last Name * :</div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <input
+                      id="lastName"
+                      type="text"
+                      size="30"
+                      pInputText
+                      formControlName="lastName"
+                      placeholder="Enter Last Name"
+                      autocomplete="off" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-mt-2">
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">
+                    Date Of Birth * :
+                  </div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <p-calendar
+                      formControlName="dateOfBirth"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      class="dropdown-panel"
+                      placeholder="MM/DD/YYYY"
+                      [yearRange]="birthYearRange"
+                      [maxDate]="maxDate"
+                      [minDate]="minDate"
+                      dataType="string">
+                    </p-calendar>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">Diagnosis :</div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <input
+                      id="diagnosis"
+                      type="text"
+                      size="30"
+                      pInputText
+                      formControlName="diagnosis"
+                      autocomplete="off"
+                      placeholder="Enter Here" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-mt-2">
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">
+                    Patient Height (ft' inch") * :
+                  </div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <div
+                      [style]="{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flex: 1,
+                        justifyContent: 'space-between',
+                        alignItems: 'baseline'
+                      }">
+                      <p-inputNumber
+                        name="patientHeightFeet"
+                        formControlName="patientHeightFeet"
+                        [style]="{marginRight: '10px'}"
+                        mode="decimal"
+                        [min]="0"
+                        [max]="10"
+                        placeholder="feet">
+                      </p-inputNumber>
+                      <span> feet'</span>
+                      <p-inputNumber
+                        name="patientHeightInch"
+                        formControlName="patientHeightInch"
+                        mode="decimal"
+                        autocomplete="off"
+                        [max]="12"
+                        placeholder="inch">
+                      </p-inputNumber>
+                      <span>inch"</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">
+                    Patient Weight (lbs) * :
+                  </div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <input
+                      id="patientWeight"
+                      type="text"
+                      size="20"
+                      pInputText
+                      formControlName="patientWeight"
+                      autocomplete="off"
+                      placeholder="lbs" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 p-md-6">
+                <div class="p-grid p-align-center">
+                  <h3 class="p-col-3 p-md-5 p-lg-4 p-text-md-right">Addresses *</h3>
+                  <span class="add-facility p-col-9 p-md-7 p-lg-8" (click)="locationType = ''">
+                    <i class="pi pi-plus-circle"></i> Add Address
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid" style="margin-left: 10px" *ngIf="patientFacilityAddress.length > 0">
+              <app-address-list
+                style="width: 100%"
+                [address]="patientFacilityAddress"
+                [title]="'Facility'"
+                (delete)="deleteFacilityAddress($event)"></app-address-list>
+            </div>
+            <div
+              formArrayName="patientAddress"
+              *ngFor="let address of patientForm.get('patientAddress')['controls']; index as idx"
+              class="address-form-row">
+              <div [formGroupName]="idx">
+                <div class="address-header mt-5 home">
+                  Home Address {{ idx + 1 }} :
+                  <span class="delete" (click)="removeHomeAddress(idx)">
+                    <i class="pi pi-trash"></i><span class="label">Remove Address</span>
+                  </span>
+                </div>
+                <div>
+                  <app-address
+                    [address]="address.get('address')"
+                    [hiddenFields]="['latitude', 'longitude', 'county']">
+                  </app-address>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 p-md-6" *ngIf="locationType === ''">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">Location Type :</div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <p-dropdown
+                      [options]="addressTypes"
+                      [(ngModel)]="locationType"
+                      placeholder="Choose location type"
+                      [ngModelOptions]="{standalone: true}"
+                      (onChange)="locationTypeSelected($event)"
+                      class="dropdown-panel"
+                      [panelStyle]="{width: '100%'}"></p-dropdown>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-6" *ngIf="showFacilitySelect && locationType !== ''">
+                <div class="p-grid p-align-center">
+                  <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">Facility :</div>
+                  <div class="p-col-9 p-md-7 p-lg-8">
+                    <p-dropdown
+                      [options]="hospiceFacilities"
+                      filter="true"
+                      name="id"
+                      [(ngModel)]="hospiceFacility"
+                      [ngModelOptions]="{standalone: true}"
+                      placeholder="Choose Facility"
+                      (onChange)="facilitySelected($event)"
+                      class="dropdown-panel"
+                      [panelStyle]="{width: '100%'}">
+                      <ng-template let-item pTemplate="selectedItem">
+                        <span>{{ item.label }}</span>
+                      </ng-template>
+                      <ng-template let-facility pTemplate="item">
+                        <div class="p-helper-clearfix" style="position: relative">
+                          <div style="margin-top: 4px">
+                            {{ facility.label
+                            }}<span style="float: right"
+                              >{{ facility?.address?.addressLine1 }}
+                              {{ facility?.address?.addressLine2 ? ', ' : '' }}
+                              {{ facility?.address?.addressLine2 }}
+                              {{ facility?.address?.zipCode ? ' - ' : '' }}
+                              {{ facility?.address?.zipCode }}
+                            </span>
+                          </div>
+                        </div>
+                      </ng-template>
+                    </p-dropdown>
+                  </div>
+                </div>
+                <div class="contacts-subtext" *ngIf="!patientForm.get('hospiceId').value">
+                  Choose a hospice from above to start adding facility
+                </div>
+                <span
+                  class="add-facility p-ml-3"
+                  *ngIf="patientForm.get('hospiceId').value"
+                  (click)="addFacility()">
+                  <i class="pi pi-plus-circle"></i> Add Facility</span
+                >
+              </div>
+            </div>
+            <div
+              formArrayName="phoneNumbers"
+              style="margin-left: 10px"
+              class="p-mt-3"
+              *ngFor="let phone of patientForm.get('phoneNumbers')['controls']; index as idx">
+              <div class="p-grid" [formGroupName]="idx">
+                <div class="p-col-12 p-md-6">
+                  <div class="p-grid p-align-center">
+                    <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">
+                      {{ idx === 0 ? 'Primary Number *' : 'Secondary Number' }} :
+                    </div>
+                    <div class="p-col-9 p-md-7 p-lg-8 p-d-flex p-align-center">
+                      <p-inputMask
+                        size="20"
+                        mask="(999) 999-9999"
+                        unmask="true"
+                        formControlName="number"
+                        placeholder="(555) 010-0100"
+                        autocomplete="off"></p-inputMask>
+                      <span class="radio-item p-ml-2">
+                        <input
+                          id="selfPhone{{ idx }}"
+                          type="radio"
+                          [value]="true"
+                          name="isSelfPhone{{ idx }}"
+                          [formControl]="phone.controls['isSelfPhone']" />
+                        <label for="selfPhone{{ idx }}">Self</label>
+                      </span>
+
+                      <span class="radio-item">
+                        <input
+                          id="otherPhone{{ idx }}"
+                          type="radio"
+                          [value]="false"
+                          name="isSelfPhone{{ idx }}"
+                          [formControl]="phone.controls['isSelfPhone']"
+                          [style]="{marginLeft: '1em'}" />
+                        <label for="otherPhone{{ idx }}">Other</label>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-12 p-md-6" *ngIf="!phone.controls.isSelfPhone.value">
+                  <div class="p-grid p-align-center">
+                    <div class="top-label p-col-3 p-md-5 p-lg-4 p-text-md-right">
+                      Contact Name * :
+                    </div>
+                    <div class="p-col-9 p-md-7 p-lg-8">
+                      <input
+                        id="contactName{{ idx }}"
+                        type="text"
+                        size="30"
+                        pInputText
+                        formControlName="contactName"
+                        placeholder="Enter Full Name"
+                        autocomplete="off" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-d-none p-d-md-block p-md-1"></div>
+                <div class="p-col-12 p-md-11">
+                  <div class="contacts-subtext" *ngIf="idx === 0">
+                    Enter primary contact name/phone number of the person that will be contacted for
+                    coordination of services
+                  </div>
+                  <div class="contacts-subtext" *ngIf="idx === 1">
+                    Enter secondary name/phone number of the person that will be contacted for
+                    coordination of services if the primary contact is unavailable
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid patient-note-section">
+              <div class="p-col-12 p-md-10">
+                <div class="p-mb-2 p-text-left top-label">Patient Notes :</div>
+                <div class="patient-notes-input">
+                  <textarea
+                    pInputTextarea
+                    [rows]="4"
+                    [cols]="99"
+                    [(ngModel)]="newPatientNote"
+                    [ngModelOptions]="{standalone: true}"></textarea>
+                  <div>
+                    <button
+                      pButton
+                      class="p-col-1 ml-10"
+                      type="button"
+                      (click)="addNote()"
+                      label="Add Notes"
+                      style="width: 100%"></button>
+                  </div>
+                </div>
+                <app-table
+                  [list]="patientForm.get('patientNotes').value"
+                  [headers]="patientNotesHeader"
+                  (deleteHandler)="deletePatientNote($event?.index)"
+                  [showPaginator]="false">
+                </app-table>
+              </div>
+            </div>
+            <div class="p-col-10 p-d-flex p-justify-end form-action">
+              <button
+                (click)="goBack()"
+                pButton
+                label="Secondary"
+                class="ml-10 p-button p-button-secondary"
+                type="button"
+                label="Cancel"
+                [disabled]="formSubmit"></button>
+              <button
+                pButton
+                class="ml-10"
+                type="button"
+                (click)="handleSubmitPatient()"
+                label="{{ editmode ? 'Update' : 'Add' }} {{ orderType ? '& order' : '' }}"
+                [disabled]="formSubmit"
+                icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+                [pTooltip]="checkFormValidity(patientForm)"
+                tooltipPosition="top"
+                [escape]="false"></button>
+            </div>
+          </div>
+        </form>
+      </p-tabPanel>
+      <p-tabPanel
+        *ngIf="canView('Patient') && editmode"
+        header="Current Inventory"
+        [selected]="isCurrentView('inventory')">
+        <app-patient-inventory
+          *ngIf="isCurrentView('inventory') && patient?.uniqueId"
+          [patientUuid]="patient?.uniqueId">
+        </app-patient-inventory>
+      </p-tabPanel>
+      <p-tabPanel
+        *ngIf="canView('Patient') && editmode"
+        header="Order History"
+        [selected]="isCurrentView('order')">
+        <div class="mt-5">
+          <app-table-virtual-scroll
+            *ngIf="canView('Patient') && editmode && patientView == 'order'"
+            [list]="orderHeadersResponse?.records"
+            [pageSize]="orderHeadersFilter?.pageSize"
+            [loading]="loading"
+            [pageLoadNextOffset]="10"
+            [totalRecords]="orderHeadersResponse?.totalRecordCount"
+            filterFields="[]"
+            [headers]="orderHeaders"
+            [pageNumber]="orderHeadersResponse?.pageNumber || 0"
+            [totalPage]="orderHeadersResponse?.totalPageCount || 0"
+            [selection]="true"
+            (fetchNext)="fetchNextOrders($event)"
+            (rowSelected)="orderSelected($event)"
+            (sort)="sortOrders($event)">
+          </app-table-virtual-scroll>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+  <div class="flyout" *ngIf="showAddFacilityFlyer">
+    <button class="close-icon" (click)="closeFacilityAdd()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyer-label">
+      <span>Add Facility</span>
+    </div>
+    <app-add-facility
+      *ngIf="patientForm.get('hospiceId').value && showAddFacilityFlyer"
+      (facilityAdded)="recieveAddedFacility($event)"
+      [hospiceId]="patientForm.get('hospiceId').value">
+    </app-add-facility>
+  </div>
+  <app-order-flyout
+    [currentOrder]="currentOrder"
+    [fulfilledItems]="fulfilledItems"
+    *ngIf="!showAddFacilityFlyer"
+    (closeFlyout)="closeOrderDetails($event)"></app-order-flyout>
+</div>
+<app-patient-search
+  [searchCriteria]="searchCriteria"
+  [findDuplicates]="findDuplicates"
+  [searchEnabled]="patientSearchEnabled"
+  [hospices]="hospices"
+  (closeSearchBox)="closeSearch()"
+  (ignoreDuplicates)="continueWithDuplicate()"
+  (showSearchBox)="showSearch()">
+</app-patient-search>
+<app-address-verification-modal
+  #addressverificationmodal
+  [addresses]="addressesToVerify"
+  (update)="updateAddressWithSuggestions($event)">
+</app-address-verification-modal>
+<app-confirm-dialog
+  (accepted)="confirmAccepted()"
+  (rejected)="confirmRejected()"
+  #confirmDialog></app-confirm-dialog>

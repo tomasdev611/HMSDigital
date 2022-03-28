@@ -1,0 +1,74 @@
+<div class="sub">
+  <app-body-header displayTitle="Transfer Inventory" backText="Back"></app-body-header>
+  <div class="forms-wrapper">
+    <p-panel header="Transfer Request" [style]="{marginTop: '10px'}">
+      <form [formGroup]="inventoryTransferForm" (ngSubmit)="requestTransfer()">
+        <p-fieldset legend="Source">
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Location Type * :</div>
+            <div class="p-col-3">
+              <p-dropdown
+                [options]="locationTypes"
+                name="sourceLocationTypeId"
+                formControlName="sourceLocationTypeId"
+                placeholder="Source Location Type">
+              </p-dropdown>
+            </div>
+            <div class="p-col-2 form-label">Location * :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                [(ngModel)]="sourceLocation"
+                field="name"
+                disabled="true"
+                [ngModelOptions]="{standalone: true}">
+              </p-autoComplete>
+            </div>
+          </div>
+        </p-fieldset>
+        <p-fieldset legend="Destination">
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Location Type * :</div>
+            <div class="p-col-3">
+              <p-dropdown
+                [options]="locationTypes"
+                filter="true"
+                name="destLocation"
+                formControlName="destinationLocationTypeId"
+                placeholder="Destination Location Type"></p-dropdown>
+            </div>
+            <div class="p-col-2 form-label">Location * :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                autoHighlight="true"
+                [(ngModel)]="destinationLocation"
+                field="name"
+                (completeMethod)="searchLocation($event)"
+                [suggestions]="destLocationSuggestions"
+                [ngModelOptions]="{standalone: true}"
+                (onSelect)="destLocationSelected()">
+              </p-autoComplete>
+            </div>
+          </div>
+        </p-fieldset>
+        <div class="p-grid">
+          <div class="p-col-10 btn-right">
+            <button
+              pButton
+              type="submit"
+              label="Transfer"
+              icon="pi pi-save"
+              [disabled]="
+                !(inventoryTransferForm?.dirty || inventoryTransferForm?.touched) ||
+                !inventoryTransferForm?.valid
+              "></button>
+          </div>
+        </div>
+      </form>
+      <app-table
+        [list]="items"
+        [headers]="listHeaders"
+        [paginate]="false"
+        [loading]="loading"></app-table>
+    </p-panel>
+  </div>
+</div>

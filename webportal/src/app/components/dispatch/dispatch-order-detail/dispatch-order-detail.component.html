@@ -1,0 +1,149 @@
+<div class="sub dispatch">
+  <div class="p-helper-clearfix">
+    <div class="p-grid p-justify-between dispatch-header no-margin">
+      <div class="p-col-6 no-padding">
+        <div class="p-grid p-justify-between no-margin">
+          <div><span class="badge">Status : </span> {{ order?.dispatchStatus }}</div>
+          <div>
+            <span>Assigned Truck :</span>
+            {{
+              dispatchInstructions && dispatchInstructions.length > 0
+                ? dispatchInstructions[0].vehicle.name
+                : ''
+            }}
+          </div>
+          <div>
+            <span>Driver : </span
+            >{{
+              dispatchInstructions && dispatchInstructions.length > 0
+                ? dispatchInstructions[0].vehicle.currentDriverName
+                : ''
+            }}
+          </div>
+        </div>
+      </div>
+      <div class="p-col-6 no-padding p-justify-between btn-right">
+        <button pButton type="button" class="ml-20" label="Call Driver"></button>
+        <button pButton type="button" class="ml-20" label="Re-Assign"></button>
+        <button
+          pButton
+          type="button"
+          label="Fulfill Order"
+          *ngIf="checkPermission('Orders', 'Fulfill')"
+          [routerLink]="['./../../fulfill-order/' + orderId]"
+          (click)="saveFulfillmentFrom('dispatchOrderDetail')"></button>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid no-margin no-padding">
+    <div class="p-col-4">
+      <div class="p-grid no-margin">
+        <div class="p-col-12 no-padding map-view">
+          <div id="orderMap"></div>
+        </div>
+        <div class="p-col-12 no-padding"></div>
+      </div>
+      <div class="p-grid p-justify-space-between processing-time no-margin">
+        <div class="p-col-12 no-padding header">
+          <div>
+            <i class="pi pi-pencil" style="font-size: 1.5em"></i>
+            <span class="badge">Processing Time </span>
+          </div>
+          <div>
+            <span>{{ processingTime.total ? processingTime.total + ' mins' : 'N/A' }} </span>
+            <i class="pi pi-info-circle" style="margin-top: -0.9em; font-size: 1.5em"></i>
+          </div>
+        </div>
+        <div class="p-col-12">
+          <div class="item">
+            <div>Navigation</div>
+            <div>{{ processingTime.navigation ? processingTime.navigation + ' mins' : 'N/A' }}</div>
+          </div>
+          <div class="item">
+            <div>Offloading time</div>
+            <div>{{ processingTime.offloading ? processingTime.offloading + ' mins' : 'N/A' }}</div>
+          </div>
+          <div class="item">
+            <div>Warehouse loading</div>
+            <div>
+              {{
+                processingTime.warehouseLoading ? processingTime.warehouseLoading + ' mins' : 'N/A'
+              }}
+            </div>
+          </div>
+          <div class="item">
+            <div>Buffer</div>
+            <div>{{ processingTime.buffer ? processingTime.buffer + ' mins' : 'N/A' }}</div>
+          </div>
+        </div>
+        <div class="p-col-12 time-slot">
+          <div class="head">
+            <i class="pi pi-check-circle"></i>
+            <span class="badge">Timeslot Available </span>
+          </div>
+          <div class="content">
+            <div>Add break after Delivery</div>
+            <div>{{ breakAfterDelivery ? breakAfterDelivery + ' mins' : 'N/A' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-5">
+      <app-dispatch-list-item
+        class="p-grid no-margin"
+        [order]="order"
+        [activeView]="'orderDetailView'">
+      </app-dispatch-list-item>
+      <div class="list-header">
+        List of Items:
+        <button pButton type="button" class="p-button-rounded active" label="Fulfilled"></button>
+        <div>
+          <span class="badge">{{ fulfilledItems }}</span>
+        </div>
+        <button pButton type="button" class="ml-20 p-button-rounded" label="Unfulfilled"></button>
+        <div>
+          <span class="badge">{{ unfulfilledItems }}</span>
+        </div>
+      </div>
+      <p-table [value]="order?.orderLineItems" dataKey="displayName">
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+          <tr [pRowToggler]="item" [class.expanded]="expanded">
+            <td>
+              {{ item.displayName }}
+              <i
+                style="float: right"
+                [ngClass]="{pi: true, 'pi-sort-down': !expanded, 'pi-caret-up': expanded}"></i>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-item>
+          <div class="expanded-view">
+            <small>{{ item?.item.description }}</small>
+            <div class="body">
+              Qty - {{ item?.itemCount }}
+              <a [routerLink]="['/inventory/item/info/' + item.itemId]" target="_blank"
+                >Product Details</a
+              >
+            </div>
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="p-col-3">
+      <div class="scheduler-date">
+        <strong>{{ viewDate | date: 'longDate' }}</strong>
+      </div>
+      <mwl-calendar-day-view [viewDate]="viewDate" [events]="events"> </mwl-calendar-day-view>
+      <div class="p-grid detail-instructions no-margin">
+        <div class="p-col-12 no-padding">
+          <div class="header">Order Notes</div>
+          <div class="instruction">{{ order?.instruction }}</div>
+          <div class="header">Patient Notes</div>
+          <div class="instruction" *ngFor="let note of order?.patient?.patientNotes">
+            {{ note?.note }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

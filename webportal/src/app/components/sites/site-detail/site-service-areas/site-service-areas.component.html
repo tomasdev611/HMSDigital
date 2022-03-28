@@ -1,0 +1,90 @@
+<div class="p-grid p-nogutter mb-10">
+  <div class="p-col-12 btn-right">
+    <button
+      *ngIf="checkPermission('Site', 'Update') && checkPermission('Site', 'Create')"
+      pButton
+      class="btn-right"
+      label="Add Zip Codes"
+      icon="pi pi-plus"
+      (click)="addZipCodes()"
+      [disabled]="loading"></button>
+  </div>
+</div>
+<app-table-virtual-scroll
+  [list]="serviceAreasResponse?.records"
+  [pageSize]="serviceAreasRequest?.pageSize"
+  [loading]="loading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="serviceAreasResponse?.totalRecordCount"
+  filterFields="[]"
+  [headers]="serviceAreasHeaders"
+  [pageNumber]="serviceAreasResponse?.pageNumber || 0"
+  [totalPage]="serviceAreasResponse?.totalPageCount || 0"
+  [selection]="true"
+  (fetchNext)="getNextServiceAreas($event)"
+  (deleteHandler)="deleteZipCode($event?.object)">
+</app-table-virtual-scroll>
+<app-modal
+  *ngIf="showAddModal"
+  header="Add zip codes to this site"
+  [visible]="showAddModal"
+  (hide)="hideZipcodeModal()"
+  class="no-footer">
+  <form [formGroup]="zipCodeForm" class="p-grid p-nogutter zipcode-form">
+    <div class="p-grid p-col-12">
+      <div class="p-col-12">
+        <div
+          class="p-grid p-nogutter"
+          formArrayName="zipCodes"
+          *ngFor="let zipCode of zipCodeForm.get('zipCodes')['controls']; index as idx">
+          <div class="p-grid p-nogutter zip-code mb-5" [formGroupName]="idx">
+            <div class="p-col-fixed width-100">Zip Code</div>
+            <div class="p-col-6">
+              <p-inputMask
+                size="5"
+                slotChar=""
+                placeholder="99999"
+                [autoClear]="false"
+                mask="99999"
+                id="zipCode{{ idx }}"
+                formControlName="zipCode"></p-inputMask>
+              <div class="red site-code-error">{{ getErrorForIndex(idx) }}</div>
+            </div>
+            <div class="p-col-2">
+              <button
+                *ngIf="zipCodeForm.get('zipCodes')['controls'].length !== 1"
+                pButton
+                icon="pi pi-trash"
+                class="p-button-secondary delete-zip-btn"
+                (click)="removeZipCode(idx)"></button>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid p-nogutter">
+          <button
+            pButton
+            icon="pi pi-plus"
+            class="p-button-secondary add-zip-btn"
+            label="Add Zip Code"
+            (click)="addOneMore()"></button>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-footer p-grid p-col-12 p-jc-end">
+      <button
+        pButton
+        class="p-button-secondary"
+        type="button"
+        (click)="hideZipcodeModal()"
+        icon="pi pi-times"
+        label="Cancel"></button>
+      <button
+        pButton
+        type="button"
+        [disabled]="!zipCodeForm.valid"
+        (click)="zipCodeForm.valid && onSubmitZipcode(zipCodeForm.getRawValue())"
+        label="Save All"
+        icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"></button>
+    </div>
+  </form>
+</app-modal>

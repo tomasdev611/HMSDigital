@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:constants="clr-namespace:MobileApp.Assets.Constants">
+    <Color x:Key="DarkShade">#003E87</Color>
+    <Color x:Key="LightShade">#049EFF</Color>
+    <Color x:Key="GreenShade">#6FCF97</Color>
+    <Color x:Key="BackgroundShade">#F4F7F9</Color>
+    <Color x:Key="DarkBlueShade">#001C40</Color>
+    <Color x:Key="LightBlueShade">#F1F9FF</Color>
+    <Color x:Key="BackgroundColor">#FFFFFF</Color>
+    <Color x:Key="CyanColor">#CCD8E7</Color>
+    <Color x:Key="RedShade">#EB5757</Color>
+    <Color x:Key="E6ECF3">#E6ECF3</Color>
+    <Color x:Key="424B5A">#424B5A</Color>
+    <Color x:Key="C2D1D9">#C2D1D9</Color>
+    <Color x:Key="Delivery">#338AFF</Color>
+    <Color x:Key="Pickup">#F2994A</Color>
+    <Color x:Key="Exchange">#F2C94C</Color>
+    <Color x:Key="Move">#6FCf97</Color>
+
+    <Color x:Key="PurchaseOrderBackground">#F9FAFD</Color>
+    <Color x:Key="PrimaryBlueColor">#1E265D</Color>
+    <Color x:Key="PurchaseOrderElementBorder">#EEEFF1</Color>
+    <Color x:Key="SecondaryActionButtonColor">#EEEFF1</Color>
+    <Color x:Key="LightGrayColor">#596167</Color>
+    <Color x:Key="Yellow800">#FBF8ED</Color>
+    <Color x:Key="Yellow800Strong">#F7E1B5</Color>
+    <Color x:Key="YellowStrong">#F5DEAC</Color>
+    <Color x:Key="Green800">#B1DCC7</Color>
+    <Color x:Key="Blue800">#ACD1FE</Color>
+    <Color x:Key="BlueLight">#DCEAFF</Color>
+
+    <Color x:Key="LightBlack">#7A7A7A</Color>
+    <Color x:Key="DarkBlack">#212121</Color>
+</ResourceDictionary>

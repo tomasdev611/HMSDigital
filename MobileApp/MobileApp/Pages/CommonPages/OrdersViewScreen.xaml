@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage NavigationPage.BackButtonTitle=""
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converters="clr-namespace:MobileApp.Utils.Converter"           
+             x:Class="MobileApp.Pages.Screen.CommonPages.OrdersViewScreen"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+             Title="{Binding OrdersList.Name}"
+             x:Name="ordersViewScreen">
+    <ContentPage.Content>
+        <ListView SeparatorVisibility="None"
+                  BackgroundColor="{StaticResource BackgroundShade }"
+                  x:Name="listView"
+                  ItemsSource="{Binding OrdersList}"
+                  HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Frame CornerRadius="15"
+                               Margin="10"
+                               Padding="15">
+                            <StackLayout Margin="10,0,0,0"
+                                         >
+                                <FlexLayout JustifyContent="SpaceBetween">
+                                    <StackLayout Orientation="Horizontal"
+                                                 x:Name="orderNumberlabel">
+                                        <Label Text="{Binding OrderNumber, StringFormat='#{0}'}"
+                                               VerticalOptions="End"
+                                               FontAttributes="Bold"
+                                               FontSize="10" />
+                                        <templates:OrderTypeLabel OrderTypeId="{Binding OrderTypeId}" />
+                                    </StackLayout>
+                                    <Label IsVisible="{Binding IsInfectious}"
+                                           Text="* Infectious"
+                                          TextColor="Red"
+                                           FontSize="13"
+                                    HorizontalTextAlignment="End"/>
+                                </FlexLayout>
+                                <FlexLayout JustifyContent="SpaceBetween">
+                                    <Label
+                                        Text="{Binding ContactPerson}"
+                                        VerticalOptions="End"
+                                        FontAttributes="Bold"
+                                        FontSize="20" />
+                                    <Label 
+                                        Text="{Binding ItemCount, StringFormat='{0} Item'}"
+                                        FontSize="15" />
+                                </FlexLayout>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0"
+                                           Text="{Binding ETA, StringFormat='ETA {0}'}"
+                                           FontSize="13" />
+                                    <Label Grid.Column="1"
+                                           HorizontalOptions="Start"
+                                           FontSize="13"
+                                           IsVisible="{Binding ExpectedDeliveryDate ,Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                           Text="{Binding ExpectedDeliveryDate, StringFormat=' ({0})'}"/>
+                                </Grid>
+
+                                <Label         
+                                               Text="{Binding ContactNumber, Converter={converters:StringToPhoneNumberConverter}}"
+                                               FontAttributes="Bold"
+                                               FontSize="16"/>
+                            </StackLayout>
+                        </Frame>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

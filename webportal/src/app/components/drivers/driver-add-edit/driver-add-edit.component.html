@@ -1,0 +1,110 @@
+<div class="sub">
+  <app-body-header
+    displayTitle="Driver {{ editmode ? 'Edit' : 'Add' }}"
+    backText="Back"></app-body-header>
+  <div class="forms-wrapper">
+    <p-panel header="Driver Information" [style]="{marginTop: '10px'}">
+      <form
+        [formGroup]="driverForm"
+        (ngSubmit)="onSubmitDriver(driverForm.value)"
+        autocomplete="off">
+        <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Email * :</div>
+            <div class="p-col-4">
+              <p-autoComplete
+                name="email"
+                formControlName="user"
+                [suggestions]="searchedUsers"
+                (completeMethod)="searchUsers($event)"
+                field="email"
+                (onSelect)="setUserFields($event)"
+                (onClear)="clearEmail()"
+                autocomplete="new-email"></p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">First Name * :</div>
+            <div class="p-col-3">
+              <input id="firstName" type="text" size="20" pInputText formControlName="firstName" />
+            </div>
+            <div class="p-col-2 form-label">Last Name * :</div>
+            <div class="p-col-3">
+              <input id="lastName" type="text" size="30" pInputText formControlName="lastName" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Mobile * :</div>
+            <div class="p-col-3">
+              <p-inputMask
+                size="20"
+                mask="(999) 999-9999"
+                unmask="true"
+                formControlName="phoneNumber"
+                placeholder="(999) 999-9999"></p-inputMask>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Current Site :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                autoHighlight="true"
+                name="site"
+                dataKey="id"
+                field="name"
+                [(ngModel)]="site"
+                [suggestions]="sites"
+                (completeMethod)="searchSites($event)"
+                autocomplete="off"
+                (onSelect)="siteSelected($event)"
+                (onClear)="siteSelected($event)"
+                [ngModelOptions]="{standalone: true}"></p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Current Vehicle :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                autoHighlight="true"
+                name="vehicle"
+                dataKey="id"
+                field="name"
+                [(ngModel)]="vehicle"
+                [suggestions]="vehicles"
+                (completeMethod)="searchVehicles($event)"
+                autocomplete="off"
+                (onSelect)="vehicleSelected($event)"
+                (onClear)="vehicleSelected($event)"
+                [ngModelOptions]="{standalone: true}">
+                <ng-template let-vehicle pTemplate="item">
+                  <div>
+                    {{ vehicle?.name }}
+                    <span style="float: right">{{ vehicle?.licensePlate }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid p-justify-end">
+            <div class="p-col-3" *ngIf="hasPermission('Driver', 'Delete')">
+              <button
+                pButton
+                label="Delete"
+                [disabled]="!driverId || formSubmit || loading"
+                icon="pi pi-trash"
+                class="p-button-secondary p-mr-1"
+                (click)="deleteDriver()"></button>
+              <button
+                pButton
+                type="submit"
+                label="{{ editmode ? 'Update' : 'Save' }}"
+                icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+                [disabled]="!(driverForm.valid && !formSubmit)"></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+</div>
+<app-confirm-dialog (accepted)="deleteConfirmed()" #confirmDialog></app-confirm-dialog>

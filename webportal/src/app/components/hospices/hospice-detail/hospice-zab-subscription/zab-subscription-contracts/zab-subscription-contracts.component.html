@@ -1,0 +1,16 @@
+<div class="sub">
+  <app-body-header displayTitle="Subscription Contracts" backText="Back"></app-body-header>
+  <app-table-virtual-scroll
+    [list]="subscriptionContractResponse?.records"
+    [pageSize]="subscriptionContractResponse?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    [totalRecords]="subscriptionContractResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="subscriptionContractHeaders"
+    [pageNumber]="subscriptionContractResponse?.pageNumber"
+    [totalPage]="subscriptionContractResponse?.totalPageCount"
+    [selection]="true"
+    (fetchNext)="fetchNext($event)">
+  </app-table-virtual-scroll>
+</div>

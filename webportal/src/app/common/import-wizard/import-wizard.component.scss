@@ -1,0 +1,105 @@
+:host ::ng-deep {
+  .iw-nav-btn {
+    background-color: transparent;
+    color: black;
+    opacity: 1;
+    outline: none;
+    border: none;
+    &:enabled {
+      &:hover {
+        background-color: transparent;
+      }
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .p-steps {
+    .p-steps-current {
+      .p-menuitem-link {
+        transition: all 0.6s ease;
+        transform: scale(1.2);
+      }
+    }
+    .p-steps-item {
+      width: 33%;
+      .p-menuitem-link {
+        &:focus {
+          box-shadow: none;
+        }
+        .p-steps-number {
+          line-height: 28px;
+        }
+      }
+    }
+    .p-steps-title {
+      color: black !important;
+    }
+  }
+
+  .p-fileupload-content {
+    height: calc(100vh - 450px);
+    .p-messages {
+      &.p-messages-error {
+        display: none;
+      }
+    }
+    & p-messages:only-child {
+      &::after {
+        content: 'Drop your CSV file here';
+        position: absolute;
+        color: var(--text-color-secondary);
+        transform: translateX(-50%) translateY(-50%);
+        top: 50%;
+        left: 50%;
+      }
+    }
+  }
+
+  .iw-card-container {
+    height: calc(100vh - 300px);
+    margin-top: 2em;
+    padding: 0.5em;
+    background-color: transparent;
+    box-shadow: none;
+    .iw-header-container {
+      .p-grid {
+        .left {
+          button {
+            margin: 0 5px;
+          }
+        }
+      }
+    }
+    .p-card {
+      max-height: calc(100vh - 200px) !important;
+    }
+  }
+
+  .p-progress-spinner {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.iw-finish-container {
+  width: 20em;
+  margin: auto;
+  background-color: var(--layer-0);
+  padding: 2em;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    color: var(--text-color);
+    text-align: center;
+  }
+}

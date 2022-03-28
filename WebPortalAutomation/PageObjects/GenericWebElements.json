@@ -1,0 +1,73 @@
+{
+    "clickables": {
+
+        "parameterized": {
+            "Top Page Buttons": {    
+                "xpath": "//button/span[normalize-space(text())=\"BUTTON-NAME\"]",
+                "placeholder": "BUTTON-NAME"
+            },
+
+            "Hospices": {
+                "xpath": "//input[@placeholder=\"Hospice\"]/following-sibling::div/ul/li/span[normalize-space(text())=\"HOSPICE-PLACEHOLDER\"]",
+                "placeholder": "HOSPICE-PLACEHOLDER"
+            }
+        },
+
+        "uniques": {
+            "Clear Search Bar": {
+                "findBy": "xpath",
+                "xpath": "//app-search-bar/div/span[@class=\"clear-icon active\"]"
+            },
+
+            "Close Filter By": {
+                "findBy": "xpath",
+                "xpath": "//span[normalize-space(text())=\"Filter By:\"]/following-sibling::button/span[1]"
+            },
+
+            "Close Info Modal": {
+                "findBy": "class name",
+                "class name": "close-icon"
+            }
+        }
+    },
+
+    "waitables": {
+
+        "uniques": {
+            "Inside IFrame": {
+                "findBy": "id",
+                "id": "sca-iframe"
+            },
+
+            "Table Data": {
+                "shouldBeRelative": true,
+
+                "findBy": "xpath",
+                "xpath": "//td"
+            },
+
+            "Loading Table Rows": {
+                "shouldBeRelative": true,
+
+                "findBy": "xpath",
+                "xpath": "td[2]/div[1]"
+            }
+        }
+    },
+
+    "writables": {
+
+        "uniques": {
+
+            "Search Bar": {
+                "findBy": "xpath",
+                "xpath": "//input[@placeholder=\"Search\"]"
+            },
+
+            "Filter By Hospice": {
+                "findBy": "xpath",
+                "xpath": "//input[@placeholder=\"Hospice\"]"
+            }
+        }
+    },
+}

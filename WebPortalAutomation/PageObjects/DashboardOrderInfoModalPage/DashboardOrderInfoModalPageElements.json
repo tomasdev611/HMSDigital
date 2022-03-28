@@ -1,0 +1,24 @@
+{
+    "waitables": {
+        "mapped": [
+            {
+                "xpath": "//div[contains(@class, \"item-ATTRIBUTE\")]",
+
+                "shouldBeRelative": true,
+                "map": {
+                    "Item Name": { "ATTRIBUTE": "name" },
+                    "Item Amount": { "ATTRIBUTE": "quantity" }
+                }
+            },
+            {
+                "xpath": "//div[contains(@class, \"item-equipments\")]/span[EQUIPMENT-ATTRIBUTE]",
+
+                "shouldBeRelative": true,
+                "map": {
+                    "Equipment Name": { "EQUIPMENT-ATTRIBUTE": "1" },
+                    "Equipment Amount": { "EQUIPMENT-ATTRIBUTE": "2" }
+                }
+            }
+        ]
+    }
+}

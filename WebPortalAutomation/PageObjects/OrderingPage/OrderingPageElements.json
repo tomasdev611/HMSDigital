@@ -1,0 +1,151 @@
+{
+    "clickables": {
+        
+        "uniques": {
+            
+            "Next": {
+                "findBy": "class name",
+                "class name": "live-cart-place-order-btn"
+            },
+
+            "Remove product from cart": {
+                "findBy": "xpath",
+                "xpath": "div[@class=\"live-cart-line-controls\"]/button[@class=\"live-cart-remove-line-btn\"]",
+                "shouldBeRelative": true
+            }
+
+        },
+
+        "parameterized": {
+            "Change by 1 already loaded": {
+                "xpath": "div[@class=\"live-cart-line-controls\"]/div[@class=\"live-cart-line-quantity-controls\"]/button[normalize-space(text())=\"CHANGER\"]",
+                "placeholder": "CHANGER",
+                "shouldBeRelative": true
+            }
+        },
+
+        "mapped": [
+            {
+                "xpath": "div[@data-view=\"DATA-VIEW\"]/button[@data-action=\"DATA-ACTION\"]",
+                "shouldBeRelative": true,
+
+                "map": {
+                    "Add product to cart" : {
+                        "DATA-VIEW": "PLPItemQuantityToCart.AddToCartButton",
+                        "DATA-ACTION": "add-to-cart"
+                    },
+
+                    "Minus 1 amount product": {
+                        "DATA-VIEW": "Item.QuantityControls",
+                        "DATA-ACTION": "input-number-with-button-controls-decrease-quantity"
+                    },
+
+                    "Plus 1 amount product": {
+                        "DATA-VIEW": "Item.QuantityControls",
+                        "DATA-ACTION": "input-number-with-button-controls-increase-quantity"
+                    }
+                }
+            },
+            {
+                "xpath": "//li[@class=\"global-views-pagination-PAGINATION-TYPE\"]/a",
+
+                "map": {
+                    "First page to click in pagination": {
+                        "PAGINATION-TYPE": "links-number"
+                    },
+                    "Next page in pagination": {
+                       "PAGINATION-TYPE": "next" 
+                    },
+                    "Previous page in pagination": {
+                       "PAGINATION-TYPE": "prev" 
+                    }
+                }
+            }
+        ]
+    },
+
+    "iterables": {
+        
+        "uniques": {
+            
+            "Order items pagination": {
+                "findBy": "class name",
+                "class name": "card-body",
+
+                "relatives": {
+                    "findBy": "xpath",
+                    "xpath": "div[@class=\"facets-facet-browse-items\"]/div[@class=\"facets-items-collection-view-row\"]/div[@class=\"facets-items-collection-view-cell-span12\"]/div[@class=\"facets-item-cell-list\"]"
+                }
+            }
+
+        }
+
+    },
+
+    "waitables": {
+
+        "parameterized": {
+
+            "Specific item added to cart": {
+                "xpath": "//div[@class=\"live-cart-line-info\"]/p[normalize-space(text())=\"ITEM-NAME\"]/parent::div/parent::div",
+                "placeholder": "ITEM-NAME"
+            },
+        },
+
+        "uniques": {
+
+            "Interactable section": {
+                "findBy": "xpath",
+                "xpath": "//section[@class=\"facets-facet-browse\"]"
+            },
+
+            "Current page in pagination": {
+                "findBy": "xpath",
+                "xpath": "//li/a[@class=\"global-views-pagination-active\"]"
+            },
+
+            "Items added to cart": {
+                "findBy": "xpath",
+                "xpath": "//p/parent::div/parent::div[@class=\"live-cart-line\"]"
+            },
+
+            "Item added category": {
+                "findBy": "xpath",
+                "xpath": "parent::div[@data-view=\"LiveCart.Lines\"]/preceding-sibling::h4",
+                "shouldBeRelative": true
+            },
+
+            "Item added name": {
+                "findBy": "xpath",
+                "xpath": "div[@class=\"live-cart-line-info\"]/p",
+                "shouldBeRelative": true
+            },
+
+            "Item to add name": {
+                "findBy": "xpath",
+                "xpath": "div[3]/h2/a/span",
+                "shouldBeRelative": true
+            }
+        }
+    },
+
+    "writables": {
+
+        "uniques": {
+
+            "Amount to load": {
+                "shouldBeRelative": true,
+
+                "findBy": "xpath",
+                "xpath": "div[@data-view=\"Item.QuantityControls\"]/input"
+            },
+
+            "Item added amount": {
+                "findBy": "xpath",
+                "xpath": "div[@class=\"live-cart-line-controls\"]/div[@class=\"live-cart-line-quantity-controls\"]/input",
+                "shouldBeRelative": true
+            }
+        }
+
+    }
+}

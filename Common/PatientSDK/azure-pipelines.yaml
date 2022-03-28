@@ -1,0 +1,51 @@
+pool:
+  name: Azure Pipelines
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+    paths:
+      include:
+      - Common/Common.SDK
+      - Common/PatientSDK
+      - Patient/Patient.ViewModels
+      exclude:
+      - Common/PatientSDK/README.md
+pr: none
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: 'Common\PatientSDK\PatientSDK.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    command: build
+    projects: 'Common\PatientSDK\PatientSDK.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: NuGetCommand@2
+  displayName: 'nuget pack'
+  inputs:
+    command: pack
+    packagesToPack: 'Common\PatientSDK\PatientSDK.csproj'
+    includeReferencedProjects: true
+    versioningScheme: byPrereleaseNumber
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet push'
+  inputs:
+    command: push
+    publishVstsFeed: '902dc6c4-e674-46d7-8d6a-1683cf95a3fe'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()

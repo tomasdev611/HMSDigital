@@ -1,0 +1,14 @@
+<app-table-virtual-scroll
+  #patientInventoryTable
+  [list]="patientInventoryResponse?.records"
+  [pageSize]="patientInventoryRequest?.pageSize"
+  [loading]="patientsLoading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="patientInventoryResponse?.totalRecordCount"
+  filterFields="[]"
+  [headers]="inventoryHeaders"
+  [pageNumber]="patientInventoryResponse?.pageNumber || 0"
+  [totalPage]="patientInventoryResponse?.totalPageCount || 0"
+  [selection]="true"
+  (fetchNext)="getNextInventoryPage($event)">
+</app-table-virtual-scroll>

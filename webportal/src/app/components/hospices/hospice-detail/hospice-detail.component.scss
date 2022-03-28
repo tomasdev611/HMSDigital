@@ -1,0 +1,131 @@
+:host ::ng-deep {
+  .p-tabview-panel {
+    padding: 1em !important;
+    .p-table-scrollable-body {
+      height: calc(100vh - 340px) !important;
+      max-height: calc(100vh - 340px) !important;
+    }
+  }
+
+  .hospice-header {
+    justify-content: space-between;
+  }
+
+  .empty-wrapper {
+    height: 90%;
+    background-color: var(--layer-2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color-secondary);
+  }
+
+  .p-progress-spinner {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+  }
+
+  // override button styles to make it look like dropdown button
+  .p-autocomplete {
+    border: 1px solid #5c6270 !important;
+    border-radius: 5px;
+    input.p-inputtext {
+      border: none;
+      box-shadow: none;
+      width: 300px;
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .p-autocomplete-dropdown.p-button {
+      background-color: transparent !important;
+      border: none !important;
+      color: #5c6270 !important;
+      box-shadow: none;
+    }
+  }
+  .info-subtext {
+    font-weight: 500;
+    font-style: italic;
+    font-size: 10px;
+  }
+}
+
+.body-container {
+  display: flex;
+  height: calc(100vh - 0px);
+  position: relative;
+
+  .flyout {
+    display: none;
+    flex-direction: column;
+    min-width: 350px;
+    max-width: 350px;
+    width: 0px;
+    right: 0;
+    flex-basis: 500px;
+    background-color: #ffffff;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+    margin-top: 3px;
+
+    button.close-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background-color: var(--text-color);
+      color: white;
+      border-radius: 50%;
+      padding: 0.5em;
+      border: none;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+      outline: none;
+      > i.pi {
+        align-self: center;
+      }
+    }
+
+    .details-label {
+      text-align: left;
+      font-size: 20px;
+      font-weight: 400;
+      padding: 0.7em;
+      padding-right: 2em;
+    }
+
+    .location-details {
+      > div {
+        display: flex;
+        padding: 1em;
+        background-color: #edf1f4;
+        justify-content: space-between;
+
+        > span:first-child {
+          text-align: left;
+          font-size: 15px;
+          width: 30%;
+        }
+        > span:last-child {
+          font-size: 0.9em;
+          text-align: left;
+          width: 60%;
+        }
+      }
+    }
+  }
+
+  &.flyout-open {
+    .flyout {
+      min-width: 350px;
+      display: flex;
+    }
+  }
+}
+
+.sub {
+  flex-grow: 2;
+}

@@ -1,0 +1,143 @@
+<div class="sub dispatch">
+  <div class="p-helper-clearfix">
+    <div class="p-grid p-nogutter p-ai-center p-jc-between dispatch-header">
+      <div class="show-only-section" *ngIf="activeView === 'mapView'">
+        <span class="back-button pi pi-arrow-left icon" (click)="activeView = 'orderView'"></span>
+      </div>
+      <div class="show-only-section">
+        <p-checkbox
+          [(ngModel)]="selectAllOrder"
+          (onChange)="toggleAllOrder($event)"
+          binary="true"></p-checkbox>
+        <span class="header-label">SELECT ALL</span>
+      </div>
+      <div>
+        <p-autoComplete
+          autoHighlight="true"
+          name="site"
+          field="name"
+          [(ngModel)]="location"
+          [suggestions]="locations"
+          (onSelect)="onLocationSelect($event)"
+          (onClear)="clearLocation($event)"
+          (completeMethod)="searchLocation($event)"
+          [pTooltip]="'LOCATION'"
+          tooltipPosition="bottom"
+          placeholder="Search site/region/area"
+          autocomplete="off"></p-autoComplete>
+      </div>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+        <input
+          style="width: 180px"
+          type="search"
+          [(ngModel)]="searchKeyword"
+          (ngModelChange)="changed($event)"
+          pInputText
+          placeholder="Search Patient/Order#"
+          [disabled]="!location?.id" />
+      </div>
+      <div>
+        <p-calendar
+          [pTooltip]="'Order Date'"
+          tooltipPosition="bottom"
+          (onSelect)="dateSelected()"
+          [maxDate]="maxDate"
+          [placeholder]="'Order Date'"
+          [(ngModel)]="orderDate"
+          (onClearClick)="dateSelected()"
+          showButtonBar="true"
+          [disabled]="!location?.id"
+          (onBlur)="dateSelected()">
+        </p-calendar>
+      </div>
+      <div>
+        <p-calendar
+          [pTooltip]="'Order Request Date'"
+          tooltipPosition="bottom"
+          (onSelect)="dateSelected()"
+          [placeholder]="'Order Request Date'"
+          [(ngModel)]="orderRequestDate"
+          (onClearClick)="dateSelected()"
+          showButtonBar="true"
+          [disabled]="!location?.id"
+          (onBlur)="dateSelected()">
+        </p-calendar>
+      </div>
+      <div class="show-only-section">
+        <span class="header-label">SHOW ONLY</span>
+        <p-selectButton
+          [options]="dispatchStatuses"
+          [(ngModel)]="filter.status"
+          multiple="multiple"
+          (onChange)="statusFilterChange($event)"
+          [disabled]="!location?.id"></p-selectButton>
+      </div>
+      <div>
+        <p-dropdown
+          [options]="orderTypes"
+          [(ngModel)]="filter.type"
+          placeholder="Select Type"
+          [pTooltip]="'FILTER BY'"
+          tooltipPosition="bottom"
+          (onChange)="typeFilterChange($event)"></p-dropdown>
+      </div>
+      <div class="switch-view">
+        <button
+          pButton
+          type="button"
+          label="ASSIGN VIEW"
+          [disabled]="!location?.id"
+          *ngIf="checkPermission('Dispatch', 'Create')"
+          (click)="assignOrders()"></button>
+        <button
+          pButton
+          type="button"
+          *ngIf="activeView === 'orderView'"
+          label="MAP VIEW"
+          (click)="activeView = 'mapView'"></button>
+        <button
+          pButton
+          type="button"
+          *ngIf="activeView === 'mapView'"
+          label="ORDER VIEW"
+          (click)="activeView = 'orderView'"></button>
+      </div>
+    </div>
+    <div *ngIf="selectedOrders.length > 0" class="selected-order-info" [ngClass]="activeView">
+      <p class="no-margin">{{ selectedOrders.length }} orders selected</p>
+      <button
+        pButton
+        class="btn-right"
+        type="submit"
+        label="Assign {{ selectedOrders.length }} Order"
+        (click)="assignOrders()"></button>
+    </div>
+  </div>
+  <div class="p-grid no-margin">
+    <div
+      class="no-padding"
+      [ngClass]="{'p-col-12': activeView === 'orderView', 'p-col-4': activeView === 'mapView'}"
+      *ngIf="shouldShowDispatchList()">
+      <app-dispatch-list
+        [loading]="loading"
+        [orders]="activeView === 'orderView' && location ? orderResponse?.records : selectedOrders"
+        [activeView]="activeView"
+        (orderSelected)="selectOrder($event)"
+        showPaginator="true"
+        [pageNumber]="orderResponse?.pageNumber"
+        [totalPage]="orderResponse?.totalPageCount"
+        [paginate]="true"
+        (fetchNext)="getNext()"
+        (fetchPrev)="getPrev()"
+        [markedOrderId]="markedOrderId"></app-dispatch-list>
+    </div>
+    <app-dispatch-map
+      class="p-col-8 no-padding"
+      *ngIf="activeView === 'mapView' && !loading"
+      class="map-view"
+      [selectedOrders]="selectedOrders"
+      [site]="location"
+      (markerSelected)="markerSelected($event)"></app-dispatch-map>
+  </div>
+</div>

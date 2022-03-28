@@ -1,0 +1,52 @@
+<div class="spinner-container" *ngIf="isLoading">
+  <p-progressSpinner
+    styleClass="custom-spinner"
+    strokeWidth="8"
+    fill="#EEEEEE"
+    animationDuration=".5s">
+  </p-progressSpinner>
+</div>
+<div class="health-check-container" *ngIf="statusResponse">
+  <div class="p-grid ml-5">
+    <div class="p-col-12">
+      <span
+        >Status:
+        <small
+          class="chip"
+          [ngClass]="{
+            healthy: statusResponse?.status === 'Healthy',
+            degraded: statusResponse?.status === 'Degraded'
+          }">
+          {{ statusResponse.status }}
+        </small>
+      </span>
+    </div>
+    <div class="p-col-12">
+      <span>Duration: {{ statusResponse.totalDuration }} seconds</span>
+    </div>
+    <div *ngFor="let key of statusResponseKeys" class="p-grid p-nogutter">
+      <div class="p-col-12 title-wrapper">
+        <h1 class="title bold">{{ key }}</h1>
+      </div>
+      <div class="p-col-12">
+        <span
+          >Status:
+          <small
+            class="chip"
+            [ngClass]="{
+              healthy: statusResponse?.status === 'Healthy',
+              degraded: statusResponse?.status === 'Degraded'
+            }">
+            {{ statusResponse.entries[key].status }}
+          </small>
+        </span>
+      </div>
+      <div class="p-col-12">
+        <span>Duration: {{ statusResponse.entries[key].duration }} seconds</span>
+      </div>
+      <div class="p-col-12" *ngIf="statusResponse.entries[key].description">
+        <span>Description: {{ statusResponse.entries[key].description }} </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.InventoryManagement.InventoryReceivePage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:cake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+    xmlns:controls="clr-namespace:MobileApp.Controls"
+    xmlns:dxui="http://dips.xamarin.ui.com"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <dxui:ModalityLayout>
+        <dxui:ModalityLayout.Behaviors>
+            <dxui:SheetBehavior
+                Title="Quantity Based Items"
+                CloseOnOverlayTapped="False"
+                IsOpen="{Binding IsOpenSheet}"
+                MaxPosition="0.7"
+                Position="0.7">
+                <dxui:SheetBehavior.SheetContentTemplate>
+                    <DataTemplate>
+                        <StackLayout Margin="15,16" Spacing="15">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="16"
+                                Text="{Binding SelectedReceipt.MaterialName}"
+                                TextColor="{StaticResource PrimaryBlueColor}" />
+                            <StackLayout Orientation="Horizontal">
+                                <Label
+                                    FontSize="14"
+                                    Text="Qty Ordered:"
+                                    TextColor="#596167" />
+                                <Label
+                                    FontSize="14"
+                                    Text="{Binding SelectedReceipt.Quantity}"
+                                    TextColor="#596167" />
+                            </StackLayout>
+                            <StackLayout HorizontalOptions="StartAndExpand" Orientation="Horizontal">
+                                <Label
+                                    FontSize="14"
+                                    Text="Qty Received:"
+                                    TextColor="#596167"
+                                    VerticalOptions="Center" />
+                                <Entry
+                                    FontSize="14"
+                                    HeightRequest="40"
+                                    HorizontalTextAlignment="End"
+                                    Keyboard="Numeric"
+                                    Text="{Binding SelectedReceipt.Quantity, Mode=TwoWay}"
+                                    TextColor="#596167"
+                                    VerticalOptions="Center"
+                                    WidthRequest="110" />
+                            </StackLayout>
+                            <Button
+                                BackgroundColor="{StaticResource PrimaryBlueColor}"
+                                Command="{Binding CloseSheetCommand}"
+                                FontSize="14"
+                                Text="Complete Receipt"
+                                TextColor="White"
+                                VerticalOptions="EndAndExpand" />
+                        </StackLayout>
+                    </DataTemplate>
+                </dxui:SheetBehavior.SheetContentTemplate>
+            </dxui:SheetBehavior>
+        </dxui:ModalityLayout.Behaviors>
+        <Grid RowDefinitions="Auto, Auto">
+            <StackLayout>
+                <controls:TransferOrderControl Margin="0,16" BindingContext="{Binding TransferOrder}" />
+                <controls:SearchEntry
+                    BorderColor="{StaticResource PrimaryBlueColor}"
+                    Placeholder="Search"
+                    Style="{StaticResource SearchBarStyle}"
+                    Text="{Binding SearchText}" />
+            </StackLayout>
+            <RefreshView
+                Grid.Row="1"
+                Command="{Binding RefreshCommand}"
+                IsRefreshing="{Binding IsRefreshing}">
+                <CollectionView
+                    x:Name="LineItemsCollectionView"
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemsSource="{Binding LineItemsList}">
+                    <CollectionView.Footer>
+                        <StackLayout Margin="0,15" Spacing="8">
+                            <Button
+                                Margin="16,5"
+                                BackgroundColor="{StaticResource PrimaryBlueColor}"
+                                Command="{Binding CompleteReceiptCommand}"
+                                FontSize="14"
+                                IsEnabled="{Binding CanCompleteReceipt}"
+                                Text="Complete Receipt"
+                                TextColor="White"
+                                VerticalOptions="Center" />
+                            <Button
+                                Margin="16,5"
+                                BackgroundColor="{StaticResource SecondaryActionButtonColor}"
+                                Command="{Binding CancelCommand}"
+                                FontSize="14"
+                                Text="Cancel"
+                                TextColor="{StaticResource PrimaryBlueColor}" />
+                        </StackLayout>
+                    </CollectionView.Footer>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <ContentView>
+                                <cake:PancakeView
+                                    Margin="16,0"
+                                    Background="White"
+                                    CornerRadius="4">
+                                    <cake:PancakeView.Border>
+                                        <cake:Border Thickness="1" Color="{StaticResource PurchaseOrderElementBorder}" />
+                                    </cake:PancakeView.Border>
+                                    <StackLayout Margin="16,20">
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="16"
+                                            Text="{Binding ItemDescription}"
+                                            TextColor="{StaticResource PrimaryBlueColor}" />
+                                        <Grid ColumnDefinitions="8*,2*">
+                                            <StackLayout Grid.Column="0">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label
+                                                        FontSize="14"
+                                                        Text="Vendor Modal No:"
+                                                        TextColor="#596167" />
+                                                    <Label
+                                                        FontSize="14"
+                                                        Text="{Binding ItemName}"
+                                                        TextColor="#596167" />
+                                                </StackLayout>
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label
+                                                        FontSize="14"
+                                                        Text="Qty:"
+                                                        TextColor="#596167" />
+                                                    <Label
+                                                        FontSize="14"
+                                                        Text="{Binding Quantity}"
+                                                        TextColor="#596167" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                            <StackLayout Grid.Column="1" Padding="0,6,12,6">
+                                                <Button
+                                                Margin="-10"
+                                                Padding="0"
+                                                BackgroundColor="{StaticResource PrimaryBlueColor}"
+                                                Command="{Binding BindingContext.ReceiveLineItemCommand, Source={x:Reference Name=LineItemsCollectionView}}"
+                                                CommandParameter="{Binding .}"
+                                                FontSize="14"
+                                                Text="Receive"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
+                                            </StackLayout>
+                                        </Grid>
+                                        <!--    -->
+                                    </StackLayout>
+                                </cake:PancakeView>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+    </dxui:ModalityLayout>
+</ContentPage>

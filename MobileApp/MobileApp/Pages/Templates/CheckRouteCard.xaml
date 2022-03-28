@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileApp.Pages.Templates.CheckRouteCard"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView">
+    <Frame Padding="0"
+           CornerRadius="10"
+           BackgroundColor="White">
+        <StackLayout Spacing="0">
+            <cornerView:PancakeView CornerRadius="10,10,0,0">
+                <FlexLayout BackgroundColor="{StaticResource LightBlueShade}"
+                            Padding="15,10"
+                            Direction="Row"
+                            JustifyContent="SpaceBetween">
+                    <Label Grid.Column="0"
+                           Text="Routes"
+                           FontSize="20"
+                           FlexLayout.AlignSelf="Center"
+                           FontAttributes="Bold" />
+                    <Label Grid.Column="1"
+                           Text="{Binding OrdersCount}"
+                           FlexLayout.AlignSelf="Center" />
+                </FlexLayout>
+            </cornerView:PancakeView>
+            <StackLayout Padding="15,10">
+                <Label Text="Workload"
+                        FontAttributes="Bold" />
+                <Label x:Name="workloadHours"
+                        FontAttributes="Bold" />
+                <Label Text="Estimated trip miles"
+                        FontAttributes="Bold" />
+                <Label Text="{Binding SiteDetails.Address}"
+                        FontSize="12" />
+                <Label x:Name="distance"
+                        FontAttributes="Bold" />
+            </StackLayout>
+            <cornerView:PancakeView CornerRadius="0,0,10,10">
+                <Button FontAttributes="Bold"
+                        FontSize="15"
+                        Text="View Route"
+                        CornerRadius="0"
+                        TextColor="White"
+                        Command="{Binding CheckRouteCommand}"
+                        BackgroundColor="{StaticResource DarkShade}"
+                        HorizontalOptions="FillAndExpand" />
+            </cornerView:PancakeView>
+        </StackLayout>
+    </Frame>
+</ContentView>

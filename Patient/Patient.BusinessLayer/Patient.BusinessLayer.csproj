@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>HMSDigital.Patient.BusinessLayer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="Hl7.Fhir.R4" Version="1.5.0" />
+    <PackageReference Include="LinqKit" Version="1.1.17" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.3" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.1.3" />
+    <PackageReference Include="Sieve" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.BusinessLayer\Common.BusinessLayer.csproj" />
+    <ProjectReference Include="..\..\Common\Common.SDK\Common.SDK.csproj" />
+    <ProjectReference Include="..\..\Common\PatientSDK\PatientSDK.csproj" />
+    <ProjectReference Include="..\Patient.Data\Patient.Data.csproj" />
+    <ProjectReference Include="..\Patient.FHIR.BusinessLayer\Patient.FHIR.BusinessLayer.csproj" />
+    <ProjectReference Include="..\Patient.ViewModels\Patient.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

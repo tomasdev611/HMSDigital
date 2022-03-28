@@ -1,0 +1,159 @@
+<div [ngClass]="{sub: true, 'flyout-open': flyoutOpen}">
+  <app-body-header displayTitle="Finance"> </app-body-header>
+  <form [formGroup]="patientForm" (keyup.enter)="getPatients()" autocomplete="none">
+    <h4 class="p-grid p-nogutter p-mb-1">Search Patients</h4>
+    <div class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+      <div class="p-col-2">
+        <input
+          id="fName"
+          type="text"
+          pInputText
+          formControlName="firstName"
+          placeholder="First Name"
+          autocomplete="none" />
+      </div>
+      <div class="p-col-2">
+        <input
+          id="lName"
+          type="text"
+          pInputText
+          formControlName="lastName"
+          placeholder="Last Name" />
+      </div>
+      <div class="p-col-3">
+        <p-dropdown
+          [options]="hospiceLocations"
+          filter="true"
+          formControlName="hospiceLocationId"
+          [style]="{width: '150px'}"
+          [showClear]="true"
+          placeholder="Select a Hospice Location"
+          [panelStyleClass]="'hospice-dropdown'"
+          [panelStyle]="{width: '100%'}"></p-dropdown>
+      </div>
+      <div class="p-col-2 p-ml-2">
+        <button
+          pButton
+          label="Secondary"
+          [style]="{float: 'center'}"
+          class="p-button p-button-secondary"
+          type="button"
+          label="Search"
+          (click)="getPatients()"
+          [disabled]="getSearchDisabled()"></button>
+      </div>
+    </div>
+  </form>
+  <p-tabView>
+    <p-tabPanel header="Fix Patient Fulfillment" leftIcon="pi pi-cog" [disabled]="!patient">
+      <app-patient-dispatch
+        (toggleFlyout)="toggleFlyout($event)"
+        [selectedPatient]="patient"></app-patient-dispatch>
+    </p-tabPanel>
+    <p-tabPanel header="Fix Patient Hospice" leftIcon="pi pi-cog" [disabled]="!patient">
+      <app-patient-hospice
+        (refreshPatient)="refreshPatient($event)"
+        [selectedPatient]="patient"></app-patient-hospice>
+    </p-tabPanel>
+    <p-tabPanel header="Merge Duplicate Patient" leftIcon="pi pi-cog" [disabled]="!patient">
+      <app-patient-merge
+        [selectedPatient]="patient"
+        (refreshPatient)="refreshPatient($event)"></app-patient-merge>
+    </p-tabPanel>
+    <p-tabPanel header="Move Patient Hospice" leftIcon="pi pi-cog" [disabled]="!patient">
+      <app-move-patient-hospice
+        [selectedPatient]="patient"
+        (refreshPatient)="refreshPatient($event)"></app-move-patient-hospice>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<app-modal
+  dialogStyleClass="order-dialog no-footer"
+  header="Select Patient"
+  [visible]="showPatients"
+  *ngIf="showPatients"
+  (hide)="closePatientsModal()">
+  <div class="content-container">
+    <div class="body new-order-modal-body">
+      <div
+        class="p-grid p-nogutter p-grid-responsive patients-list fix-list"
+        style="padding-top: 0">
+        <div class="p-col co-patients-list">
+          <p-listbox
+            *ngIf="!patientsLoading"
+            [options]="patients"
+            [(ngModel)]="selectedPatient"
+            dataKey="id"
+            [listStyle]="{'min-height': 'auto', 'max-height': '280px'}"
+            listStyleClass="fix-list-item">
+            <ng-template pTemplate="footer" *ngIf="!patients || !patients?.length">
+              <div class="empty-records">No Records Found</div>
+            </ng-template>
+            <ng-template let-patient pTemplate="item">
+              <div class="p-helper-clearfix patient-list-item">
+                <div class="p-d-flex p-jc-between">
+                  <span
+                    >{{ patient?.label }}
+                    {{
+                      patient?.value?.hospiceLocation?.name
+                        ? '(' + patient.value.hospiceLocation.name + ')'
+                        : ''
+                    }}</span
+                  >
+                  <i class="sub-section">{{ patient?.value?.address }}</i>
+                </div>
+                <div class="sub-section p-d-flex p-jc-between">
+                  <span
+                    >Created On :
+                    {{ patient?.value?.createdDateTime | date: 'LLL dd, yyyy, h:mm a' }}</span
+                  >
+                  <span *ngIf="patient?.value?.lastOrderDateTime"
+                    >Last Order :
+                    {{ patient?.value?.lastOrderDateTime | date: 'LLL dd, yyyy, h:mm a' }}</span
+                  >
+                </div>
+                <div class="sub-section">
+                  <a
+                    [routerLink]="['/patients/edit/' + patient?.value?.id]"
+                    [queryParams]="{view: 'profile'}"
+                    target="_blank"
+                    (click)="$event.stopPropagation()"
+                    >Profile</a
+                  >
+                  <a
+                    [routerLink]="['/patients/edit/' + patient?.value?.id]"
+                    [queryParams]="{view: 'order'}"
+                    target="_blank"
+                    (click)="$event.stopPropagation()"
+                    class="ml-20"
+                    >Order History</a
+                  >
+                </div>
+              </div>
+            </ng-template>
+          </p-listbox>
+          <p-progressSpinner
+            *ngIf="patientsLoading"
+            [style]="{width: '50px', height: '50px'}"
+            strokeWidth="8"
+            fill="#EEEEEE"
+            animationDuration=".5s"></p-progressSpinner>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <button
+        pButton
+        label="Cancel"
+        (click)="closePatientsModal()"
+        class="p-button-secondary"></button>
+      <button
+        pButton
+        label="Continue"
+        (click)="selectPatient()"
+        class="p-btn"
+        [disabled]="!selectedPatient"></button>
+    </div>
+  </div>
+</app-modal>

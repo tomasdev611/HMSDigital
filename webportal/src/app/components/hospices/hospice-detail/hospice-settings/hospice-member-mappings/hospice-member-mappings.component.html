@@ -1,0 +1,12 @@
+<div class="sub">
+  <app-body-header displayTitle="Hospice Member Mappings configuration" backText="Back">
+  </app-body-header>
+
+  <app-mappings
+    [inputMappings]="inputMappings"
+    [outputMappings]="outputMappings"
+    [fields]="fields"
+    (save)="saveMappings($event)"
+    (cancel)="cancel()">
+  </app-mappings>
+</div>

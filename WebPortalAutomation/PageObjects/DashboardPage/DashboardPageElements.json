@@ -1,0 +1,26 @@
+{
+    "clickables": {
+
+        "parameterized": {
+            "Actions Order Info": {    
+                "xpath": "//a[normalize-space(text())=\"ACTION-BUTTON\"]",
+                "placeholder": "ACTION-BUTTON"
+            }
+        }
+    },
+
+    "waitables": {
+
+        "uniques": {
+            "Iteractable Section": {
+                "findBy": "class name",
+                "class name": "order-container"
+            },
+
+            "Items Ordered": {
+                "findBy": "xpath",
+                "xpath": "//div[@class=\"line-item-list\"]/ul/li"
+            }
+        }
+    }
+}

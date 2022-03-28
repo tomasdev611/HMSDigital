@@ -1,0 +1,42 @@
+.edit-driver-label {
+  height: 50px;
+  text-align: left;
+  font-size: 23px;
+  font-weight: 400;
+  padding: 0.7em;
+}
+.edit-driver-form {
+  padding: 1rem;
+  .form-item {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    width: 100%;
+    padding-left: 9px;
+  }
+  input {
+    height: 40px;
+    font-size: 14px;
+  }
+}
+::ng-deep {
+  .p-chkbox-label {
+    font-size: 14px;
+  }
+  .p-dropdown-label-container {
+    width: 100%;
+  }
+}
+
+p-checkbox {
+  margin-bottom: 10px;
+}
+.manage-account {
+  font-size: 12px;
+  display: flex;
+  align-self: center;
+  margin-top: 4em;
+  > span {
+    cursor: pointer;
+  }
+}

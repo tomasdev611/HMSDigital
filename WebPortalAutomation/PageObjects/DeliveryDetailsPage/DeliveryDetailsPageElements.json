@@ -1,0 +1,64 @@
+{
+    "clickables": {
+        "parameterized": {
+            
+            "Delivery Time": {
+                "xpath": "//span[normalize-space(text())=\"TIME-PLACEHOLDER\"]/preceding-sibling::input",
+                "placeholder": "TIME-PLACEHOLDER"
+            }
+        },  
+
+        "uniques": {
+            "High Priority": {
+                "findBy": "id",
+                "id": "high-priority"
+            },
+
+            "Regular Priority": {
+                "findBy": "id",
+                "id": "regular-priority"
+            },
+
+            "Continue": {
+                "findBy": "class name",
+                "class name": "order-wizard-step-button-continue"
+            }
+        }
+    },
+
+    "selectables": {
+
+        "uniques": {
+
+            "Ordering Nurse": {
+                
+                "findBy": "xpath",
+                "xpath": "//button[@data-id=\"ordering-nurse\"]",
+
+                "options": {
+                    
+                    "xpath": "//button[@data-id=\"ordering-nurse\"]/following-sibling::div/div[2]/ul/li/a/span[normalize-space(text())=\"PLACEHOLDER-TO-REPLACE\"]",
+                    "placeholder": "PLACEHOLDER-TO-REPLACE",
+
+                    "values": [
+                        "Account Holder", "Rocky Zapata", "Hans Lovett", "Don Metcalf", "Randy Putnam",
+                        "Tomas Fonseca", "Terry Emerson", "Frank Porter", "Kermit Ledbetter", "Lester Gallegos",
+                        "Rusty Vu", "Anthony Hayes", "Jordan Mcfarland", "Lucas Olmos", "gracia user",
+                        "Paul Shea"
+                    ]
+                }
+            }
+
+        }
+    },
+
+    "writables": {
+
+        "uniques": {
+            "Order Notes": {
+                "findBy": "id",
+                "id": "instructions"
+            }
+        }
+    }
+}

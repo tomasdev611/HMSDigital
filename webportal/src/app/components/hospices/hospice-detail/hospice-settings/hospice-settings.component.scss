@@ -1,0 +1,87 @@
+.settings-container {
+  height: calc(100vh - 370px);
+  margin-top: 2em;
+}
+.credits-wrapper {
+  margin-bottom: 1em;
+  width: 100%;
+  .form-label {
+    margin-right: 1em;
+  }
+}
+.info-subtext {
+  font-weight: 500;
+  font-style: italic;
+  font-size: 10px;
+  margin-left: 5.5em;
+}
+.credithold-form {
+  padding-top: 0;
+  margin-bottom: 3em;
+  .action-btns {
+    display: flex;
+    width: 19em;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.flyout {
+  display: none;
+  flex-direction: column;
+  min-width: 700px;
+  max-width: 700px;
+  width: 0px;
+  right: 0;
+  flex-basis: 700px;
+  background-color: var(--layer-0);
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+  margin-top: 3px;
+
+  .flyout-header-label {
+    height: 50px;
+    text-align: left;
+    font-size: 23px;
+    font-weight: 400;
+    padding: 0.3em;
+    padding-left: 0.5em;
+  }
+  .flyout-table-wrapper {
+    .flyout-table-container {
+      td > div {
+        word-wrap: break-word;
+      }
+    }
+    font-size: 14px;
+    padding: 1em;
+    span {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    & .details-link {
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .flyout-table {
+      th {
+        font-size: 11px;
+      }
+      td {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.flyout-open {
+  .flyout {
+    min-width: 700px;
+    display: flex;
+  }
+}
+:host ::ng-deep {
+  .p-datatable-scrollable-body {
+    height: calc(100vh - 210px);
+    max-height: calc(100vh - 210px);
+  }
+}

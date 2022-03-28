@@ -1,0 +1,226 @@
+<div [ngClass]="{'order-container': true, 'flyout-open': detailsViewOpen}">
+  <div class="sub">
+    <app-body-header displayTitle="Orders" [listCount]="orderHeadersResponse?.totalRecordCount">
+      <app-orders-filter
+        class="order-filters"
+        (filter)="filterOrders($event)"
+        [orderView]="orderView">
+      </app-orders-filter>
+      <div class="action-btns-mobile">
+        <a
+          pButton
+          type="button"
+          class="p-button-order"
+          icon="pi pi-shopping-cart"
+          (click)="openCreateOrderModal()"
+          *ngIf="checkPermission('Orders', 'Create')"
+          [routerLink]="[]">
+        </a>
+        <a
+          pButton
+          type="button"
+          class="p-button-order"
+          icon="pi pi-plus"
+          [routerLink]="['/patients/add']"
+          [queryParams]="{source: '/dashboard'}"
+          *ngIf="checkPermission('Patient', 'Create')">
+        </a>
+        <a pButton type="button" class="p-button-order" icon="pi pi-comments"> </a>
+      </div>
+      <div class="action-btns-wrapper">
+        <div class="top">
+          <button
+            pButton
+            (click)="openCreateOrderModal()"
+            label="Create Order"
+            title=""
+            *ngIf="checkPermission('Orders', 'Create')"
+            [routerLink]="[]"
+            class="p-button-secondary mr-5 mb-5"></button>
+          <button
+            type="button"
+            pButton
+            label="Add a Patient"
+            *ngIf="checkPermission('Patient', 'Create')"
+            title=""
+            [routerLink]="['/patients/add']"
+            [queryParams]="{source: '/dashboard'}"
+            class="p-button-secondary mb-5"></button>
+        </div>
+        <button
+          type="button"
+          pButton
+          label="Give Feedback"
+          class="p-button-secondary"
+          title=""
+          (click)="openFeedbackFlyout()"></button>
+        <div class="action-btn-subtext">Share compliments & concerns!</div>
+      </div>
+    </app-body-header>
+    <p-tabView (onChange)="onTabChange($event)">
+      <p-tabPanel header="All Open Orders" [selected]="orderView === 'open'">
+        <ng-template pTemplate="content">
+          <app-table-virtual-scroll
+            #openOrdersTable
+            [list]="orderHeadersResponse?.records"
+            [pageSize]="orderHeadersFilter?.pageSize"
+            [loading]="loading"
+            [pageLoadNextOffset]="10"
+            [totalRecords]="orderHeadersResponse?.totalRecordCount"
+            filterFields="[]"
+            [headers]="openOrderHeaders"
+            [pageNumber]="orderHeadersResponse?.pageNumber"
+            [totalPage]="orderHeadersResponse?.totalPageCount"
+            [selection]="true"
+            (fetchNext)="fetchNext($event)"
+            (rowSelected)="orderSelected($event)"
+            (sort)="sortOrders($event)"
+            (conditionalBtnHandler)="navigateToApproveOrder($event)">
+          </app-table-virtual-scroll>
+        </ng-template>
+      </p-tabPanel>
+      <p-tabPanel header="All Completed Orders" [selected]="orderView === 'completed'">
+        <ng-template pTemplate="content">
+          <app-table-virtual-scroll
+            #completedOrdersTable
+            [list]="orderHeadersResponse?.records"
+            [pageSize]="orderHeadersFilter?.pageSize"
+            [loading]="loading"
+            [pageLoadNextOffset]="10"
+            [totalRecords]="orderHeadersResponse?.totalRecordCount"
+            filterFields="[]"
+            [headers]="completedOrderHeaders"
+            [pageNumber]="orderHeadersResponse?.pageNumber"
+            [totalPage]="orderHeadersResponse?.totalPageCount"
+            [selection]="true"
+            (fetchNext)="fetchNext($event)"
+            (rowSelected)="orderSelected($event)"
+            (sort)="sortOrders($event)">
+          </app-table-virtual-scroll>
+        </ng-template>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+  <app-order-flyout
+    [currentOrder]="currentOrder"
+    (reloadOrderTable)="reloadOrders()"
+    [fulfilledItems]="fulfilledItems"
+    [accessPatientProfile]="true"
+    (closeFlyout)="closeOrderDetails($event)"></app-order-flyout>
+  <p-sidebar
+    [style]="{height: hospiceLocations.length !== 1 ? '612px' : '540px'}"
+    [(visible)]="feedbackOpen"
+    [dismissible]="true"
+    (onHide)="closeFeedbackFlyout()"
+    [showCloseIcon]="false"
+    position="right">
+    <button class="close-icon" (click)="closeFeedbackFlyout()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-label">
+      <span>Send Us Your Feedback</span>
+    </div>
+    <form
+      class="feedback-form mt-5"
+      [formGroup]="feedbackForm"
+      (ngSubmit)="onSubmitFeedback(feedbackForm.value)"
+      autocomplete="off">
+      <div class="p-grid p-grid-responsive p-grid-pad p-fluid">
+        <div class="form-item">
+          <label>Full Name *</label>
+          <input
+            pInputText
+            id="name"
+            type="text"
+            size="20"
+            formControlName="name"
+            placeholder="Your name" />
+        </div>
+        <div class="form-item">
+          <label>Email *</label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Your email" />
+        </div>
+        <div class="form-item" *ngIf="allHospiceLocationsList.length !== 1">
+          <label>Hospice Location *</label>
+          <p-dropdown
+            [options]="allHospiceLocationsList"
+            filter="true"
+            name="hospiceLocation"
+            formControlName="hospiceLocation"
+            placeholder="Choose Hospice Location"
+            filterBy="label"></p-dropdown>
+        </div>
+        <div class="form-item">
+          <label>Subject *</label>
+          <input
+            pInputText
+            id="subject"
+            type="text"
+            formControlName="subject"
+            placeholder="Subject" />
+        </div>
+        <div class="form-item">
+          <label>Type *</label>
+          <span style="margin-top: 2px">
+            <p-radioButton
+              class="radio"
+              name="type"
+              [value]="'Concern'"
+              label="Concern"
+              formControlName="type">
+            </p-radioButton>
+            <p-radioButton
+              class="radio"
+              name="type"
+              [value]="'Compliment'"
+              label="Compliment"
+              formControlName="type"
+              [style]="{marginLeft: '1em'}"></p-radioButton>
+          </span>
+        </div>
+        <div class="form-item">
+          <label>Comments *</label>
+          <textarea
+            pInputTextarea
+            id="comments"
+            type="text"
+            [rows]="5"
+            formControlName="comments"
+            placeholder="Your comment"></textarea>
+        </div>
+        <span class="reset-form" (click)="openFeedbackFlyout()">Reset</span>
+        <div class="form-item">
+          <div class="action-btns">
+            <button
+              pButton
+              label="Cancel"
+              type="button"
+              icon="pi pi-times"
+              class="p-button-secondary"
+              (click)="closeFeedbackFlyout()"></button>
+            <button
+              pButton
+              type="button"
+              label="Submit"
+              icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+              (click)="feedbackForm.valid && onSubmitFeedback(feedbackForm.value)"
+              [pTooltip]="checkFormValidity(feedbackForm)"
+              tooltipPosition="top"
+              [escape]="false"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </p-sidebar>
+</div>
+<app-create-order-modal #createordermodal (next)="proceedToCreateOrder($event)">
+</app-create-order-modal>
+<app-confirm-dialog
+  (accepted)="confirmAccepted()"
+  (rejected)="confirmRejected()"
+  #confirmDialog></app-confirm-dialog>

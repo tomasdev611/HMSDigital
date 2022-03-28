@@ -1,0 +1,122 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - msbuild
+  - visualstudio
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - Core
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      - Common/NetSuiteSDK
+      - Common/NotificationSDK
+      - Database
+      exclude:
+      - Core/README.md
+      - Common/NetSuiteSDK/azure-pipelines.yaml
+pr:
+    branches:
+      include:
+      - dev
+      - e2e
+    paths:
+      include:
+      - Core
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      - Common/NetSuiteSDK
+      - Common/NotificationSDK
+      - Database
+      exclude:
+      - Core/README.md
+      - Core/Core.Deployment
+      - Common/NetSuiteSDK/azure-pipelines.yaml
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: Core/Core.API/Core.API.csproj
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Core/Core.API/Core.API.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: Core/Core.Test/Core.Test.csproj
+    arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish SubscriptionProcessor'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Core/Core.SubscriptionProcessor/Core.SubscriptionProcessor.csproj
+    arguments: '--configuration $(BuildConfiguration) --output Core\Core.SubscriptionProcessor\bin\App_Data\Jobs\Triggered\SubscriptionProcessor'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- script: |
+   copy Core\Core.Deployment\run.SubscriptionProcessor.cmd Core\Core.SubscriptionProcessor\bin\App_Data\Jobs\Triggered\SubscriptionProcessor\run.cmd
+   copy Core\Core.Deployment\settings.SubscriptionProcessor.job Core\Core.SubscriptionProcessor\bin\App_Data\Jobs\Triggered\SubscriptionProcessor\settings.job
+  displayName: 'Copy SubscriptionProcessor deployment files'
+
+- task: ArchiveFiles@2
+  displayName: 'Package SubscriptionProcessor'
+  inputs:
+    rootFolderOrFile: 'Core/Core.SubscriptionProcessor/bin/App_Data'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/SubscriptionProcessor.zip'
+
+- task: VSBuild@1
+  displayName: 'Build solution Database/Database.sqlproj'
+  inputs:
+    solution: Database/Database.sqlproj
+    msbuildArgs: '/property:DSP="Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider";DacVersion=$(DacVersion)'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: CopyFiles@2
+  displayName: 'Copy database files to Artificats staging directory'
+  inputs:
+    SourceFolder: Database
+    Contents: '**\bin\**\*.dacpac'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: CopyFiles@2
+  displayName: 'Copy deployment files to Artifacts staging directory'
+  inputs:
+    SourceFolder: Core/Core.Deployment
+    Contents: |
+     *.bat
+     *.json
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

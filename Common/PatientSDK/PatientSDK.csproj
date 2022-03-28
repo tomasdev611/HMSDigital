@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>HospiceSource.Digital.Patient.SDK</AssemblyName>
+    <PackageId>HospiceSource.Digital.Patient.SDK</PackageId>
+    <Title>HS Digital Patient SDK</Title>
+    <RootNamespace>HospiceSource.Digital.Patient.SDK</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.12" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.12" />
+    <PackageReference Include="RestEase" Version="1.5.0" />
+    <PackageReference Include="Sieve" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Patient\Patient.ViewModels\Patient.ViewModels.csproj" />
+    <ProjectReference Include="..\Common.SDK\Common.SDK.csproj" />
+  </ItemGroup>
+
+</Project>

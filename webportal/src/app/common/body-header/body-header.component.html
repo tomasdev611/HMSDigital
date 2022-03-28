@@ -1,0 +1,21 @@
+<div class="title-wrapper">
+  <div>
+    <span *ngIf="backText" (click)="goBack()" class="back-button">
+      <span class="pi pi-chevron-left icon"></span> {{ backText }}
+    </span>
+    <span class="title bold">{{ displayTitle }}</span
+    ><br class="title-new-line" />
+    <span *ngIf="listCount" class="subtitle"> {{ listCount }} items in {{ displayTitle }} </span>
+  </div>
+  <ng-content></ng-content>
+  <div class="title-right-content" *ngIf="showSearchBar || actionBtnText">
+    <app-search-bar *ngIf="showSearchBar" (search)="pageSearch($event)"></app-search-bar>
+    <button
+      *ngIf="actionBtnText"
+      type="button"
+      [routerLink]="[actionBtnUrl]"
+      pButton
+      label="{{ actionBtnText }}"
+      class="p-button-secondary btn-right"></button>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.PurchaseOrder.POViewPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:MobileApp.Controls"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <ContentPage.Content>
+        <Grid RowDefinitions="Auto, *">
+            <controls:SearchEntry
+                BorderColor="{StaticResource PrimaryBlueColor}"
+                Placeholder="Search PO"
+                Style="{StaticResource SearchBarStyle}"
+                Text="{Binding SearchText}" />
+
+            <RefreshView
+                Grid.Row="1"
+                Command="{Binding RefreshCommand}"
+                IsRefreshing="{Binding IsRefreshing}">
+                <CollectionView
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemsSource="{Binding PurchaseOrders}"
+                    SelectionChangedCommand="{Binding SelectedPurchaseOrderCommand}"
+                    SelectedItem="{Binding SelectedPurchaseOrder, Mode=TwoWay}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:PurchaseOrderControl BindingContext="{Binding}"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,56 @@
+<div [ngClass]="{'flyout-open': detailsViewOpen}">
+  <app-table-virtual-scroll
+    [list]="contractResponse?.records"
+    [pageSize]="contractRequest?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    [totalRecords]="contractResponse?.totalRecordCount || 0"
+    filterFields="[]"
+    [headers]="contractHeaders"
+    [pageNumber]="contractResponse?.pageNumber || 0"
+    [totalPage]="contractResponse?.totalPageCount || 0"
+    [selection]="true"
+    (fetchNext)="fetchNext($event)"
+    (rowSelected)="contractSelected($event)"
+    (actionBtnHandler)="showContractItems($event?.object)">
+  </app-table-virtual-scroll>
+  <div class="flyout">
+    <button class="close-icon" (click)="closeContractDetails()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-main">
+      <div class="flyout-label">
+        <span class="flyout-title">{{ selectedContract?.contractName }}</span>
+        <div class="p-d-flex">
+          <a
+            [routerLink]="['./contract/' + selectedContract?.id + '/items']"
+            class="subscription-item-link">
+            View Contract Items
+          </a>
+        </div>
+      </div>
+      <div class="subscription-detail">
+        <div class="item">
+          <span>Contract Name</span>
+          <span>{{ selectedContract?.contractName }}</span>
+        </div>
+        <div class="item">
+          <span>Contract Number</span>
+          <span>{{ selectedContract?.contractNumber }}</span>
+        </div>
+        <div class="item">
+          <span>Per Diem Rate</span>
+          <span>{{ selectedContract?.perDiemRate }}</span>
+        </div>
+        <div class="item">
+          <span>Start Date</span>
+          <span>{{ selectedContract?.startDate | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>End Date</span>
+          <span>{{ selectedContract?.endDate | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<app-modal
+  header="Equipment Settings Configuration"
+  [visible]="isConfigDialogOpen"
+  dialogStyleClass="eqsettings-add-dialog"
+  (hide)="closeEquipmentSettingsConfigurationDialog()">
+  <div class="configuration-dialog-content">
+    <div class="eq-settings-selector">
+      <p class="info-text">select from suggestions or enter new setting name to create</p>
+      <p-autoComplete
+        styleClass="hms-search-autocomplete"
+        [completeOnFocus]="true"
+        [(ngModel)]="selectedEquipmentSettingType"
+        [dropdown]="true"
+        dropdownIcon="pi pi-search"
+        placeholder="search or create new settings"
+        [suggestions]="equipmentSettingTypes"
+        (completeMethod)="searchEqSettingTypes($event)"
+        field="equipmentSettingTypeName"
+        dataKey="equipmentSettingTypeName"
+        [forceSelection]="false"
+        (onSelect)="eqConfigSelected($event)">
+        <ng-template let-eqType pTemplate="item">
+          <div class="eq-suggestion">
+            {{ eqType.equipmentSettingTypeName }}
+            <span *ngIf="eqType.isQuery" class="eq-subtext">(Create new)</span>
+          </div>
+        </ng-template>
+        <ng-template let-value pTemplate="selectedItem">
+          {{ value?.equipmentSettingTypeName }}
+        </ng-template>
+      </p-autoComplete>
+    </div>
+    <ul class="eq-keys-list">
+      <li class="empty-row" *ngIf="!(equipmentSettingsConfig && equipmentSettingsConfig.length)">
+        Select equipment settings from search
+      </li>
+      <li class="eq-key" *ngFor="let eqConfig of equipmentSettingsConfig">
+        <i class="pi pi-sliders-v"></i>
+        {{ eqConfig.equipmentSettingTypeName }}
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-times"
+          class="eq-delete p-button-rounded p-button-danger p-button-text"
+          (click)="removeItem(eqConfig)"></button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="eq-configuration-dialog-footer">
+    <button
+      pButton
+      pRipple
+      type="button"
+      label="Cancel"
+      (click)="closeEquipmentSettingsConfigurationDialog()"
+      class="p-button-outlined p-button-secondary"></button>
+    <button
+      pButton
+      pRipple
+      type="button"
+      label="Save"
+      (click)="saveEquipmentSettingsConfiguartion()"></button>
+  </div>
+
+  <div class="eq-progress-spinner-container" *ngIf="loading">
+    <p-progressSpinner
+      [style]="{width: '50px', height: '50px'}"
+      styleClass="eq-progress-spinner"
+      strokeWidth="8"
+      animationDuration=".5s"></p-progressSpinner>
+  </div>
+</app-modal>

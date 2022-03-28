@@ -1,0 +1,93 @@
+pool:
+  name: Azure Pipelines
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - Notification
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      exclude:
+      - Notification/README.md
+pr:
+    branches:
+      include:
+      - dev
+    paths:
+      include:
+      - Notification
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      exclude:
+      - Notification/README.md
+      - Notification/Notification.Deployment
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: Notification/Notification.API/Notification.API.csproj
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish Notification.API'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Notification/Notification.API/Notification.API.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish NotificationProcessor'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Notification/Notification.NotificationProcessor/Notification.NotificationProcessor.csproj
+    arguments: '--configuration $(BuildConfiguration) --output Notification\Notification.NotificationProcessor\bin\App_Data\Jobs\Continuous\NotificationProcessor'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- script: 'copy Notification\Notification.Deployment\run.NotificationProcessor.cmd Notification\Notification.NotificationProcessor\bin\App_Data\Jobs\Continuous\NotificationProcessor\run.cmd'
+  displayName: 'Copy NotificationProcessor deployment files'
+
+- task: ArchiveFiles@2
+  displayName: 'Package NotificationProcessor'
+  inputs:
+    rootFolderOrFile: 'Notification/Notification.NotificationProcessor/bin/App_Data'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/NotificationProcessor.zip'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: Notification/Notification.Test/Notification.Test.csproj
+    arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+- task: CopyFiles@2
+  displayName: 'Copy deployment files to Artifacts staging directory'
+  inputs:
+    SourceFolder: Notification/Notification.Deployment
+    Contents: |
+     *.bat
+     *.json
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

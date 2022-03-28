@@ -1,0 +1,15 @@
+export enum EnumNames {
+  AddressTypes = 'addressTypes',
+  DispatchInstructionStatusTypes = 'dispatchInstructionStatusTypes',
+  DispatchInstructionTypes = 'dispatchInstructionTypes',
+  FileStorageTypes = 'fileStorageTypes',
+  InventoryLocationTypes = 'inventoryLocationTypes',
+  InventoryStatusTypes = 'inventoryStatusTypes',
+  OrderStatusTypes = 'orderStatusTypes',
+  OrderTypes = 'orderTypes',
+  OrderHeaderStatusTypes = 'orderHeaderStatusTypes',
+  orderLineItemStatusTypes = 'orderLineItemStatusTypes',
+  PhoneNumberTypes = 'phoneNumberTypes',
+  ResourceTypes = 'resourceTypes',
+  TransferRequestStatusTypes = 'transferRequestStatusTypes',
+}

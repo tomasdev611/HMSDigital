@@ -1,0 +1,17 @@
+<app-table-virtual-scroll
+  #userListTable
+  [list]="users"
+  [pageSize]="userRequest?.pageSize"
+  [loading]="loading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="userResponse?.totalRecordCount"
+  filterFields="[]"
+  [headers]="headers"
+  [pageNumber]="userResponse?.pageNumber || 0"
+  [totalPage]="userResponse?.totalPageCount || 0"
+  [selection]="true"
+  (fetchNext)="nextUsers($event)"
+  (toggle)="toggleUserStatus($event)"
+  [submit]="statusSubmit"
+  (sort)="sortUsers($event)">
+</app-table-virtual-scroll>

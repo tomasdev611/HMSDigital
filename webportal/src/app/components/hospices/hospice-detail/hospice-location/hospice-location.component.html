@@ -1,0 +1,13 @@
+<app-table-virtual-scroll
+  [list]="allLocations"
+  [pageSize]="60"
+  [loading]="locationsLoading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="allLocations?.length"
+  filterFields="[]"
+  [headers]="locationsHeaders"
+  [pageNumber]="pageNumber"
+  [totalPage]="totalPageCount"
+  [selection]="true"
+  (rowSelected)="locationSelected($event)">
+</app-table-virtual-scroll>

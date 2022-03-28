@@ -1,0 +1,61 @@
+﻿<style>
+    table, th, td, tr {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+</style>
+<b>Thank you for your order! Please find the details of your request below.</b>
+<br>
+<br>
+<b>Requested By</b>: {{{memberName}}}
+<br>
+<b>Hospice Office</b>: {{{hospiceLocationName}}}
+<br>
+<b>Order Number</b>: {{{orderNumber}}}
+<br>
+<b>Order Status</b>: {{{orderStatus}}}
+<br>
+{{#isOrderPriority}}
+<b>Order Priority</b>: {{{orderPriority}}}
+<br>
+{{/isOrderPriority}}
+<b>Order Items</b>:
+<br>
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+    </tr>
+    {{#orderItems}}
+
+    <tr>
+        <td>{{ItemName}}</td>
+        <td>{{Quantity}}</td>
+    </tr>
+
+    {{/orderItems}}
+</table>
+{{#isOrderNotesAvailable}}
+<br>
+<b>Order Notes</b>:
+<br>
+
+<ul>
+    {{#orderNotes}}
+    <li>{{Note}}</li>
+    {{/orderNotes}}
+</ul>
+<br>
+{{/isOrderNotesAvailable}}
+<br>
+Thank you!
+<br>
+<br>
+Hospice Source
+<br>
+Need additional information or to edit a placed order? You can log in <a href="{{{orderDashboardLink}}}">here</a> or call us at 800-299-9277
+{{> footer}}

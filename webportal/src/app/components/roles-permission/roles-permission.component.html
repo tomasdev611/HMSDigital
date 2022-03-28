@@ -1,0 +1,15 @@
+<app-table-virtual-scroll
+  #rolesPermissionTable
+  [list]="roles"
+  [pageSize]="1"
+  [loading]="loading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="roles.length"
+  filterFields="[]"
+  [headers]="headers"
+  [pageNumber]="roles.length ? 1 : 0"
+  (sort)="sortRoles($event)"
+  [totalPage]="roles.length ? 1 : 0"
+  [selection]="true"
+  (rowSelected)="roleSelected($event)">
+</app-table-virtual-scroll>

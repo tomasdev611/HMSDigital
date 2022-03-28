@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "812510814733",
+    "project_id": "hms-digital",
+    "storage_bucket": "hms-digital.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812510814733:android:539f38de8468ce24d26b44",
+        "android_client_info": {
+          "package_name": "net.hospicesource.digital"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812510814733-0o7r6fgttjsaipq8qm9sq3ct2r1vpglj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8NgRBJAV5z43CkuZYKrbzrTzxxOjtVV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812510814733-0o7r6fgttjsaipq8qm9sq3ct2r1vpglj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

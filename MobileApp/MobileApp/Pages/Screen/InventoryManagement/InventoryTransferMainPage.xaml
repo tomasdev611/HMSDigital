@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.InventoryManagement.InventoryTransferMainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:MobileApp.Controls"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <ContentPage.Content>
+        <Grid RowDefinitions="Auto, *">
+            <StackLayout>
+                <Button
+                    BackgroundColor="{StaticResource PrimaryBlueColor}"
+                    Command="{Binding CreateTransferOrderCommand}"
+                    FontSize="14"
+                    Margin="15"
+                    Text="Create Transfer Order"
+                    TextColor="White" />
+                <controls:SearchEntry
+                    BorderColor="{StaticResource PrimaryBlueColor}"
+                    Placeholder="Search Transfer Id"
+                    Style="{StaticResource SearchBarStyle}"
+                    Text="{Binding SearchText}" />
+            </StackLayout>
+
+
+            <RefreshView
+                Grid.Row="1"
+                Command="{Binding RefreshCommand}"
+                IsRefreshing="{Binding IsRefreshing}">
+                <CollectionView
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemsSource="{Binding PendingReceiveOrders}"
+                    SelectedItem="{Binding SelectedTransferOrder, Mode=TwoWay}"
+                    SelectionChangedCommand="{Binding SelectedTransferOrderCommand}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:TransferOrderControl BindingContext="{Binding}" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

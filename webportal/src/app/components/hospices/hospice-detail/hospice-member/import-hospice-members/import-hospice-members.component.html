@@ -1,0 +1,17 @@
+<div class="sub">
+  <app-body-header displayTitle="Hospice Member Import Wizard" backText="Back"> </app-body-header>
+
+  <app-import-wizard
+    [validRecords]="validMembers"
+    [inValidRecords]="invalidMembers"
+    [mappedHeaders]="tableHeaders"
+    [isImportSuccess]="importSuccess"
+    [loading]="loading"
+    [outroMessage]="outroMessage"
+    [errors]="errors"
+    (finish)="closeWizard()"
+    (fileUpload)="ValidateImportFile($event)"
+    (importData)="createMembers($event)"
+    (downloadSample)="downloadCsvSampleFile()">
+  </app-import-wizard>
+</div>

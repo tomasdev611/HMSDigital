@@ -1,0 +1,356 @@
+:host ::ng-deep {
+  .p-grid {
+    padding-left: 0;
+    .p-col-3 {
+      padding-right: 1em;
+    }
+  }
+  .p-component {
+    font-size: 14px;
+  }
+  .system-filters,
+  .user-filters {
+    flex: 1;
+  }
+  .p-tabview .p-tabview-panels {
+    padding: 0.571rem 0;
+  }
+  .p-autocomplete {
+    border: 1px solid #5c6270 !important;
+    border-radius: 5px;
+    input.p-inputtext {
+      border: none;
+      box-shadow: none;
+      width: 200px;
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .p-autocomplete-dropdown.p-button {
+      background-color: #ffffff !important;
+      border: none !important;
+      color: #5c6270 !important;
+      box-shadow: none;
+    }
+  }
+  .flyout {
+    .netsuite-detail-label {
+      font-size: 1.3rem;
+    }
+    .net-suite-detail {
+      background-color: #f4f4f4;
+      font-size: 0.9rem;
+      .title {
+        font-weight: bold;
+      }
+      .long-text {
+        word-break: break-word;
+        font-size: 0.8rem;
+      }
+    }
+    .audit-detail-label {
+      text-align: left;
+      font-size: 23px;
+      font-weight: 400;
+      padding: 0.7em;
+      padding-right: 50px;
+      display: flex;
+      justify-content: space-between;
+      background-color: var(--layer-2);
+      a.p-button-secondary {
+        height: 33px;
+      }
+    }
+    .audit-general {
+      font-size: 14px;
+      padding: 1em;
+      margin-bottom: 0;
+      span {
+        font-weight: bold;
+        font-size: 16px;
+      }
+    }
+    .audit-update {
+      .auditlogs-container {
+        td > div {
+          word-wrap: break-word;
+        }
+      }
+      font-size: 14px;
+      padding: 1em;
+      span {
+        font-weight: bold;
+        font-size: 16px;
+      }
+      & .details-link {
+        font-size: 10px;
+        cursor: pointer;
+      }
+      .flyout-audit-table {
+        th {
+          font-size: 11px;
+        }
+        td {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  .flyout-container {
+    .flyout {
+      display: none;
+      flex-direction: column;
+      min-width: 500px;
+      max-width: 500px;
+      width: 0px;
+      right: 0;
+      flex-basis: 500px;
+      background-color: var(--layer-0);
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+      margin-top: 3px;
+
+      .order-instructions {
+        margin: 1em;
+        font-size: 13px;
+        min-height: 200px;
+        flex-basis: 200px;
+        .p-tabview {
+          height: 100%;
+
+          .p-tabview-nav {
+            li {
+              border: none;
+              text-align: center;
+              width: 48%;
+              &:hover {
+                border: none !important;
+              }
+              &.p-tabview-selected {
+                color: white;
+                a {
+                  color: var(--layer-0) !important;
+                }
+              }
+              color: white;
+              a {
+                color: var(--text-color-secondary) !important;
+              }
+            }
+          }
+
+          .p-tabview-panels {
+            border: none;
+            height: 90%;
+            background-color: var(--layer-0);
+            padding: 0;
+
+            .p-tabview-panel {
+              height: 100%;
+            }
+          }
+        }
+
+        .instructions-title {
+          padding: 0.5em;
+          background-color: #5c6270;
+          margin: 0.5em;
+          border-radius: 10px;
+          color: var(--layer-0);
+        }
+        .instructions-list {
+          overflow: auto;
+          height: 90%;
+          margin: 0.8em 0;
+        }
+        .instruction-item {
+          background: aliceblue;
+          padding: 0.7em;
+          border-radius: 5px;
+          margin: 0.3em;
+        }
+      }
+      .order-actions {
+        display: flex;
+        padding-top: 0.7em;
+        justify-content: space-around;
+        border-radius: 0 0 5px 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .order-label {
+        height: 50px;
+        text-align: left;
+        font-size: 23px;
+        font-weight: 400;
+        padding: 0.7em;
+      }
+
+      .order-header {
+        background-color: var(--layer-1);
+        margin: 1em 0;
+        padding: 1em;
+        margin-bottom: 0;
+        &.nurse-info {
+          padding: 0 1em;
+        }
+        .details {
+          font-size: 13px;
+          margin: 0.5em 0;
+          .value {
+            font-weight: bold;
+          }
+          &.address {
+            .value {
+              flex-basis: 150px;
+            }
+          }
+        }
+      }
+      .order-items {
+        margin-top: 1em;
+        min-height: 300px;
+        flex-basis: 300px;
+        flex-grow: 3;
+        width: 100%;
+        align-self: flex-end;
+        background-color: var(--layer-2);
+        .line-item-header {
+          background-color: #c1d82f;
+          color: #002049;
+          padding: 0.5em 1em;
+          display: flex;
+          justify-content: space-between;
+          font-weight: bold;
+          > .line-item-title {
+            > a {
+              color: inherit;
+              font-weight: 400;
+              font-size: 0.9em;
+              text-decoration: underline;
+              cursor: pointer;
+            }
+          }
+        }
+        .line-item-list {
+          overflow: auto;
+          height: calc(100% - 40px);
+          padding: 1em;
+          > ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 15px;
+            .line-item {
+              padding: 0.5em;
+              .item-details {
+                display: flex;
+                justify-content: space-between;
+              }
+            }
+          }
+        }
+      }
+
+      button.close-icon {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background-color: var(--text-color);
+        color: white;
+        border-radius: 50%;
+        padding: 0.5em;
+        border: none;
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        outline: none;
+        > i.pi {
+          align-self: center;
+        }
+      }
+    }
+  }
+  &.flyout-open {
+    .flyout {
+      min-width: 500px;
+      display: flex;
+    }
+  }
+  .btn-audit-log-reset {
+    margin-top: 22px;
+  }
+  .fulfilled-items {
+    width: 100%;
+    margin-left: 1.5em;
+    position: relative;
+    .fulfilled-status {
+      position: absolute;
+      top: 0;
+      font-size: 1.2em;
+      background-color: #c1d82f;
+      border-radius: 1em;
+      width: 100%;
+      text-align: center;
+    }
+    .fulfilled-info {
+      font-size: 10px;
+      display: block;
+      width: 100%;
+      border-bottom: 1px solid #002049;
+      &:first-child {
+        margin-top: 2em;
+      }
+      .chip {
+        background-color: #c1d82f;
+        color: #002049;
+        padding-left: 1em;
+        padding-right: 1em;
+        border-radius: 1em;
+        margin-right: 1em;
+      }
+      > .time-info {
+        text-align: right;
+      }
+    }
+  }
+}
+
+.modal-consumable-inventory {
+  div.patient-information {
+    h4 {
+      margin-bottom: 0.1em;
+    }
+  }
+
+  div.inventory-information {
+    h5 {
+      margin-top: 1em;
+      margin-bottom: 0.25em;
+    }
+    ul {
+      list-style: none;
+      margin-top: 0;
+      font-size: 12px;
+      padding-left: 1em;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+  }
+
+  .confirm-modal {
+    display: flex;
+    button {
+      margin: 0em 0.25em;
+    }
+  }
+}
+
+.audit-log-header {
+  width: 100%;
+  margin: 0;
+  margin-bottom: 0.5em;
+  p-dropdown {
+    align-self: center;
+  }
+}

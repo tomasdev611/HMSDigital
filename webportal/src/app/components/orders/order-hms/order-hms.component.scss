@@ -1,0 +1,63 @@
+:host ::ng-deep {
+  .main-view {
+    width: 72%;
+  }
+  .rightside-view {
+    width: 28%;
+    height: 81.5vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    margin-left: 0.5rem;
+    padding: 1rem;
+    font-size: 15px;
+    overflow: auto;
+    .header {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 15px;
+      color: grey;
+    }
+    .title {
+      margin-bottom: 0.2rem;
+    }
+    .title-header {
+      font-size: 18px;
+    }
+    .link {
+      font-size: 12px;
+      text-decoration: underline;
+    }
+  }
+  .content {
+    height: calc(80vh);
+    overflow-y: auto;
+  }
+  .patient-inventory {
+    overflow-y: auto;
+    font-size: 14px;
+    > ul {
+      padding: 0;
+      .line-item {
+        padding: 0.2em;
+      }
+    }
+  }
+  .cart-items {
+    font-size: 14px;
+    overflow-y: auto;
+    overflow-x: visible;
+    display: flex;
+    align-items: flex-start;
+    > ul {
+      padding: 0;
+      .line-item {
+        padding: 0.2em;
+      }
+    }
+    .pi {
+      cursor: pointer;
+    }
+  }
+}

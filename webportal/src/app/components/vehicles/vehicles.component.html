@@ -1,0 +1,42 @@
+<div [ngClass]="{'flyout-open': showFlyout, 'hms-table': true}">
+  <app-body-header
+    displayTitle="Vehicles"
+    [listCount]="vehiclesResponse?.totalRecordCount"
+    [showSearchBar]="false">
+  </app-body-header>
+  <app-table-virtual-scroll
+    #vehiclesTable
+    [list]="vehiclesResponse?.records"
+    [pageSize]="vehiclesResponse?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    scrollHeightCustom="calc(100vh - 210px)"
+    [totalRecords]="vehiclesResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="headers"
+    [pageNumber]="vehiclesResponse?.pageNumber || 0"
+    [totalPage]="vehiclesResponse?.totalPageCount"
+    (fetchNext)="nextVehicles($event)"
+    (sort)="sortVehicles($event)"
+    (actionBtnHandler)="showInventoryFlyout($event?.object)">
+  </app-table-virtual-scroll>
+
+  <p-sidebar
+    [(visible)]="showFlyout"
+    (onHide)="closeInventoryFlyout()"
+    [showCloseIcon]="false"
+    position="right">
+    <button class="close-icon" (click)="closeInventoryFlyout()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-label">
+      <span>Inventory</span>
+    </div>
+    <app-location-inventory
+      *ngIf="selectedVehicle && selectedVehicle?.id"
+      locationType="Vehicle"
+      [locationId]="selectedVehicle?.id"
+      [selectedVehicle]="selectedVehicle">
+    </app-location-inventory>
+  </p-sidebar>
+</div>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.PurchaseOrder.QuantityItemPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <ContentPage.Content>
+        <StackLayout Margin="15,16" Spacing="15">
+            <Label
+                FontAttributes="Bold"
+                FontSize="16"
+                Text="{Binding SelectedLineItemModel.ItemDescription}"
+                TextColor="{StaticResource PrimaryBlueColor}" />
+            <StackLayout Orientation="Horizontal">
+                <Label
+                    FontSize="14"
+                    Text="Qty Ordered:"
+                    TextColor="#596167" />
+                <Label
+                    FontSize="14"
+                    Text="{Binding SelectedLineItemModel.Quantity}"
+                    TextColor="#596167" />
+            </StackLayout>
+            <StackLayout HorizontalOptions="StartAndExpand">
+                <Label
+                    FontSize="14"
+                    Text="Qty Received:"
+                    TextColor="#596167"
+                    VerticalOptions="Center" />
+                <Entry
+                    FontSize="14"
+                    HeightRequest="40"
+                    x:Name="quantityEntry"
+                    Keyboard="Numeric"
+                    Text="{Binding QuantityReceived, Mode=TwoWay}"
+                    TextColor="{StaticResource DarkBlack}"
+                    VerticalOptions="StartAndExpand" />
+            </StackLayout>
+            <Button
+                Padding="0"
+                BackgroundColor="{StaticResource PrimaryBlueColor}"
+                FontSize="14"
+                Command="{Binding DoneCommand}"
+                Text="Receive"
+                TextColor="White"
+                VerticalOptions="Center" />
+            <Button
+                BackgroundColor="{StaticResource SecondaryActionButtonColor}"
+                Command="{Binding CloseCommand}"
+                FontSize="14"
+                Text="Cancel"
+                TextColor="{StaticResource PrimaryBlueColor}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

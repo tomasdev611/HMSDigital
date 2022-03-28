@@ -1,0 +1,156 @@
+# According to the documentation, these variables are overridden
+# by the variables defined within the jobs
+variables:
+  browser: chrome
+  environment: e2e
+  headless: true
+  chrome_binary: default
+  chromium_binary: default
+
+# Trigger pipeline on pushes or PRs to the specific branch
+# trigger:
+#   branches:
+#     include:
+#     - automation-main
+# 
+# pr:
+#   branches:
+#     include:
+#     - automation-main
+
+# Currently do not run
+trigger: none
+pr: none
+
+# # Daily run of automation tests
+# schedules:
+#   - cron: "0 18 * * 1-5"  # At 18:00 UTC (15:00 Argentina time) on every day-of-week from Monday through Friday.
+#     displayName: Daily automation tests
+#     # Use only code from that branch until this is correctly tested
+#     branches:
+#       include:
+#       - automation-main
+# 
+#     # Whether to always run the pipeline or only if there have been source code changes
+#     # since the last successful scheduled run.
+#     always: true 
+
+
+jobs:
+- job: AUTOMATION
+  
+  strategy:
+    matrix: 
+      
+      LINUX CHROME:
+        image: ubuntu-latest
+        browser: CHROME  
+      LINUX FIREFOX:
+        image: ubuntu-latest
+        browser: FIREFOX
+      LINUX CHROMIUM:
+        image: ubuntu-latest
+        browser: CHROMIUM
+        # Currently I don't know if this is the correct path and azure is starting chromium
+        # instead of google chrome, as there has been no error that indicates that, 
+        # I assume that it works fine until something appears (the same with google chrome,
+        # I assume that in that job that is the browser used) 
+        chromium_binary: /usr/bin/chromium
+      
+      MAC CHROME:
+        image: macOS-latest
+        browser: CHROME
+      MAC FIREFOX:
+        image: macOS-latest
+        browser: FIREFOX
+      MAC SAFARI:
+        image: macOS-latest
+        browser: SAFARI
+      MAC EDGE:
+        image: macOS-latest
+        browser: EDGE
+      # MAC BRAVE:
+      #   image: macOS-latest
+      #   browser: BRAVE
+      #   chromium_binary: /Applications/Brave Browser.app/Contents/MacOS/Brave Browser
+
+      WINDOWS CHROME:
+        image: windows-latest
+        browser: CHROME
+      WINDOWS FIREFOX:
+        image: windows-latest
+        browser: FIREFOX
+      WINDOWS EDGE:
+        image: windows-latest
+        browser: EDGE
+      # WINDOWS BRAVE:
+      #   image: windows-latest
+      #   browser: BRAVE
+      #   chromium_binary: C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe
+
+  pool:
+    vmImage: $(image)
+
+  steps:
+  - bash: |
+       echo Step to install the Brave browser, it is not critical \
+            so it remains a task to do at some point
+    displayName: Install Brave Windows (if applicable)
+    condition: and(succeeded(), eq(variables.browser, 'BRAVE'), eq(variables.image, 'windows-latest'))
+
+  - bash: |
+       echo Step to install the Brave browser, it is not critical \
+            so it remains a task to do at some point
+    displayName: Install Brave Mac (if applicable)
+    condition: and(succeeded(), eq(variables.browser, 'BRAVE'), eq(variables.image, 'macOS-latest'))
+
+  - bash: |
+       cd WebPortalAutomation;
+       dotnet add package Microsoft.NET.Test.Sdk --version 16.10.0;
+       dotnet add package NUnit --version 3.13.2;
+       dotnet add package NUnit3TestAdapter --version 4.0.0;
+       dotnet add package Selenium.WebDriver -v 4.0.0-beta4;
+       dotnet add package SeleniumExtras.WaitHelpers --version 1.0.2;
+       dotnet add package Json.NET --version 1.0.33;
+    displayName: Install Packages
+
+  - bash: |
+       cd WebPortalAutomation;
+       dotnet test --nologo \
+        --logger "trx;LogFileName=RESULTS $(Agent.JobName).trx" \
+        --logger "html;LogFileName=RESULTS $(Agent.JobName).html"  -- \
+        TestRunParameters.Parameter\(name=\"BROWSER\",\ value=\"$(browser)\"\) \
+        TestRunParameters.Parameter\(name=\"ENV\",\ value=\"$(environment)\"\) \
+        TestRunParameters.Parameter\(name=\"HEADLESS\",\ value=\"$(headless)\"\) \
+        TestRunParameters.Parameter\(name=\"CHROME_BINARY\",\ value=\"$(chrome_binary)\"\) \
+        TestRunParameters.Parameter\(name=\"CHROMIUM_BINARY\",\ value=\"$(chromium_binary)\"\);
+    displayName: Run Tests
+    env:
+      HMSDIGITAL_SITE_MANAGER_EMAIL: $(site_manager_email)
+      HMSDIGITAL_SITE_MANAGER_PASSWORD: $(site_manager_password)
+      HMSDIGITAL_DRIVER_EMAIL: $(driver_email)
+      HMSDIGITAL_DRIVER_PASSWORD: $(driver_password)
+      HMSDIGITAL_CUSTOM_SERVICE_REP_EMAIL: $(custom_service_rep_email)
+      HMSDIGITAL_CUSTOM_SERVICE_REP_PASSWORD: $(custom_service_rep_password)
+      HMSDIGITAL_CUSTOM_SERVICE_SUPV_EMAIL: $(custom_service_supv_email)
+      HMSDIGITAL_CUSTOM_SERVICE_SUPV_PASSWORD: $(custom_service_supv_password)
+      HMSDIGITAL_HOSPICE_ADMIN_EMAIL: $(hospice_admin_email)
+      HMSDIGITAL_HOSPICE_ADMIN_PASSWORD: $(hospice_admin_password)
+      HMSDIGITAL_HOSPICE_USER_EMAIL: $(hospice_user_email)
+      HMSDIGITAL_HOSPICE_USER_PASSWORD: $(hospice_user_password)
+    
+  - task: PublishTestResults@2
+    displayName: Publish .trx (VStest) test results to see in azure 
+    condition: succeededOrFailed()
+    inputs: 
+      testResultsFormat: VSTest
+      testResultsFiles: WebPortalAutomation/TestResults/RESULTS $(Agent.JobName).trx
+      testRunTitle: $(Agent.JobName) TEST RESULTS
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish .html test results as artifacts to download and see locally
+    condition: succeededOrFailed()
+    inputs:
+      targetPath: WebPortalAutomation/TestResults/RESULTS $(Agent.JobName).html
+      artifactName: HTML RESULTS $(Agent.JobName) (with logs)
+      artifactType: pipeline

@@ -1,0 +1,145 @@
+:host ::ng-deep {
+  .p-table-scrollable-body {
+    height: calc(100vh - 360px);
+  }
+  .user-filters {
+    flex: 1;
+  }
+  .action-btn {
+    max-width: 13.7em;
+    &.btns {
+      width: 16.8em;
+    }
+  }
+  .page-container {
+    display: flex;
+    height: calc(100vh - 0px);
+    position: relative;
+    .sub {
+      height: 100%;
+      width: 100%;
+    }
+    .flyout {
+      display: none;
+      flex-direction: column;
+      min-width: 500px;
+      max-width: 500px;
+      width: 0px;
+      right: 0;
+      flex-basis: 500px;
+      background-color: #ffffff;
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+      margin-top: 3px;
+      position: relative;
+      .p-grid {
+        margin-top: 0;
+      }
+      button.close-icon {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background-color: var(--text-color);
+        color: white;
+        border-radius: 50%;
+        padding: 0.5em;
+        border: none;
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        outline: none;
+        > i.pi {
+          align-self: center;
+        }
+      }
+
+      .role-label {
+        text-align: left;
+        font-size: 23px;
+        font-weight: 400;
+        padding: 0.7em;
+        padding-right: 50px;
+        display: flex;
+        justify-content: space-between;
+        background-color: #eaeaea;
+        a.p-button-secondary {
+          height: 33px;
+        }
+      }
+      .audit-detail-label {
+        text-align: left;
+        font-size: 23px;
+        font-weight: 400;
+        padding: 0.7em;
+        padding-right: 50px;
+        display: flex;
+        justify-content: space-between;
+        background-color: #eaeaea;
+        a.p-button-secondary {
+          height: 33px;
+        }
+      }
+      .audit-general {
+        font-size: 14px;
+        padding: 1em;
+        margin-bottom: 0;
+        span {
+          font-weight: bold;
+          font-size: 16px;
+        }
+      }
+      .audit-update {
+        font-size: 14px;
+        padding: 1em;
+        span {
+          font-weight: bold;
+          font-size: 16px;
+        }
+        .flyout-audit-table {
+          th {
+            font-size: 12px;
+          }
+          td {
+            font-size: 13px;
+          }
+        }
+      }
+
+      .permissions-list {
+        overflow: auto;
+        .permission-group {
+          background-color: #ffffff;
+          display: flex;
+          flex-wrap: wrap;
+          .group-name {
+            background-color: #5c6270;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            padding: 5px 15px;
+            height: 35px;
+            flex: 100%;
+          }
+          .permission-item {
+            width: 50%;
+            padding: 8px;
+            .pi {
+              font-size: 0.75rem;
+            }
+            &.w-100 {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+    &.flyout-open {
+      .flyout {
+        min-width: 500px;
+        display: flex;
+        padding-bottom: 70px;
+      }
+    }
+  }
+}

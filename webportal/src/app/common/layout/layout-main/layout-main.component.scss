@@ -1,0 +1,71 @@
+.area-wrapper {
+  display: flex;
+
+  &.full-view {
+    .sidenav-wrapper {
+      width: 80px;
+      flex-basis: 80px;
+      margin-right: 0;
+      position: absolute;
+      &:hover {
+        width: 250px;
+        flex-basis: 250px;
+        transition: all 0.2s ease-in-out;
+        margin-right: 0;
+        ::ng-deep {
+          .p-menuitem-text {
+            transition: all 0.5s ease-in-out;
+            display: inline;
+          }
+        }
+      }
+      ::ng-deep {
+        .p-menuitem-text {
+          display: none;
+        }
+        .dispatch-menu {
+          margin-bottom: 0em !important;
+          button {
+            display: none !important;
+          }
+        }
+      }
+    }
+
+    .main-content-wrapper {
+      margin-left: 100px;
+      flex-grow: 1;
+      max-width: calc(100vw - 100px);
+    }
+  }
+  .sidenav-wrapper {
+    flex-basis: 250px;
+    margin-right: 1em;
+    flex-shrink: 0;
+    transition: all 0.2s ease-in-out;
+    z-index: 10000;
+  }
+
+  .main-content-wrapper {
+    flex-grow: 5;
+    margin-left: 1em;
+    max-width: calc(100vw - 250px);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .area-wrapper {
+    .sidenav-wrapper {
+      display: none;
+      width: 200px;
+      flex-basis: 80px;
+      margin-right: 0;
+      position: absolute;
+    }
+
+    .main-content-wrapper {
+      max-width: 100%;
+      margin-left: 0;
+    }
+  }
+}

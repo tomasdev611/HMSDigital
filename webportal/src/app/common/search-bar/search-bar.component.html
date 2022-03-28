@@ -1,0 +1,17 @@
+<div class="searchbar-wrapper">
+  <span class="search-icon">
+    <i class="pi pi-search"></i>
+  </span>
+  <form [formGroup]="searchForm">
+    <input
+      pInputText
+      formControlName="query"
+      class="searchbar"
+      type="text"
+      #searchBarField
+      placeholder="Search" />
+  </form>
+  <span [ngClass]="searchBarField.value ? 'clear-icon active' : 'clear-icon inactive'">
+    <i class="pi pi-times-circle" (click)="clearInput()"></i>
+  </span>
+</div>

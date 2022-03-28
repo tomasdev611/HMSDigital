@@ -1,0 +1,21 @@
+﻿CREATE TABLE [core].[HospiceMember]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [HospiceId] INT NOT NULL, 
+    [UserId] INT NOT NULL, 
+    [Designation] VARCHAR(MAX) NULL,
+    [NetSuiteContactId] INT NULL DEFAULT NULL, 
+    [CanAccessWebStore] BIT NULL DEFAULT 0, 
+    [CanApproveOrder] BIT NULL DEFAULT 0,
+    [AdditionalField1] BIT NULL DEFAULT 0, 
+    [AdditionalField2] INT NULL, 
+    [AdditionalField3] DATETIME2 NULL, 
+    [CreatedDateTime] DATETIME2 NULL, 
+    [CreatedByUserId] INT NULL   , 
+    [UpdatedDateTime] DATETIME2 NULL, 
+    [UpdatedByUserId] INT NULL ,
+    CONSTRAINT [FK_HospiceUser_Hospice] FOREIGN KEY ([HospiceId]) REFERENCES [core].[Hospices]([Id]), 
+    CONSTRAINT [FK_HospiceUser_Users] FOREIGN KEY ([UserId]) REFERENCES [core].[Users]([Id]), 
+    CONSTRAINT [FK_HospiceMember_ToUsers_Created] FOREIGN KEY ([CreatedByUserId]) REFERENCES [core].[Users]([Id]),
+    CONSTRAINT [FK_HospiceMember_ToUsers_Updated] FOREIGN KEY ([UpdatedByUserId]) REFERENCES [core].[Users]([Id]), 
+)

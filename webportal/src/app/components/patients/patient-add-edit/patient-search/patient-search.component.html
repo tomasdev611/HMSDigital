@@ -1,0 +1,99 @@
+<app-modal
+  header="Patient Search"
+  [visible]="searchEnabled"
+  [dialogStyleClass]="'patient-search-dialog no-footer'"
+  (hide)="closeSearch($event)"
+  style="width: 50vw !important"
+  [contentStyle]="!!searchedPatients.length && {overflow: 'auto'}">
+  <form
+    [formGroup]="patientSearchForm"
+    (ngSubmit)="patientSearch(patientSearchForm.value)"
+    class="patient-search">
+    <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+      <div class="p-grid">
+        <div class="p-col-12 p-sm-3 p-md-2 form-label p-text-left p-text-sm-right">
+          First Name :
+        </div>
+        <div class="p-col-12 p-sm-9 p-md-4">
+          <input id="firstName" type="text" size="40" pInputText formControlName="firstName" />
+        </div>
+        <div class="p-col-12 p-sm-3 p-md-2 form-label p-text-left p-text-sm-right">Last Name :</div>
+        <div class="p-col-12 p-sm-9 p-md-4">
+          <input id="lastName" type="text" size="40" pInputText formControlName="lastName" />
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 p-sm-3 p-md-2 form-label p-text-left p-text-sm-right">
+          Date Of Birth :
+        </div>
+        <div class="p-col-12 p-sm-9 p-md-4">
+          <p-calendar
+            formControlName="dateOfBirth"
+            [readonlyInput]="true"
+            [monthNavigator]="true"
+            showButtonBar="true"
+            [yearNavigator]="true"
+            [autoZIndex]="true"
+            yearRange="1901:2040"
+            [maxDate]="maxDate"
+            dataType="string">
+          </p-calendar>
+        </div>
+        <div
+          class="p-col-12 p-sm-3 p-md-2 form-label p-text-left p-text-sm-right"
+          *ngIf="hospices?.length">
+          Hospice :
+        </div>
+        <div class="p-col-12 p-sm-9 p-md-4" *ngIf="hospices?.length">
+          <p-dropdown
+            [options]="hospices"
+            filter="true"
+            name="hospiceId"
+            formControlName="hospiceId"
+            [style]="{width: '150px'}"
+            placeholder="Select a Hospice"
+            [panelStyleClass]="'patient-hospice-dropdown'"
+            [panelStyle]="{width: '100%'}"></p-dropdown>
+        </div>
+      </div>
+      <div style="width: 100%">
+        <app-address
+          [address]="patientSearchForm.get('address')"
+          [hiddenFields]="['latitude', 'longitude', 'county', 'plus4Code']">
+        </app-address>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-10 search-btn">
+          <button
+            type="submit"
+            class="btn-right"
+            pButton
+            [disabled]="searchLoading || !patientSearchForm.valid"
+            icon="{{ searchLoading ? 'pi pi-spin pi-spinner' : 'pi pi-search' }}"
+            label="Search"></button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div *ngIf="!!searchedPatients.length" class="title-wrapper">
+    <h3 *ngIf="!findDuplicates">Searched Patients</h3>
+    <h3 *ngIf="findDuplicates">Duplicate records found for the information you added</h3>
+    <button
+      *ngIf="findDuplicates"
+      type="button"
+      class="btn-right"
+      pButton
+      icon="pi pi-arrow-circle-right"
+      (click)="continueWithDuplicate()"
+      label="Ignore and continue"></button>
+  </div>
+  <app-table
+    *ngIf="!!searchedPatients.length"
+    [list]="searchedPatients"
+    rows="60"
+    [loading]="searchLoading"
+    filterFields="[]"
+    [headers]="headers"
+    [showPaginator]="false">
+  </app-table>
+</app-modal>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.CommonPages.NoInternetAccess">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <Image Source="{xct:ImageResource Id=MobileApp.Assets.Images.appLogo.png}"
+                   Scale="1.5"
+                   Grid.Row="0"
+                   HorizontalOptions="Center" />
+            <Label Text="No Internet access"
+                   Grid.Row="1"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                VerticalOptions="End" 
+                HorizontalOptions="CenterAndExpand" />
+            <Label Grid.Row="2" 
+                   Text="Please reconnect to internet and you will be redirected back to your workflow" 
+                   MaxLines="2" 
+                   FontSize="15"
+                   VerticalOptions="Start" 
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="CenterAndExpand" 
+                   Padding="20"></Label>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

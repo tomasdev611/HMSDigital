@@ -1,0 +1,47 @@
+<div class="p-grid p-nogutter p-flex-column p-jc-end mb-10">
+  <div class="mb-10">
+    <button
+      pButton
+      class="btn-right"
+      [routerLink]="['/hospice/' + hospiceId + '/members/add']"
+      label="Add"
+      icon="pi pi-plus"
+      [disabled]="membersLoading"
+      *ngIf="hasPermission('Hospice', 'Create')"></button>
+    <button
+      pButton
+      class="btn-right"
+      [routerLink]="['/hospice/' + hospiceId + '/members/import']"
+      label="Import"
+      style="margin-right: 10px"
+      icon="pi pi-upload"
+      [disabled]="membersLoading"
+      *ngIf="hasPermission('Hospice', 'Create')"></button>
+    <button
+      pButton
+      class="btn-right"
+      (click)="goToManageApprovers()"
+      label="Manage Approvers"
+      style="margin-right: 10px"
+      icon="pi pi-refresh"
+      [disabled]="membersLoading"
+      *ngIf="hasPermission('Hospice', 'Update')"></button>
+  </div>
+  <app-filters
+    [filterConfiguration]="filterConfiguration"
+    (filter)="filterMembers($event)"></app-filters>
+</div>
+
+<app-table-virtual-scroll
+  [list]="membersResponse?.records"
+  [pageSize]="membersRequest?.pageSize"
+  [loading]="membersLoading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="membersResponse?.totalRecordCount"
+  filterFields="[]"
+  [headers]="membersHeaders"
+  [pageNumber]="membersResponse?.pageNumber || 0"
+  [totalPage]="membersResponse?.totalPageCount || 0"
+  [selection]="true"
+  (fetchNext)="nextMembers($event)">
+</app-table-virtual-scroll>

@@ -1,0 +1,84 @@
+:host ::ng-deep {
+  .profile-image,
+  .cropper-image {
+    height: 200px;
+    width: 200px;
+    border: grey 0.5px solid;
+    margin: 0 10px;
+  }
+
+  .profile-image-container {
+    display: flex;
+    justify-content: center;
+    .profile-image {
+      border: none;
+      border-radius: 200px;
+      border-width: 2px;
+      border-color: #c1d82f;
+    }
+  }
+
+  .actions {
+    > button {
+      margin: 10px;
+      margin-left: 20px;
+    }
+    text-align: center;
+  }
+  .img-loader {
+    width: 80px;
+    height: 80px;
+    margin-left: -10em;
+    margin-top: 3em;
+    position: absolute;
+  }
+
+  .image-section {
+    display: flex;
+    justify-content: space-between;
+    .text-center {
+      text-align: center;
+    }
+  }
+
+  .actions-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media screen and (max-width: 640px) {
+    .image-section {
+      flex-direction: column;
+      & > div {
+        display: flex;
+        justify-content: center;
+        &.d-sm-none {
+          display: none;
+        }
+      }
+    }
+
+    .actions-container {
+      display: block;
+      .actions {
+        display: flex;
+        justify-content: center;
+      }
+      .d-sm-none {
+        display: none;
+      }
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    .profile-general-info .form-label {
+      text-align: left;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .password-container .form-label {
+      text-align: left;
+    }
+  }
+}

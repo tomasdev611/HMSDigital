@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  tr {
+    th {
+      width: 250px;
+    }
+    td {
+      width: 250px;
+    }
+  }
+  .column {
+    width: 250px;
+  }
+  .reorderableHandle {
+    width: 2.5em;
+  }
+  .ex-small {
+    width: 10em !important;
+  }
+}

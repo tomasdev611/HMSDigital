@@ -1,0 +1,71 @@
+<div class="menu-container">
+  <div class="menu">
+    <div>
+      <span class="pi pi-bars sidenav-open-icon" (click)="openSideNav()"></span>
+      <img src="../../../assets/images/png/hs-logo.png" class="logo" />
+    </div>
+    <div>
+      <app-search-bar
+        (search)="search($event)"
+        #searchBar
+        [hidden]="!showSearch"
+        [searchPreservedRoutes]="searchPreservedRoutes"></app-search-bar>
+    </div>
+    <div class="user-info">
+      <a class="username" [routerLink]="['/profile']">
+        <span>
+          <img
+            class="profile-image-thumbnail"
+            [src]="userImageUrl ? userImageUrl : '../../../assets/images/png/avatar.png'" />
+          <span> {{ user?.name }}</span>
+        </span>
+      </a>
+      <div class="username">
+        <span (click)="openFlyout()">
+          <span> <i class="pi pi-user mr-5" style="font-size: 1.5em"></i></span>
+          <span>Contact Us </span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <p-sidebar
+    [(visible)]="contactViewOpen"
+    [dismissible]="true"
+    (onHide)="closeFlyout()"
+    [showCloseIcon]="false"
+    autoZIndex="false"
+    position="right">
+    <div class="contact-detail">
+      <div class="contact-info">
+        <span>
+          <i class="pi pi-home" style="font-size: 1.5em"></i>
+          <span
+            >3440 Sojourn Dr Ste 150 <br />
+            Carrollton <br />
+            TX 75006</span
+          >
+        </span>
+      </div>
+      <div class="contact-info">
+        <span>
+          <i class="pi pi-mobile" style="font-size: 1.5em"></i>
+          <span
+            >(800) 299-9277 <br />
+            (214) 572-0520</span
+          >
+        </span>
+      </div>
+      <div class="contact-info">
+        <span>
+          <i class="pi pi-print" style="font-size: 1.5em"></i> <span> Fax : (214) 572-0511</span>
+        </span>
+      </div>
+      <div class="contact-info">
+        <span>
+          <i class="pi pi-envelope" style="font-size: 1.5em"></i>
+          <a href="mailto:info@hospicesource.net" target="_blank"> info@hospicesource.net</a>
+        </span>
+      </div>
+    </div>
+  </p-sidebar>
+</div>

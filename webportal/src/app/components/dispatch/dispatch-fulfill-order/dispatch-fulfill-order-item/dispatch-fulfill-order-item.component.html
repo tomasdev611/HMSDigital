@@ -1,0 +1,112 @@
+<div class="p-grid parent row-flex p-nogutter" style="width: 100%" *ngIf="order">
+  <div class="p-col-6 row-flex">
+    <div class="p-col-4">
+      <div class="user-info order-info">
+        <p class="text-light">Order:</p>
+        <p class="name">#{{ order.orderNumber }}</p>
+      </div>
+      <div class="user-info order-info" *ngIf="order.orderDateTime">
+        <p class="text-light">Order Date:</p>
+        <p class="name">
+          {{ order.orderDateTime | date: 'medium' }}
+        </p>
+      </div>
+      <div class="user-info order-info" *ngIf="order.orderDateTime">
+        <p class="text-light">Order Type:</p>
+        <p class="name">{{ order.statOrder ? 'STAT-' : '' }}{{ order?.orderType }}</p>
+      </div>
+      <div class="user-info order-info" *ngIf="order.orderDateTime">
+        <p class="text-light">Deliver By:</p>
+        <p class="name">
+          {{ order?.requestedEndDateTime | date: 'h:mm a, MMM d' }}
+        </p>
+      </div>
+    </div>
+    <div class="p-col-8">
+      <div class="order-group">
+        <div class="user-info order-info" *ngIf="order.patient">
+          <p class="text-light">Patient Name:</p>
+          <p class="name">{{ order.patient.firstName }} {{ order.patient.lastName }}</p>
+        </div>
+        <div class="user-info order-info" *ngIf="order.patient">
+          <p class="text-light">Patient Phone:</p>
+          <p class="name">
+            {{ formatPhoneNumber(order?.patient?.phoneNumbers[0].number) }}
+          </p>
+        </div>
+      </div>
+      <div class="order-group">
+        <div class="user-info order-info p-col-6" *ngIf="order.hospice">
+          <p class="text-light">Hospice:</p>
+          <p class="name">
+            {{ order.hospice.name }}
+          </p>
+        </div>
+        <div class="user-info order-info p-col-6" *ngIf="order.hospice.phoneNumber">
+          <p class="text-light">Hospice Phone:</p>
+          <p class="name">
+            {{ formatPhoneNumber(order.hospice.phoneNumber.number) }}
+          </p>
+        </div>
+      </div>
+      <div class="user-info order-info order-group" *ngIf="order.processingTime">
+        <p class="text-light">Processing Time:</p>
+        <p class="name">{{ order.processingTime }} {{ order.processingTime ? 'mins' : '' }}</p>
+      </div>
+      <div class="user-info order-info order-group" *ngIf="order.orderType">
+        <span *ngIf="shouldShowAddr('pickup')">
+          <p class="text-light">Pickup Address:</p>
+          <p class="name">
+            {{ getFormattedAddress('pickup') }}
+          </p>
+        </span>
+        <span *ngIf="shouldShowAddr('delivery')">
+          <p class="text-light">Delivery Address:</p>
+          <p class="name">
+            {{ getFormattedAddress('delivery') }}
+          </p>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="p-col-6 row-flex">
+    <div class="column-notes">
+      <p class="text-light">Order Notes</p>
+      <div class="list" *ngIf="order?.orderNotes?.length">
+        <div *ngFor="let orderNote of order.orderNotes">
+          <p class="item">
+            {{ orderNote?.note }}
+          </p>
+          <p class="author">
+            <span class="text-light ml-5" *ngIf="orderNote?.createdDateTime">{{
+              orderNote?.createdDateTime | date: 'MMM
+              d, y, h:mm a'
+            }}</span>
+            <span class="text-light">{{ orderNote?.createdByUserName }}</span>
+          </p>
+        </div>
+      </div>
+      <p class="text-light" *ngIf="order.orderNotes.length === 0">There aren't any notes</p>
+    </div>
+    <div class="column-notes">
+      <p class="text-light">Patient Notes</p>
+      <div class="list" *ngIf="order?.patient?.patientNotes.length > 0">
+        <div *ngFor="let note of order.patient.patientNotes">
+          <p class="item">
+            {{ note?.note }}
+          </p>
+          <p class="author">
+            <span class="text-light ml-5" *ngIf="note?.createdDateTime">{{
+              note?.createdDateTime | date: 'MMM d, y, h:mm
+              a'
+            }}</span>
+            <span class="text-light">{{ note?.createdByUserName }}</span>
+          </p>
+        </div>
+      </div>
+      <p class="text-light" *ngIf="order?.patient?.patientNotes.length === 0">
+        There aren't any notes
+      </p>
+    </div>
+  </div>
+</div>

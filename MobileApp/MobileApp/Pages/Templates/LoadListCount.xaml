@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+    x:Class="MobileApp.Pages.Templates.LoadListCount">
+    <ContentView.Content>
+        <Frame Margin="10"
+                               Padding="0"
+               CornerRadius="10"
+               VerticalOptions="Start"
+               BackgroundColor="White">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="110" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <cornerView:PancakeView CornerRadius="10,10,0,0">
+                    <FlexLayout JustifyContent="Start"
+                                BackgroundColor="{StaticResource LightBlueShade}">
+                        <Label  Margin="20,10,0,0"
+                                Grid.Row="0"
+                                Text="Today's Loadlist"
+                                FontSize="Body"
+                                FlexLayout.Grow="3"
+                                FontAttributes="Bold" />
+                    </FlexLayout>
+                </cornerView:PancakeView>
+                <StackLayout Grid.Row="1"
+                             Margin="10"
+                             BackgroundColor="White">
+                    <FlexLayout Direction="Row"
+                                JustifyContent="SpaceBetween">
+                        <Label Margin="25,0,0,0"
+                               FontAttributes="Bold"
+                               FontSize="13"
+                               Text="Product Count"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="Start" />
+                        <Label Margin="0,0,30,0"
+                               FontAttributes="Bold"
+                               Text="{Binding LoadListCounts.ProductsCount}"
+                               FontSize="13"
+                               Grid.Column="1"
+                               Grid.Row="2"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="End" />
+                    </FlexLayout>
+                    <FlexLayout Direction="Row"
+                                JustifyContent="SpaceBetween">
+                        <Label Margin="25,0,0,5"
+                               FontAttributes="Bold"
+                               FontSize="13"
+                               Text="Item Count"
+                               Grid.Column="0"
+                               Grid.Row="3"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="Start" />
+                        <Label Margin="0,0,30,5"
+                               FontAttributes="Bold"
+                               Text="{Binding LoadListCounts.ItemsCount}"
+                               FontSize="13"
+                               Grid.Column="1"
+                               Grid.Row="3"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="End" />
+                    </FlexLayout>
+                    <FlexLayout Direction="Row"
+                                JustifyContent="SpaceBetween">
+                        <Label Margin="25,0,0,0"
+                           FontAttributes="Bold"
+                           FontSize="13"
+                           Text="Order Count"
+                           Grid.Column="0"
+                           Grid.Row="1"
+                           VerticalTextAlignment="End"
+                           HorizontalTextAlignment="Start" />
+                        <Label Margin="0,0,30,0"
+                               FontAttributes="Bold"
+                               Text="{Binding LoadListCounts.OrdersCount}"
+                               FontSize="13"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="End" />
+                    </FlexLayout>
+                    <FlexLayout Direction="Row"
+                                JustifyContent="SpaceBetween">
+                        <Label Margin="25,0,0,0"
+                               FontAttributes="Bold"
+                               FontSize="13"
+                               Text="Trucks"
+                               Grid.Column="0"
+                               Grid.Row="0"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="Start" />
+                        <Label Margin="0,0,30,0"
+                               FontAttributes="Bold"
+                               Text="{Binding LoadListCounts.TrucksCount}"
+                               FontSize="13"
+                               Grid.Column="1"
+                               Grid.Row="0"
+                               VerticalTextAlignment="End"
+                               HorizontalTextAlignment="End" />
+                    </FlexLayout>
+                </StackLayout>
+                <cornerView:PancakeView Grid.Row="2" CornerRadius="0,0,10,10">
+                    <Button x:Name="showDetails"
+                            IsEnabled="True"
+                            Command="{Binding ShowLoadListDetailsCommand}"
+                            Text="Show Details"
+                            FontAttributes="Bold"
+                            FontSize="13"
+                            Grid.Row="2"
+                            CornerRadius="0"
+                            HeightRequest="40"
+                            TextColor="White"
+                            BackgroundColor="{StaticResource DarkShade}" />
+                </cornerView:PancakeView>
+            </Grid>
+        </Frame>
+    </ContentView.Content>
+</ContentView>

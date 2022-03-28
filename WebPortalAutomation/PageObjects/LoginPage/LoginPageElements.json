@@ -1,0 +1,39 @@
+{
+    "clickables": {
+
+        "mapped": [
+            {
+                "xpath": "//div[@class=\"modal-content background-customizable modal-content-mobile visible-md visible-lg\"]//HTML-ELEMENT",
+            
+                "map": {
+                    "Sign In Submit": { "HTML-ELEMENT": "input[@name=\"signInSubmitButton\"]" },
+                    "Forgot your password?": { "HTML-ELEMENT": "a[@class=\"redirect-customizable\"]" }
+                }
+            }
+        ]
+    },
+
+    "waitables": {
+
+        "uniques": {
+            "Interactable section": {
+                "findBy": "xpath",
+                "xpath": "//div[@class=\"modal-content background-customizable modal-content-mobile visible-md visible-lg\"]//div[@class=\"modal-body\"]"
+            }
+        }
+    },
+
+    "writables": {
+
+        "mapped": [
+            {
+                "xpath": "//div[@class=\"modal-content background-customizable modal-content-mobile visible-md visible-lg\"]//input[@id=\"INPUT-LOGIN\"]",
+                
+                "map": {
+                    "Sign In Username": { "INPUT-LOGIN": "signInFormUsername" },
+                    "Sign In Password": { "INPUT-LOGIN": "signInFormPassword" }
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,298 @@
+// table
+table {
+  border-color: red;
+}
+body {
+  .p-paginator .p-paginator-right-content,
+  .p-paginator .p-paginator-left-content {
+    float: right;
+    line-height: 2;
+    cursor: pointer;
+    padding: 2px 4px 0 4px;
+    &:hover {
+      background: $primary-background-color;
+      color: $base-white;
+    }
+    .disabled {
+      cursor: not-allowed;
+    }
+  }
+  .p-paginator .p-paginator-first,
+  .p-paginator .p-paginator-prev,
+  .p-paginator .p-paginator-next,
+  .p-paginator .p-paginator-last,
+  .p-paginator .p-paginator-pages {
+    display: none;
+  }
+  .p-datatable {
+    background: $base-white;
+    font-size: 14px;
+    .p-datatable-thead > tr > th {
+      border: 0;
+      height: 55px;
+      text-align: left;
+      font-weight: bold;
+
+      &.p-filter-column {
+        border-top: 1px solid $table-border-color;
+      }
+      &.xs {
+        width: 4em;
+        text-align: center;
+      }
+      &.sm {
+        width: 8em;
+      }
+      &.md {
+        width: 12em;
+      }
+      &.lg {
+        width: 16em;
+      }
+    }
+    .p-datatable-tbody > tr:nth-child(even) {
+      background-color: $base-white;
+    }
+    .p-datatable-tbody > tr:last-child {
+      .custom-dropdown-content {
+        bottom: 30px;
+      }
+    }
+    .p-datatable-tbody > tr:nth-last-child(-n + 2) {
+      .custom-dropdown-content {
+        bottom: 30px;
+      }
+    }
+    .p-datatable-tbody > tr > td {
+      border: 0;
+      height: 58px;
+      border-bottom: 1px solid rgba(193, 216, 47, 0.5);
+      cursor: auto;
+      padding: 0;
+      &.xs {
+        width: 4em;
+        text-align: center;
+      }
+      &.sm {
+        width: 8em;
+      }
+      &.md {
+        width: 12em;
+      }
+      &.lg {
+        width: 16em;
+      }
+      &.overflow-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .table-value {
+        overflow: auto;
+        overflow-wrap: break-word;
+        margin-left: 1em;
+        .td-load-more {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
+    }
+    .p-datatable-tbody {
+      > tr.p-highlight {
+        background: aliceblue !important;
+        color: var(--text-color) !important;
+      }
+    }
+    .p-datatable-tbody > tr > td .p-column-title {
+      display: none;
+    }
+    .p-datatable-loading {
+      &.p-widget-overlay {
+        background-color: $base-black;
+      }
+    }
+    .p-datatable-loading-content {
+      margin-top: -3em;
+      margin-left: -2.5em;
+      .p-datatable-loading-icon {
+        font-size: 5em;
+        color: $primary-spinner-color;
+      }
+    }
+    .p-paginator {
+      border: 0 none;
+      padding: 1em;
+      padding-right: 2em;
+      text-align: end;
+      justify-content: center;
+    }
+    .p-sortable-column.p-highlight {
+      background-color: $table-header-color;
+      color: $primary-text-color;
+      .p-sortable-column-icon {
+        color: $primary-text-color;
+      }
+    }
+    .p-sortable-column:focus {
+      box-shadow: inset 0 0 0 0 #8dcdff;
+    }
+    .p-datatable-tbody > tr.disabled,
+    tr.disabled:hover {
+      font-style: italic;
+      color: #989898 !important;
+      background: #f5f5f5 !important;
+    }
+  }
+  .p-paginator .p-paginator-pages .p-paginator-page.p-state-active {
+    background-color: $primary-background-color;
+  }
+  .mobile-action-btn {
+    display: none;
+    .p-button {
+      display: none;
+    }
+  }
+  .p-component-overlay {
+    background-color: transparent;
+  }
+  .p-datatable .p-datatable-loading-icon {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #c9c9cc;
+  }
+}
+.p-datatable-scrollable-header {
+  overflow: initial;
+}
+body .p-datatable-scrollable-body {
+  height: calc(100vh - 260px);
+  max-height: calc(100vh - 260px);
+}
+body .p-datatable .p-datatable-thead > tr > th {
+  background-color: $table-header-color;
+}
+body .p-paginator {
+  background-color: $table-header-color;
+}
+.table-mobile-header {
+  display: none;
+}
+.tr-red {
+  background: #f5d1d1 !important;
+  &.light {
+    background: #f7ebeb !important;
+  }
+}
+
+.p-dataview .p-dataview-header {
+  background: #edf1f4;
+  border: 0 none;
+}
+
+//responsive
+@media screen and (max-width: 48em) {
+  body {
+    .p-datatable {
+      &.p-datatable {
+        .p-datatable-thead > tr > th,
+        .p-datatable-tfoot > tr > td {
+          display: none !important;
+        }
+
+        .p-datatable-tbody > tr {
+          border-bottom: 3px solid $table-border-color;
+        }
+
+        .p-datatable-tbody > tr > td {
+          text-align: left;
+          display: block;
+          border-bottom: 1px solid $table-border-color;
+          width: 100% !important;
+          float: left;
+          clear: left;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .p-column-title {
+            padding: 0.6em 0.4em;
+            min-width: 30%;
+            display: flex;
+            margin: -0.4em 1em -0.4em -0.4em;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+    .p-datatable-scrollable-body {
+      height: calc(100vh - 210px);
+      max-height: calc(100vh - 210px);
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .p-datatable {
+    .p-paginator {
+      padding: 0.5em !important;
+    }
+  }
+}
+@media screen and (max-width: 768px) {
+  .patient-table {
+    .p-datatable-scrollable-body {
+      height: calc(100vh - 250px);
+    }
+  }
+  .patient-container {
+    .p-datatable-scrollable-body {
+      height: calc(100vh - 240px);
+    }
+  }
+  body {
+    .p-datepicker table {
+      font-size: 12px;
+    }
+  }
+  .table-mobile-header {
+    display: block;
+    font-weight: bold;
+  }
+  .table-value {
+    margin-left: 10px;
+  }
+  .mobile-action-col {
+    display: none !important;
+  }
+  .mobile-action-btn {
+    display: inline;
+  }
+}
+@media screen and (max-width: 480px) {
+  .p-datatable {
+    .p-paginator {
+      padding: 0px !important;
+    }
+  }
+  .patient-table {
+    .p-datatable-scrollable-body {
+      height: calc(100vh - 230px);
+    }
+  }
+  .patient-container {
+    .p-datatable-scrollable-body {
+      height: calc(100vh - 220px);
+    }
+  }
+  body {
+    .p-datatable {
+      .p-datatable-tbody > tr > td {
+        font-size: 12px !important;
+        height: 50px;
+        padding: 5px 10px;
+      }
+    }
+    .p-datepicker table {
+      font-size: 8px;
+    }
+  }
+}

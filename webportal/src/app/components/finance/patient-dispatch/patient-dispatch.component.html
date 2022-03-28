@@ -1,0 +1,289 @@
+<div class="p-grid p-nogutter p-mt-3">
+  <div class="p-grid p-nogutter p-jc-end">
+    <div *ngIf="patient">
+      <button
+        type="button"
+        pButton
+        label="View Fix History"
+        (click)="viewLogs()"
+        *ngIf="activeView !== 'logs'"></button>
+      <button
+        type="button"
+        pButton
+        label="View Fulfillment Records"
+        (click)="viewRecords()"
+        *ngIf="activeView !== 'records'"></button>
+    </div>
+  </div>
+</div>
+<div class="p-grid p-nogutter patient-wrapper" *ngIf="patient">
+  <div class="p-grid p-nogutter">
+    <div class="p-col-1 form-label">Patient Name :</div>
+    <div class="p-col-2 form-data">{{ patient?.firstName }} {{ patient?.lastName }}</div>
+    <div class="p-col-2 form-label">Hospice Name :</div>
+    <div class="p-col-4 form-data">{{ patient?.hospice?.name }}</div>
+    <a
+      class="p-col-2 form-data"
+      [routerLink]="['/patients/edit/' + patient?.id]"
+      [queryParams]="{view: 'order'}"
+      >Order History</a
+    >
+  </div>
+  <div class="p-grid p-nogutter">
+    <div class="p-col-1 form-label">DOB :</div>
+    <div class="p-col-2 form-data">{{ patient?.dateOfBirth | date: 'LL/dd/yyyy' }}</div>
+    <div class="p-col-2 form-label">Hospice Location :</div>
+    <div class="p-col-4 form-data">{{ patient?.hospiceLocation?.name }}</div>
+    <a
+      class="p-col-2 form-data"
+      [routerLink]="['/patients/edit/' + patient?.id]"
+      [queryParams]="{view: 'inventory'}"
+      >Current Inventory</a
+    >
+  </div>
+</div>
+<div
+  class="p-grid p-nogutter p-jc-between p-align-center p-mb-2"
+  *ngIf="patient && activeView === 'records'">
+  <div>
+    <span *ngIf="selectedItems.length">{{ selectedItems.length }} Records Selected</span>
+  </div>
+  <button
+    type="button"
+    pButton
+    label="Fix Dates"
+    *ngIf="hasPermission('Dispatch')"
+    [disabled]="!selectedItems.length"
+    (click)="fixSelectedDates()"></button>
+</div>
+<div class="p-grid p-nogutter" *ngIf="patient">
+  <p-table
+    #dispatchTable
+    *ngIf="activeView === 'records'"
+    [value]="patientDispatchResponse?.records"
+    class="flyout-dispatch-table"
+    dataKey="nsDispatchId"
+    [rowHover]="true"
+    [responsive]="true"
+    [scrollable]="true"
+    [loading]="dispatchLoading"
+    [(selection)]="selectedItems"
+    (selectionChange)="onSelectionChange($event)"
+    selectionMode=""
+    editMode="row">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3%" *ngIf="hasPermission('Dispatch')">
+          <p-tableHeaderCheckbox #headerCheckBox></p-tableHeaderCheckbox>
+        </th>
+        <th>Item Name</th>
+        <th>Serial Number</th>
+        <th style="width: 9%">Asset Tag</th>
+        <th style="width: 5%">Quantity</th>
+        <th style="width: 9%">Order Status</th>
+        <th>Delivery Date</th>
+        <th>Pickup Request Date</th>
+        <th>Pickup Date</th>
+        <th>Created Date</th>
+        <th style="width: 8%" *ngIf="hasPermission('Dispatch')"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-value let-editing="editing" let-index="rowIndex">
+      <tr class="p-selectable-row" [pSelectableRow]="value" [pEditableRow]="value">
+        <td style="width: 3%" *ngIf="hasPermission('Dispatch')">
+          <p-tableCheckbox [value]="value" [disabled]="isRowDisabled(value)"></p-tableCheckbox>
+        </td>
+        <td>{{ value?.netSuiteItem?.name }}</td>
+        <td>{{ value?.serielLotNumber }}</td>
+        <td style="width: 9%">{{ value?.assetTagNumber }}</td>
+        <td style="width: 5%">{{ value?.qty }}</td>
+        <td style="width: 9%">{{ value?.hmsPickupOrderStatus }}</td>
+        <td pEditableColumn>
+          <p-cellEditor *ngIf="value?.editEnabled">
+            <ng-template pTemplate="input">
+              <p-calendar
+                [monthNavigator]="true"
+                placeholder="select date and time"
+                [yearNavigator]="true"
+                [autoZIndex]="false"
+                yearRange="1901:2040"
+                [(ngModel)]="value.hmsDeliveryDate"
+                (onBlur)="updateDate($event, value, 'hmsDeliveryDate')"
+                [panelStyle]="{'z-index': '11005'}"
+                showTime="true"
+                hourFormat="12"
+                inputStyleClass="inline-edit-calendar">
+              </p-calendar>
+            </ng-template>
+          </p-cellEditor>
+          <span *ngIf="!value?.editEnabled">{{
+            value?.hmsDeliveryDate | date: 'LLL dd, yyyy, h:mm a'
+          }}</span>
+        </td>
+        <td pEditableColumn>
+          <p-cellEditor *ngIf="value?.editEnabled">
+            <ng-template pTemplate="input">
+              <p-calendar
+                [monthNavigator]="true"
+                placeholder="select date and time"
+                [yearNavigator]="true"
+                [autoZIndex]="false"
+                yearRange="1901:2040"
+                [(ngModel)]="value.hmsPickupRequestDate"
+                (onBlur)="updateDate($event, value, 'hmsPickupRequestDate')"
+                [panelStyle]="{'z-index': '11005'}"
+                showTime="true"
+                hourFormat="12"
+                inputStyleClass="inline-edit-calendar">
+              </p-calendar>
+            </ng-template>
+          </p-cellEditor>
+          <span *ngIf="!value?.editEnabled">{{
+            value?.hmsPickupRequestDate | date: 'LLL dd, yyyy, h:mm a'
+          }}</span>
+        </td>
+        <td pEditableColumn>
+          <p-cellEditor *ngIf="value?.editEnabled">
+            <ng-template pTemplate="input">
+              <p-calendar
+                [monthNavigator]="true"
+                placeholder="select date and time"
+                [yearNavigator]="true"
+                [autoZIndex]="false"
+                yearRange="1901:2040"
+                [(ngModel)]="value.pickupDate"
+                (onBlur)="updateDate($event, value, 'pickupDate')"
+                [panelStyle]="{'z-index': '11005'}"
+                showTime="true"
+                hourFormat="12"
+                inputStyleClass="inline-edit-calendar">
+              </p-calendar>
+            </ng-template>
+          </p-cellEditor>
+          <span *ngIf="!value?.editEnabled">{{
+            value?.pickupDate | date: 'LLL dd, yyyy, h:mm a'
+          }}</span>
+        </td>
+        <td>{{ value?.createdDate | date: 'LLL dd, yyyy, h:mm a' }}</td>
+        <td style="width: 8%" *ngIf="hasPermission('Dispatch')">
+          <button
+            pButton
+            class="p-button-secondary"
+            type="button"
+            *ngIf="!editing"
+            pInitEditableRow
+            [disabled]="isRowDisabled(value)"
+            (click)="onRowEditInit(value)"
+            icon="pi pi-pencil"></button>
+          <button
+            pButton
+            class="p-button-secondary"
+            type="button"
+            *ngIf="editing"
+            pSaveEditableRow
+            [disabled]="isRowDisabled(value)"
+            (click)="onRowEditSave(value)"
+            icon="pi pi-check"></button>
+          <button
+            pButton
+            class="p-button-secondary"
+            type="button"
+            *ngIf="editing"
+            pCancelEditableRow
+            [disabled]="isRowDisabled(value)"
+            (click)="onRowEditCancel(value, index)"
+            icon="pi pi-times"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <app-table-virtual-scroll
+    *ngIf="activeView === 'logs'"
+    #auditLogsTable
+    [list]="auditLogResponse?.records"
+    [pageSize]="auditLogResponse?.pageSize"
+    [loading]="logsLoading"
+    [pageLoadNextOffset]="5"
+    [totalRecords]="auditLogResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="auditLogHeaders"
+    [pageNumber]="auditLogResponse?.pageNumber"
+    scrollHeightCustom="calc(100vh - 280px)"
+    [totalPage]="auditLogResponse?.totalPageCount"
+    [selection]="true"
+    (fetchNext)="fetchNextAuditLogPage($event)"
+    (rowSelected)="showAuditLogDetails($event)">
+  </app-table-virtual-scroll>
+</div>
+<app-patient-dispatch-update
+  #fixmodal
+  (clearSelected)="refreshRecords($event)"
+  [selectedDispatchRecordIds]="selectedDispatchRecordIds">
+</app-patient-dispatch-update>
+<div class="flyout">
+  <button class="close-icon" (click)="closeAuditLogDeatils()">
+    <i class="pi pi-times"></i>
+  </button>
+  <div>
+    <div class="audit-detail-label">
+      <span>Fix Logs Details</span>
+    </div>
+    <div class="flyout-general">
+      <div class="p-grid">
+        <div class="p-col-4">Action Type :</div>
+        <div class="p-col-8">{{ selectedAuditLog?.auditAction }}</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-4">Modified By :</div>
+        <div class="p-col-8">{{ selectedAuditLog?.user?.name }}</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-4">Modified On :</div>
+        <div class="p-col-8">{{ selectedAuditLog?.auditDate | date: 'medium' }}</div>
+      </div>
+    </div>
+    <div class="flyout-update">
+      <div class="p-grid flyout-containerr">
+        <p-table
+          #dt
+          [value]="selectedAuditLog?.auditData"
+          class="flyout-table"
+          dataKey="entityId"
+          [rowHover]="true"
+          [responsive]="true"
+          [scrollable]="true"
+          *ngIf="selectedAuditLog && selectedAuditLog.auditData">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="columnName" style="width: 34%">
+                Field Name <p-sortIcon field="columnName"></p-sortIcon>
+              </th>
+              <th style="width: 33%">Original Value</th>
+              <th style="width: 33%">New Value</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-auditedChange>
+            <tr class="p-selectable-row">
+              <td style="width: 34%">
+                <span class="p-column-title">Field Name</span>
+                <div class="cursor-pointer">
+                  {{ auditedChange.columnName }}
+                </div>
+              </td>
+              <td style="width: 33%">
+                <span class="p-column-title">Original Value</span>
+                {{ auditedChange.originalValue | date: 'LLL dd, yyyy, h:mm a' }}
+              </td>
+              <td style="width: 33%">
+                <span class="p-column-title">New Value </span>
+                <div>
+                  {{ auditedChange.newValue | date: 'LLL dd, yyyy, h:mm a' }}
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

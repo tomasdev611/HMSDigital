@@ -1,0 +1,61 @@
+body {
+  .cancel-order-dialog {
+    width: 100vw !important;
+  }
+}
+
+.action-buttons {
+  > button {
+    margin: auto 10px;
+  }
+}
+
+:host ::ng-deep {
+  .p-datatable-scrollable-body {
+    min-height: 3.5rem;
+    max-height: 18rem;
+    height: auto;
+  }
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding-left: 1em;
+  }
+  .selection-col {
+    width: 2rem;
+  }
+  .width-per-9 {
+    width: 9%;
+  }
+  .width-per-7 {
+    width: 7%;
+  }
+}
+
+.p-dropdown {
+  width: auto;
+  min-width: 300px;
+  margin: 10px auto;
+}
+
+.order-details {
+  .paitent-details {
+    .patient-name {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .hospice-location {
+      display: block;
+      font-size: 14px;
+    }
+  }
+}
+
+.line-item-action {
+  transform: scale(0.8);
+  font-weight: 400;
+  &.pickup {
+    background-color: #f2994a;
+  }
+  &.delivery {
+    background-color: #338aff;
+  }
+}

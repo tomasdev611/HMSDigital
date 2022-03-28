@@ -1,0 +1,121 @@
+<div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+  <div class="p-grid" *ngIf="editmode">
+    <div class="p-col-2">
+      <h3>Access Control</h3>
+    </div>
+    <div class="p-col-8 btn-right">
+      <button
+        pButton
+        class="btn-right"
+        type="submit"
+        label="Add"
+        icon="pi pi-plus"
+        [disabled]="IsUserRoleValid()"
+        (click)="AddUserRole()"></button>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-2 form-label">Role :</div>
+    <div class="p-col-2">
+      <p-dropdown
+        dataKey="id"
+        [options]="roles"
+        placeholder="Select a Role"
+        name="roles"
+        optionLabel="name"
+        [(ngModel)]="userRole.role"
+        (onFocus)="rolesOpened()"
+        (onChange)="rolesChanged($event)"></p-dropdown>
+    </div>
+    <div class="p-col-1 form-label" *ngIf="editmode">Resource :</div>
+    <div class="p-col-2" *ngIf="editmode">
+      <p-dropdown
+        [options]="filteredResourceTypes"
+        placeholder="Select a Resource Type"
+        name="resourceType"
+        [(ngModel)]="userRole.resourceType"
+        [disabled]="!userRole.role"></p-dropdown>
+    </div>
+    <div class="p-col-1 form-label" *ngIf="editmode">Scope :</div>
+    <div class="p-col-2" *ngIf="editmode">
+      <p-autoComplete
+        [disabled]="!userRole.resourceType"
+        placeholder="Search {{ userRole.resourceType }}"
+        field="name"
+        dataKey="id"
+        minLength="0"
+        [completeOnFocus]="true"
+        [(ngModel)]="userRole.resource"
+        [forceSelection]="true"
+        [dropdown]="true"
+        dropdownIcon="pi pi-search"
+        (completeMethod)="searchResource($event)"
+        [suggestions]="resourceList"
+        emptyMessage="No related search found">
+      </p-autoComplete>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-2"></div>
+    <div class="p-col-8">
+      <app-table
+        [list]="assignedUserRoles"
+        rows="25"
+        [loading]="loading"
+        [paginate]="false"
+        [showPaginator]="false"
+        filterFields="['role.name','resourceType','resourceName']"
+        [headers]="headers"
+        *ngIf="editmode"
+        (deleteHandler)="removeUserRole($event?.index)">
+      </app-table>
+      <p-table [value]="assignedUserRoles" *ngIf="!editmode">
+        <ng-template pTemplate="body" let-role let-rowIndex="rowIndex">
+          <tr>
+            <td class="md">{{ role.resourceType }}{{ role.resource.id }}</td>
+            <td class="sm">
+              <p-radioButton
+                name="allowResource{{ rowIndex }}"
+                [value]="''"
+                label="None"
+                [(ngModel)]="role.resource.id"
+                (onClick)="updateResource(role)">
+              </p-radioButton>
+            </td>
+            <td class="sm">
+              <p-radioButton
+                name="allowResource{{ rowIndex }}"
+                [value]="'*'"
+                label="All"
+                [(ngModel)]="role.resource.id"
+                (onClick)="updateResource(role)"
+                [style]="{marginLeft: '1em'}"></p-radioButton>
+            </td>
+            <td class="md">
+              <p-radioButton
+                name="allowResource{{ rowIndex }}"
+                [value]="'Selected'"
+                label="Selected"
+                [(ngModel)]="role.resource.id"
+                (onClick)="updateResource(role)"
+                [style]="{marginLeft: '1em'}"></p-radioButton>
+            </td>
+            <td [class.hidden]="role.resource.id !== 'Selected'">
+              <p-multiSelect
+                [options]="role.resourceType === 'Site' ? siteList : hospiceList"
+                [(ngModel)]="role.resource[role.resourceType.toLowerCase()]"
+                [filter]="true"
+                filterBy="value.name"
+                optionLabel="name"
+                (onChange)="updateResource(role, true)"
+                (onFocus)="fetchList(role.resourceType)">
+              </p-multiSelect>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<app-filters
+  #filter
+  [filterConfiguration]="filterConfigs"
+  (filter)="filterOrder($event)"
+  (filterBarHidden)="removeFilterConf()"
+  (filterBarVisible)="buildfilterConf()"
+  (autocompleteSearch)="searchField($event)"></app-filters>

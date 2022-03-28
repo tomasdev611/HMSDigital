@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Physical Inventory"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+             xmlns:xct="clr-namespace:Xamarin.CommunityToolkit.UI.Views;assembly=Xamarin.CommunityToolkit"
+             xmlns:cornerview="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             x:Class="MobileApp.Pages.Screen.InventoryAuditView">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add New" Command="{Binding AddNewItemCommand}" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <Grid>
+            <StackLayout VerticalOptions="StartAndExpand"
+                         Grid.Row="0">
+                <Frame CornerRadius="0">
+                    <StackLayout Spacing="10">
+                            <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                                    <Label Text="Asset Tag"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           VerticalTextAlignment="Center"
+                                           FontSize="Small" />
+                                <FlexLayout FlexLayout.Grow="1"
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            HeightRequest="50">
+                                    <Entry Placeholder="Enter Asset Tag"
+                                           Text="{Binding AssetTag}"
+                                           FlexLayout.Grow="1"
+                                           HeightRequest="50" />
+                                    <Button HeightRequest="50"
+                                            FontSize="30"
+                                            WidthRequest="70"
+                                            FlexLayout.Shrink="0"
+                                            FontAttributes="Bold"
+                                            Text="&#187;"
+                                            CornerRadius="0"
+                                            IsEnabled="{Binding AssetTag, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                            Command="{Binding GetInventoryForAssetTagCommand}"
+                                            BackgroundColor="{StaticResource DarkShade}"
+                                            TextColor="White" />
+                                </FlexLayout>
+                                <Label Text="No Item found for this asset tag"
+                                       FontSize="Small"
+                                       Grid.Row="1"
+                                       Grid.Column="1"
+                                       IsVisible="{Binding ShouldShowErrorMessage}"
+                                       TextColor="{StaticResource RedShade}" />
+                            </Grid>
+                        <FlexLayout>
+                            <templates:HorizontalDivider DividerText="OR" />
+                        </FlexLayout>
+                        <FlexLayout Direction="Row"
+                                    AlignItems="Center"
+                                    JustifyContent="SpaceAround">
+                            <Button HeightRequest="50"
+                                    FontSize="16"
+                                    FlexLayout.Grow="1"
+                                    FontAttributes="Bold"
+                                    Text="Scan"
+                                    Command="{Binding GoToInventoryScanCommand}"
+                                    BackgroundColor="{StaticResource LightShade}"
+                                    TextColor="White"
+                                    CornerRadius="10" />
+                        </FlexLayout>
+                        <StackLayout Margin="0,10,0,0">
+                            <xct:Expander>
+                                <xct:Expander.Header>
+                                    <Label Text="Scan History"
+                                           HorizontalOptions="CenterAndExpand"
+                                           Padding="10"
+                                           FontSize="Micro" />
+                                </xct:Expander.Header>
+                                <CollectionView ItemsSource="{Binding ScanHistoryList}" 
+                                                EmptyView="No scan history">
+                                    <CollectionView.ItemsLayout>
+                                        <LinearItemsLayout Orientation="Vertical"
+                                                           ItemSpacing="20" />
+                                    </CollectionView.ItemsLayout>
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <cornerview:PancakeView CornerRadius="10"
+                                                                    BackgroundColor="{StaticResource BackgroundShade}">
+                                                <FlexLayout Direction="Row"
+                                                            JustifyContent="SpaceBetween"
+                                                            AlignItems="Center"
+                                                            Padding="10">
+                                                    <StackLayout>
+                                                        <Label Text="{Binding Item.Name}"
+                                                               FontSize="Medium" />
+                                                        <FlexLayout Direction="Column"
+                                                                    JustifyContent="Start">
+                                                            <Label Text="{Binding AssetTagNumber, StringFormat='Asset Tag: {0}'}"
+                                                                   Margin="5"
+                                                                   FontSize="Micro" />
+                                                            <Label Text="{Binding SerialNumber, StringFormat='Serial No: {0}'}"
+                                                                   Margin="5"
+                                                                   FontSize="Micro" />
+                                                            <Label Text="{Binding LotNumber, StringFormat='Lot No: {0}'}"
+                                                                   Margin="5"
+                                                                   FontSize="Micro" />
+                                                        </FlexLayout>
+                                                    </StackLayout>
+                                                </FlexLayout>
+                                            </cornerview:PancakeView>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </xct:Expander>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+                <templates:InventoryItemCard></templates:InventoryItemCard>
+                
+            </StackLayout>
+            <ActivityIndicator IsVisible="{Binding IsLoading}" IsRunning="{Binding IsLoading}" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

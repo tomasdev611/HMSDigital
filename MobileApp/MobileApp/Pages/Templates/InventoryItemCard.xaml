@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:xct="clr-namespace:Xamarin.CommunityToolkit.UI.Views;assembly=Xamarin.CommunityToolkit"
+             x:Class="MobileApp.Pages.Templates.InventoryItemCard">
+  <ContentView.Content>
+        <Frame HasShadow="False"
+               IsVisible="{Binding InventoryItem, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+               Margin="10"
+               Padding="10,0,0,0"
+               BackgroundColor="{StaticResource LightShade}"
+               CornerRadius="10">
+            <cornerView:PancakeView CornerRadius="0,10,0,10"
+                                    BackgroundColor="{StaticResource BackgroundShade}">
+                <StackLayout>
+                    <xct:Expander>
+                        <xct:Expander.Header>
+                            <FlexLayout Direction="Row"
+                                        JustifyContent="SpaceBetween"
+                                        AlignItems="Center"
+                                        Padding="10">
+                                <StackLayout>
+                                    <Label Text="{Binding InventoryItem.Item.Name}"
+                                           FontSize="Large" />
+                                    <FlexLayout Direction="Column"
+                                                JustifyContent="Start">
+                                        <Label Text="{Binding InventoryItem.AssetTagNumber, StringFormat='Asset Tag: {0}'}"
+                                               Margin="5"
+                                               FontSize="Micro" />
+                                        <Label Text="{Binding InventoryItem.SerialNumber, StringFormat='Serial No: {0}'}"
+                                               Margin="5"
+                                               FontSize="Micro" />
+                                        <Label Text="{Binding InventoryItem.LotNumber, StringFormat='Lot No: {0}'}"
+                                               IsVisible="{Binding InventoryItem.LotNumber, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                               Margin="5"
+                                               FontSize="Micro" />
+                                    </FlexLayout>
+
+                                </StackLayout>
+                                <Button Text="Edit"
+                                        FlexLayout.Shrink="0"
+                                        BackgroundColor="{StaticResource BackgroundShade}"
+                                        FontSize="Small"
+                                        Command="{Binding EditInventoryCommand}"
+                                        HeightRequest="50" />
+                            </FlexLayout>
+                        </xct:Expander.Header>
+                    </xct:Expander>
+                </StackLayout>
+            </cornerView:PancakeView>
+        </Frame>
+    </ContentView.Content>
+</ContentView>

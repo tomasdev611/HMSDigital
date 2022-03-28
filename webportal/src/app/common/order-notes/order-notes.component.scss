@@ -1,0 +1,69 @@
+.notes-list {
+  max-height: 300px;
+  overflow: auto;
+}
+
+:host ::ng-deep {
+  .order-notes-input {
+    width: 100%;
+    .p-chips {
+      width: 100%;
+      max-height: 250px;
+      ul.p-chips-multiple-container {
+        overflow-y: auto;
+        .p-chips-token {
+          width: 100%;
+          display: block;
+          margin-bottom: 5px;
+          background-color: #e3f2fd;
+          color: black;
+          position: relative;
+          .note-text {
+            width: 95%;
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    .p-chips .p-chips-multiple-container .p-chips-token .p-chips-token-icon {
+      margin: 0 !important;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+    }
+  }
+
+  .p-listbox {
+    background: transparent;
+    border: none;
+    .p-listbox-list {
+      .p-listbox-item {
+        &:hover {
+          cursor: auto;
+        }
+        &:focus {
+          box-shadow: none;
+        }
+        color: black;
+        background: transparent;
+        .note-item {
+          width: 100%;
+          .note-text {
+            width: 100%;
+            display: block;
+            background: #eef1f4;
+            padding: 4px;
+            border-radius: 5px;
+          }
+          .note-details {
+            font-size: 13px;
+            font-style: italic;
+            display: flex;
+            justify-content: flex-end;
+          }
+        }
+      }
+    }
+  }
+}

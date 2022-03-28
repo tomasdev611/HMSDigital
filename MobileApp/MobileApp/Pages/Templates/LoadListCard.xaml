@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:converters="clr-namespace:MobileApp.Utils.Converter"
+             x:Class="MobileApp.Pages.Templates.LoadListCard">
+    <Frame CornerRadius="10"
+           BackgroundColor="White"
+           Padding="0">
+        <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <cornerView:PancakeView Grid.Row="0"
+                                    CornerRadius="10,10,0,0">
+                <Grid BackgroundColor="{StaticResource LightBlueShade}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0"
+                           Margin="20,0,0,0"
+                           Text="Loadlist"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           VerticalTextAlignment="Center"
+                           HorizontalOptions="FillAndExpand" />
+                    <Label Grid.Column="1"
+                           x:Name="totalItems"
+                           Margin="20,0"
+                           VerticalTextAlignment="Center"
+                           HorizontalOptions="End" />
+                </Grid>
+            </cornerView:PancakeView>
+            <StackLayout Grid.Row="1"
+                         Padding="15,10"
+                         BackgroundColor="White">
+                <FlexLayout Grid.Row="0"
+                            Grid.Column="0"
+                            Direction="Row"
+                            AlignItems="Center"
+                            JustifyContent="SpaceBetween">
+                    <Label Text="Status"
+                           VerticalOptions="Center"
+                           FontAttributes="Bold" />
+                    <Label Text="Loadlist ready to pick"
+                           FontSize="15"
+                           VerticalOptions="Center"
+                           FontAttributes="Bold" />
+                </FlexLayout>
+                <Label Text="ETA to location"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+                <Label Text="{Binding SiteDetails.Address}"
+                       VerticalOptions="Start"
+                       FontSize="12" />
+                <Label x:Name="time"
+                       FontAttributes="Bold" />
+                <FlexLayout Direction="Row"
+                            JustifyContent="SpaceBetween">
+                    <StackLayout Spacing="0">
+                        <Label Text="{Binding SiteDetails.SiteAdmin}"
+                               FontSize="12" />
+                        <FlexLayout Direction="Row"
+                                    JustifyContent="SpaceBetween">
+                            <Label Text="{Binding SiteDetails.ContactNumber, Converter={converters:StringToPhoneNumberConverter}}"
+                                   FontSize="15"
+                                   FlexLayout.AlignSelf="Center"
+                                   FontAttributes="Bold" />
+                            <Button WidthRequest="70"
+                                    IsEnabled="True"
+                                    HeightRequest="34"
+                                    FontSize="10"
+                                    Padding="0"
+                                    Command="{Binding CallContactCommand}"
+                                    CommandParameter="{Binding SiteDetails.ContactNumber}"
+                                    TextColor="White"
+                                    FlexLayout.AlignSelf="Center"
+                                    Text="Call"
+                                    CornerRadius="17"
+                                    BackgroundColor="{StaticResource GreenShade}" />
+
+                        </FlexLayout>
+                    </StackLayout>
+                </FlexLayout>
+            </StackLayout>
+            <Grid VerticalOptions="Start"
+                  ColumnSpacing="0"
+                  Grid.Row="2">
+                <cornerView:PancakeView CornerRadius="0,0,10,0"
+                                        Grid.Column="0"
+                                        Margin="0">
+                    <Button Command="{Binding NavigateToMapsCommand}"
+                            Padding="10"
+                            FontAttributes="Bold"
+                            FontSize="15"
+                            Text="Navigate"
+                            CornerRadius="0"
+                            BackgroundColor="{StaticResource LightShade}"
+                            TextColor="White" />
+                </cornerView:PancakeView>
+                <cornerView:PancakeView CornerRadius="0,0,0,10"
+                                        Grid.Column="1"
+                                        Margin="0">
+                    <Button TextColor="White"
+                            Command="{Binding BeginLoadingCommand}"
+                            Padding="10"
+                            FontAttributes="Bold"
+                            FontSize="15"
+                            Text="Begin Loading"
+                            CornerRadius="0"
+                            BackgroundColor="{StaticResource DarkShade}" />
+                </cornerView:PancakeView>
+            </Grid>
+        </Grid>
+    </Frame>
+</ContentView>

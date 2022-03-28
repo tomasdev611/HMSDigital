@@ -1,0 +1,50 @@
+:host ::ng-deep {
+  .forms-wrapper {
+    height: calc(100vh);
+    overflow-y: auto;
+  }
+  .p-grid-responsive .p-grid {
+    display: block !important;
+    width: 100%;
+  }
+  .p-grid-responsive .p-col-2,
+  .p-grid-responsive .p-col-3,
+  .p-grid-responsive .p-col-4,
+  .p-grid-responsive .p-col-5,
+  .p-grid-responsive .p-col-6,
+  .p-grid-responsive .p-col-7,
+  .p-grid-responsive .p-col-8,
+  .p-grid-responsive .p-col-9,
+  .p-grid-responsive .p-col-10,
+  .p-grid-responsive .p-col-11,
+  .p-grid-responsive .p-col-12 {
+    width: 100%;
+    float: none;
+  }
+  .p-grid.p-grid-pad > .p-grid > div,
+  .custom-col {
+    padding-top: 0.3em !important;
+    padding-bottom: 0.3em !important;
+    margin: 0 !important;
+    &.form-label {
+      text-align: left;
+      margin-top: 10px;
+    }
+  }
+  .ml-20 {
+    margin-left: 0 !important;
+  }
+  @media screen and (max-width: 480px) {
+    .form-section-header {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 15px;
+    }
+    .p-grid.p-grid-pad > .p-grid > div,
+    .custom-col {
+      &.form-label {
+        font-size: 12px;
+      }
+    }
+  }
+}

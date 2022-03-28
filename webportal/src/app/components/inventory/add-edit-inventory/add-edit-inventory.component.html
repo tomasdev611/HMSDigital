@@ -1,0 +1,117 @@
+<div class="sub">
+  <app-body-header
+    displayTitle="Inventory {{ editmode ? 'Edit' : 'Add' }}"
+    backText="Back"></app-body-header>
+  <div class="forms-wrapper">
+    <p-panel header="Inventory Information" [style]="{marginTop: '10px'}">
+      <form [formGroup]="inventoryForm" (ngSubmit)="onSubmitItem()" autocomplete="nope">
+        <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+          <h4 class="form-section-header">General Info</h4>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Item * :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                [(ngModel)]="item"
+                name="item"
+                [autoHighlight]="true"
+                autocomplete="off"
+                [suggestions]="itemsList"
+                field="name"
+                [minLength]="3"
+                dataKey="id"
+                (completeMethod)="searchItems($event)"
+                (onSelect)="itemSelected($event)"
+                (onClear)="clearAutocompleteField('item')"
+                [emptyMessage]="emptyAutocompleteLabel"
+                [disabled]="editmode"
+                [ngModelOptions]="{standalone: true}">
+              </p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid" *ngIf="!editmode || itemIsSerialized">
+            <div class="p-col-2 form-label">Serial Number :</div>
+            <div class="p-col-3">
+              <input
+                pInputText
+                type="text"
+                size="20"
+                id="serial-number"
+                name="serialNumber"
+                formControlName="serialNumber"
+                autocomplete="off"
+                (change)="serialNumberChanged($event)" />
+            </div>
+          </div>
+          <div class="p-grid" *ngIf="!editmode || !itemIsSerialized">
+            <div class="p-col-2 form-label">Count * :</div>
+            <div class="p-col-3">
+              <p-inputNumber
+                name="count"
+                formControlName="count"
+                mode="decimal"
+                autocomplete="off"
+                min="0"
+                [useGrouping]="false">
+              </p-inputNumber>
+            </div>
+          </div>
+          <div class="p-grid" *ngIf="editmode">
+            <div class="p-col-2 form-label">Status * :</div>
+            <div class="p-col-3">
+              <p-dropdown
+                [options]="itemStatus"
+                name="status"
+                formControlName="statusId"
+                placeholder="Select Status">
+              </p-dropdown>
+            </div>
+          </div>
+          <h4 class="form-section-header">Location</h4>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Current Location * :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                [(ngModel)]="location"
+                autocomplete="off"
+                name="location"
+                [autoHighlight]="true"
+                [suggestions]="locations"
+                [field]="locationNameField"
+                [minLength]="1"
+                (onClear)="clearAutocompleteField('location')"
+                (completeMethod)="searchLocation($event)"
+                (onSelect)="locationSelected($event)"
+                [emptyMessage]="emptyAutocompleteLabel"
+                [ngModelOptions]="{standalone: true}">
+              </p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid p-justify-end">
+            <div class="p-col-3">
+              <button
+                *ngIf="editmode && canDelete()"
+                pButton
+                type="button"
+                (click)="deleteInventoryItem()"
+                class="p-button-secondary p-mr-1"
+                label="Delete"
+                icon="pi pi-trash"
+                [disabled]="loading || formSubmit"></button>
+              <button
+                pButton
+                type="submit"
+                label="{{ editmode ? 'Update' : 'Save' }}"
+                icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+                [disabled]="
+                  !inventoryForm.valid ||
+                  formSubmit ||
+                  !(inventoryForm.touched || inventoryForm.dirty)
+                "></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+</div>
+<app-confirm-dialog (accepted)="deleteConfirmed()" #confirmDialog></app-confirm-dialog>

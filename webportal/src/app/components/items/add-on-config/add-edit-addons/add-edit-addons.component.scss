@@ -1,0 +1,95 @@
+.addon-configuration-dialog-footer {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  > button.p-button {
+    margin: auto 5px;
+  }
+}
+
+.configuration-dialog-content {
+  .form-field-group {
+    .form-field-label {
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .form-field {
+      margin-top: 10px;
+    }
+  }
+}
+
+.addon-settings-selector {
+  min-height: 300px;
+}
+
+.primary-fields {
+  border-radius: 5px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  display: flex;
+  margin-bottom: 20px;
+  > div {
+    margin: auto 10px;
+  }
+  div.form-field-group:nth-child(1) {
+    flex-grow: 2;
+    padding-right: 20px;
+    border-right: 1px solid #ccc;
+  }
+  div.form-field-group:nth-child(2) {
+    flex-basis: 200px;
+    width: 200px;
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 0;
+  }
+}
+
+.item-searchbar {
+  margin: auto;
+  width: 300px;
+  ::ng-deep {
+    .hms-search-autocomplete {
+      width: 300px;
+      .p-autocomplete-panel {
+        width: 300px;
+        max-width: 300px;
+        overflow-x: auto;
+        > ul.p-autocomplete-items {
+          width: fit-content;
+        }
+      }
+    }
+  }
+}
+
+.products-list-container {
+  max-height: 250px;
+  overflow: auto;
+  margin: 10px auto;
+  .list-title {
+    padding-left: 20px;
+    font-weight: bold;
+  }
+  > .products-list {
+    > li.empty-list {
+      list-style: none;
+      transform: translateX(-15px);
+      font-style: italic;
+      font-size: 13px;
+      font-weight: 100;
+    }
+    > li {
+      margin: 10px auto;
+      .delete-item-btn {
+        background-color: transparent !important;
+        color: red !important;
+        border: none !important;
+        height: 25px;
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+<div class="sub">
+  <app-body-header
+    displayTitle="Site Member {{ editmode ? 'Edit' : 'Add' }}"
+    backText="Back"></app-body-header>
+  <div class="forms-wrapper">
+    <p-panel header="Member Information" [style]="{marginTop: '10px'}">
+      <form [formGroup]="memberForm" (ngSubmit)="onSubmitMember(memberForm.value)">
+        <div class="p-grid p-grid-responsive p-grid-pad p-fluid">
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Email * :</div>
+            <div class="p-col-4">
+              <p-autoComplete
+                name="email"
+                formControlName="user"
+                [suggestions]="searchedUsers"
+                (completeMethod)="searchUsers($event)"
+                field="email"
+                (onSelect)="setUserFields($event)"
+                (onClear)="clearEmail()"
+                autocomplete="new-email"></p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">First Name :</div>
+            <div class="p-col-3">
+              <input id="firstName" type="text" size="20" pInputText formControlName="firstName" />
+            </div>
+            <div class="p-col-2 form-label">Last Name :</div>
+            <div class="p-col-3">
+              <input id="lastName" type="text" size="30" pInputText formControlName="lastName" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Designation :</div>
+            <div class="p-col-3">
+              <input
+                id="designation"
+                type="text"
+                size="30"
+                pInputText
+                formControlName="designation" />
+            </div>
+            <div class="p-col-2 form-label">Mobile :</div>
+            <div class="p-col-3">
+              <p-inputMask
+                size="20"
+                mask="(999) 999-9999"
+                unmask="true"
+                formControlName="phoneNumber"
+                placeholder="(999) 999-9999"></p-inputMask>
+            </div>
+          </div>
+          <div class="p-grid" *ngIf="!editmode">
+            <div class="p-col-2 form-label">Roles :</div>
+            <div class="p-col-3">
+              <p-multiSelect [options]="siteRoles" formControlName="roleIds"></p-multiSelect>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-10 btn-right">
+              <button
+                pButton
+                class="btn-right"
+                type="submit"
+                label="{{ editmode ? 'Update' : 'Save' }}"
+                icon="pi pi-save"
+                [disabled]="
+                  !((memberForm.touched || memberForm.dirty) && memberForm.valid && !formSubmit)
+                "></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+</div>

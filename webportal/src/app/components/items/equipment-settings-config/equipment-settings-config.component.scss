@@ -1,0 +1,81 @@
+.configuration-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  ul.eq-keys-list {
+    list-style: none;
+    padding-left: 20px;
+    width: 100%;
+    min-height: 150px;
+    li.empty-row {
+      font-size: 15px;
+      font-style: italic;
+      text-align: center;
+      margin-left: -20px;
+    }
+    li.eq-key {
+      margin: 7px 5px;
+      i.pi {
+        margin-right: 0px;
+      }
+      button.eq-delete {
+        color: #e91224 !important;
+        background-color: transparent !important;
+        border: none !important;
+        height: 1.5em;
+        width: 1.5em;
+        border: 1px solid #e91224 !important;
+        border-radius: 50% !important;
+        margin-left: 10px;
+        &:focus {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+.eq-progress-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.eq-configuration-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  > button {
+    margin: 5px;
+  }
+}
+
+.eq-suggestion {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  .eq-subtext {
+    font-size: 12px;
+    font-style: italic;
+  }
+}
+
+.eq-settings-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  .info-text {
+    margin: 0;
+    font-size: 14px;
+    font-style: italic;
+    color: blue;
+    margin: 5px 0;
+  }
+}

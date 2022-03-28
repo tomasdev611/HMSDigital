@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": { "value": "HMSDigitalAppPlanTraining" },
+    "appServicePlanSkuName": { "value": "B2" },
+    "aspNetCoreEnvironment": { "value": "Training" },
+    "dbAdminLogin": { "value": "##SECRET##" },
+    "dbAdminPassword": { "value": "##SECRET##" },
+    "dbName": { "value": "HMSDigital" },
+    "notificationAppAlwaysOn": { "value": true },
+    "notificationAppName": { "value": "hmsd-notification-training" },
+    "notificationHubNamespaceName": { "value": "hmsd-notification-hubs-training" },
+    "notificationHubApnsKeyId": { "value": "##SECRET##" },
+    "notificationHubApnsToken": { "value": "##SECRET##" },
+    "notificationHubApnsEndPoint": { "value": "https://api.push.apple.com:443/3/device" },
+    "notificationHubFCMAPIKey" : { "value": "##SECRET##" },
+    "notificationQueueName": { "value": "notificationqueue" },
+    "sendGridApiKey": { "value": "##SECRET##" },
+    "serviceBusNamespaceName": { "value": "hsmdigitalsbtraining" },
+    "serviceBusNotificationQueueName": { "value": "notificationqueue" },
+    "serviceBusSku": { "value": "Standard" },
+    "sqlserverName": { "value": "hmsdsqlservertraining" },
+    "storageAccountName": { "value": "hmsdstoragetraining" },
+    "storageAccountType": { "value": "Standard_RAGRS" },
+    "twilioKeySecret": { "value": "##SECRET##" },
+    "twilioKeySid": { "value": "##SECRET##" }
+  }
+}

@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Name="orderScanScreen"
+             NavigationPage.BackButtonTitle=""
+             xmlns:controls="clr-namespace:MobileApp.Utils.TemplateSelector"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+             Title="Orders Scan"
+             x:Class="MobileApp.Pages.CommonPages.OrderListScan">
+    <ContentPage.Resources>
+
+        <DataTemplate x:Key="SerializedInventoryTemplate">
+            <Grid Padding="5, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="15" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Margin="10"
+                       IsVisible="{Binding AssetTag , Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                       Text="{Binding AssetTag, StringFormat='Asset Tag: {0}'}"
+                       HorizontalOptions="Start"
+                       FontSize="10"
+                       VerticalOptions="Center"></Label>
+                <Label Grid.Column="1"
+                       Margin="10"
+                       HorizontalTextAlignment="Start"
+                       IsVisible="{Binding SerialNumber , Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                       Text="{Binding SerialNumber, StringFormat='Serial Number: {0}'} "
+                       FontSize="9"
+                       VerticalOptions="Center"></Label>
+                <Label Grid.Column="0"
+                       Margin="10"
+                       FontSize="9"
+                       HorizontalOptions="Start"
+                       IsVisible="{Binding LotNumber, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                       Text="{Binding LotNumber, StringFormat='LotNumber: {0}'}"
+                       VerticalOptions="Center"></Label>
+                <Label Grid.Column="2"
+                       VerticalOptions="Center"
+                       Text="Scanned"
+                       TextColor="{StaticResource GreenShade}"
+                       FontSize="9"
+                       IsVisible="{Binding IsCompleted, Converter={StaticResource InvertedBoolConverter}}" />
+                <Label Grid.Column="2"
+                       VerticalOptions="Center"
+                       Text="Fulfilled"
+                       TextColor="{StaticResource GreenShade}"
+                       FontSize="9"
+                       IsVisible="{Binding IsCompleted}" />
+                <Button HeightRequest="10"
+                        CommandParameter="{Binding ID}"
+                        Padding="0"
+                        Margin="0"
+                        Grid.Column="3"
+                        VerticalOptions="Center"
+                        Text="x"
+                        IsVisible="{Binding IsCompleted, Converter={StaticResource InvertedBoolConverter}}"
+                        TextColor="Black"
+                        FontSize="9"
+                        Command="{Binding BindingContext.UndoScanCommand, Source={x:Reference orderScanScreen}}" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="StandAloneInventoryTemplate">
+            <Grid Padding="5, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="15" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0"
+                       Margin="10"
+                       FontSize="9"
+                       HorizontalOptions="Start"
+                       Text="{Binding QuantityScanned, StringFormat='Quantity Scanned: {0}'}"
+                       IsVisible="{Binding BindingContext.IsStandAlone, Source={x:Reference orderScanScreen}}"
+                       VerticalOptions="Center">
+                </Label>
+                <Label Grid.Column="1"
+                       VerticalOptions="Center"
+                       Text="Scanned"
+                       TextColor="{StaticResource GreenShade}"
+                       HorizontalTextAlignment="End"
+                       FontSize="9"
+                       IsVisible="{Binding IsCompleted, Converter={StaticResource InvertedBoolConverter}}" />
+                <Label Grid.Column="1"
+                       VerticalOptions="Center"
+                       Text="Fulfilled"
+                       HorizontalTextAlignment="End"
+                       TextColor="{StaticResource GreenShade}"
+                       FontSize="9"
+                       IsVisible="{Binding IsCompleted}" />
+                <Button HeightRequest="10"
+                        CommandParameter="{Binding ID}"
+                        Padding="0"
+                        Margin="0"
+                        Grid.Column="2"
+                        VerticalOptions="Center"
+                        Text="x"
+                        IsVisible="{Binding IsCompleted, Converter={StaticResource InvertedBoolConverter}}"
+                        TextColor="Black"
+                        FontSize="9"
+                        Command="{Binding BindingContext.UndoScanCommand, Source={x:Reference orderScanScreen}}" />
+            </Grid>
+        </DataTemplate>
+        <controls:InventoryDataTemplateSelector x:Key="templateSelector"
+                                                SerializedInventoryTemplate="{StaticResource SerializedInventoryTemplate}"
+                                                StandAloneInventoryTemplate="{StaticResource StandAloneInventoryTemplate}" />
+
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="170" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="2*" />
+                </Grid.RowDefinitions>
+                <StackLayout Grid.Row="0" Grid.Column="0" Margin="15,5">
+                    <FlexLayout Direction="Row"
+                                    JustifyContent="SpaceBetween">
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding OrderDetail.OrderNumber, StringFormat='#{0}'}"
+                                   VerticalTextAlignment="End"
+                                   FontAttributes="Bold"
+                                   FontSize="10" />
+                            <templates:OrderTypeLabel OrderTypeId="{Binding OrderDetail.OrderTypeId}"
+                                                         Margin="0" />
+                        </StackLayout>
+                        <Label VerticalOptions="End"
+                                   HorizontalOptions="Center"
+                                   IsVisible="{Binding OrderDetail.IsInfectious}"
+                                   Text="* Infectious"
+                                   TextColor="Red"
+                                   FontSize="12"
+                                   HorizontalTextAlignment="End" />
+                    </FlexLayout>
+                    <FlexLayout JustifyContent="SpaceBetween"
+                                    Direction="Row">
+                        <Label Text="{Binding OrderDetail.ContactPerson}"
+                                   FontAttributes="Bold"
+                                   FontSize="20"
+                                   Grid.Row="1" />
+                        <Button VerticalOptions="Center"
+                                    Grid.Row="1"
+                                    FontAttributes="Bold"
+                                    FontSize="12"
+                                    TextColor="White"
+                                    Padding="0"
+                                    HeightRequest="25"
+                                    Text="CALL"
+                                    Command="{Binding CallContactCommand}"
+                                    CommandParameter="{Binding OrderDetail.ContactNumber}"
+                                    CornerRadius="13"
+                                    HorizontalOptions="Center"
+                                    WidthRequest="65"
+                                    BackgroundColor="{StaticResource GreenShade}"/>
+                    </FlexLayout>
+                    <FlexLayout JustifyContent="SpaceBetween"
+                                    Direction="Row">
+                        <Label Text="{Binding ShippingAddress}"
+                                   Grid.Row="2"
+                                   FontSize="10"
+                                   LineBreakMode="WordWrap"
+                                   VerticalTextAlignment="Center"
+                                   FontAttributes="Bold" />
+                    </FlexLayout>
+                </StackLayout>
+
+                <Grid Padding="15,5" IsEnabled="{Binding OrderDetail.OrderNotes,Converter={StaticResource ListIsNotNullOrEmptyConverter}}"  Grid.Row="1" RowSpacing="0" BackgroundColor="{StaticResource LightBlueShade}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="15"/>
+                    </Grid.RowDefinitions>
+                    <Label Text="Order Notes:"
+                           FontAttributes="Bold"
+                           FontSize="13"
+                           Grid.Column="0"/>
+                    <Label Grid.Column="1" Grid.Row="0" Text="{Binding OrderDetail.OrderNotes[0].Note}" FontSize="12" MaxLines="2"/>
+                    <Label Grid.Column="1" IsVisible="{Binding OrderDetail.OrderNotes,Converter={StaticResource ListIsNotNullOrEmptyConverter}}" Grid.Row="1" Text="...more" VerticalOptions="End" HorizontalOptions="End" FontSize="10" Padding="0" TextColor="{StaticResource LightShade}"/>
+
+                    <Label Grid.Column="1" Grid.Row="0" FontSize="12" Text="No order notes available" LineBreakMode="WordWrap" TextColor="{StaticResource C2D1D9}" IsVisible="{Binding OrderDetail.OrderNotes,Converter={StaticResource ListIsNullOrEmptyConverter}}"/>
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowMoreOrderNotesCommand}"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <Grid IsEnabled="{Binding OrderDetail.PatientNotes,Converter={StaticResource ListIsNotNullOrEmptyConverter}}"  Grid.Row="2" Padding="15,5" RowSpacing="0" BackgroundColor="{StaticResource LightBlueShade}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="15"/>
+                    </Grid.RowDefinitions>
+                    <Label Text="Patient Notes:"
+                           FontAttributes="Bold"
+                           FontSize="13"
+                           Grid.Column="0"/>
+                    <Label Grid.Column="1" Grid.Row="0" Text="{Binding OrderDetail.PatientNotes[0].Note}" FontSize="12" MaxLines="2"/>
+                    <Label Grid.Column="1" IsVisible="{Binding OrderDetail.PatientNotes,Converter={StaticResource ListIsNotNullOrEmptyConverter}}" Grid.Row="1" Text="...more" VerticalOptions="End" HorizontalOptions="End" FontSize="10" Padding="0" TextColor="{StaticResource LightShade}"/>
+
+                    <Label Grid.Column="1" Grid.Row="0" FontSize="12" Text="No patient notes available" LineBreakMode="WordWrap" TextColor="{StaticResource C2D1D9}" IsVisible="{Binding OrderDetail.PatientNotes,Converter={StaticResource ListIsNullOrEmptyConverter}}"/>
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowMorePatientNotesCommand}"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+            </Grid>
+
+            <CollectionView  Grid.Row="1"
+                             ItemsSource="{Binding OrderLineItemsGroup}"
+                             ItemTemplate="{StaticResource templateSelector}"
+                             VerticalOptions="FillAndExpand"
+                             IsGrouped="True"
+                             Margin="20,20,20,0">
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <cornerView:PancakeView HeightRequest="40"
+                                                CornerRadius="15,15,0,0"
+                                                BackgroundColor="{StaticResource LightBlueShade}">
+                            <Grid Padding="10,0"
+                                  VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       FontSize="15"
+                                       Text="{Binding Name}"></Label>
+                                <Label Grid.Column="1"
+                                       Text="{Binding QuantityToFulfill, StringFormat='Quantity: {0}'}"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="Center"></Label>
+                            </Grid>
+                        </cornerView:PancakeView>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+
+                <CollectionView.GroupFooterTemplate>
+                    <DataTemplate>
+                        <Grid RowSpacing="0" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid RowSpacing="0" Grid.Row="0" BackgroundColor="{StaticResource BackgroundShade}" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="3*" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0"
+                                  RowSpacing="0"
+                                  Padding="5,0">
+                                    <Grid.IsVisible>
+                                        <MultiBinding Converter="{StaticResource VariableMultiValueOrConverter}">
+                                            <Binding Path="RequestedAssetTag"
+                                                 Converter="{StaticResource IsNotNullOrEmptyConverter}" />
+                                            <Binding Path="RequestedLotNumber"
+                                                 Converter="{StaticResource IsNotNullOrEmptyConverter}" />
+                                            <Binding Path="RequestedSerialNumber"
+                                                 Converter="{StaticResource IsNotNullOrEmptyConverter}" />
+                                        </MultiBinding>
+                                    </Grid.IsVisible>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label
+                                        Margin="5,0"
+                                        Text="Requested:"
+                                       Grid.Column="0"
+                                       FontSize="9"
+                                       FontAttributes="Bold" />
+                                    <Label Grid.Column="1"
+                                       LineBreakMode="NoWrap"
+                                       Text="{Binding RequestedSerialNumber,StringFormat='Serial number: {0}'}"
+                                       IsVisible="{Binding RequestedSerialNumber,Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                       FontSize="9"
+                                       TextColor="Gray" />
+                                    <Label Grid.Column="2"
+                                       Text="{Binding RequestedAssetTag,StringFormat='Asset tag: {0}'}"
+                                       IsVisible="{Binding RequestedAssetTag,Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                       FontSize="9"
+                                       TextColor="Gray" />
+                                    <Label Grid.Column="1"
+                                       Text="{Binding RequestedLotNumber, StringFormat='Lot number: {0}'}"
+                                       IsVisible="{Binding RequestedLotNumber,Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                       FontSize="9"
+                                       TextColor="Gray" />
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="0" BackgroundColor="{StaticResource  BackgroundShade}" IsVisible="{Binding EquipmentSettings,Converter={StaticResource ListIsNotNullOrEmptyConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Equipment Settings:"  Margin="10,0,0,0" Grid.Column="0" FontSize="10" FontAttributes="Bold"/>
+                                <ListView RowHeight="15" SeparatorVisibility="None" Grid.Column="1" ItemsSource="{Binding EquipmentSettings}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <ViewCell>
+                                                <Grid>
+                                                    <Label Grid.Column="0" FontSize="10" Text="{Binding Key}"/>
+                                                    <Label Grid.Column="1" Text="{Binding Value}" FontSize="10"/>
+                                                </Grid>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                            <Grid Grid.Row="1"
+                                  ColumnSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <cornerView:PancakeView Grid.Row="0"
+                                                        CornerRadius="0,0,15,15"
+                                                        Grid.ColumnSpan="2"
+                                                        BackgroundColor="{StaticResource DarkShade}"
+                                                        HorizontalOptions="FillAndExpand">
+                                    <Button VerticalOptions="End"
+                                            Padding="0,10,20,10"
+                                            FontAttributes="Bold"
+                                            FontSize="15"
+                                            Text="{Binding DispatchType,StringFormat='Add Manually for {0}'}"
+                                            CornerRadius="0"
+                                            TextColor="White"
+                                            BackgroundColor="{StaticResource DarkShade}">
+                                        <Button.Behaviors>
+                                            <xct:EventToCommandBehavior EventName="Clicked"
+                                                                              Command="{Binding BindingContext.AddManuallyCommand, Source={x:Reference orderScanScreen}}"
+                                                                              CommandParameter="{Binding .}" />
+                                        </Button.Behaviors>
+                                        <Button.IsVisible>
+                                            <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                                                <Binding Path="IsStandAlone" />
+                                                <Binding Path="IsCompleted"
+                                                         Converter="{x:StaticResource InvertedBoolConverter}" />
+                                            </MultiBinding>
+                                        </Button.IsVisible>
+                                    </Button>
+                                    <cornerView:PancakeView.IsVisible>
+                                        <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                                            <Binding Path="IsStandAlone" />
+                                            <Binding Path="IsCompleted"
+                                                     Converter="{x:StaticResource InvertedBoolConverter}" />
+                                        </MultiBinding>
+                                    </cornerView:PancakeView.IsVisible>
+                                </cornerView:PancakeView>
+                                <cornerView:PancakeView Grid.Row="0"
+                                                        CornerRadius="0,0,15,15"
+                                                        Grid.ColumnSpan="2"
+                                                        HorizontalOptions="FillAndExpand"
+                                                        BackgroundColor="{StaticResource GreenShade}"
+                                                        IsVisible="{Binding IsCompleted}">
+                                    <Button VerticalOptions="End"
+                                            Padding="0,10,20,10"
+                                            FontAttributes="Bold"
+                                            FontSize="15"
+                                            Text="Completed"
+                                            CornerRadius="0"
+                                            TextColor="White"
+                                            BackgroundColor="{StaticResource GreenShade}">
+                                    </Button>
+                                </cornerView:PancakeView>
+                                <cornerView:PancakeView Grid.Row="0"
+                                                        CornerRadius="0,0,15,0"
+                                                        BackgroundColor="{StaticResource LightShade}"
+                                                        Grid.Column="0">
+                                    <Button VerticalOptions="End"
+                                            FontAttributes="Bold"
+                                            FontSize="13"
+                                            Text="{Binding DispatchType,StringFormat='Scan for {0}'}"
+                                            CornerRadius="0"
+                                            TextColor="White"
+                                            BackgroundColor="{StaticResource LightShade}">
+                                        <Button.Behaviors>
+                                            <xct:EventToCommandBehavior EventName="Clicked"
+                                                                              Command="{Binding BindingContext.ScanAndLoadCommand, Source={x:Reference orderScanScreen}}"
+                                                                              CommandParameter="{Binding .}" />
+                                        </Button.Behaviors>
+                                        <Button.IsVisible>
+                                            <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                                                <Binding Path="IsStandAlone"
+                                                         Converter="{x:StaticResource InvertedBoolConverter}" />
+                                                <Binding Path="IsCompleted"
+                                                         Converter="{x:StaticResource InvertedBoolConverter}" />
+                                            </MultiBinding>
+                                        </Button.IsVisible>
+                                    </Button>
+                                    <cornerView:PancakeView.IsVisible>
+                                        <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                                            <Binding Path="IsStandAlone"
+                                                     Converter="{x:StaticResource InvertedBoolConverter}" />
+                                            <Binding Path="IsCompleted"
+                                                     Converter="{x:StaticResource InvertedBoolConverter}" />
+                                        </MultiBinding>
+                                    </cornerView:PancakeView.IsVisible>
+                                </cornerView:PancakeView>
+                                <cornerView:PancakeView CornerRadius="0,0,0,15"
+                                                        Grid.Column="1"
+                                                        BackgroundColor="{StaticResource DarkShade}">
+                                    <Button VerticalOptions="End"
+                                            FontAttributes="Bold"
+                                            FontSize="15"
+                                            Text="Add Manually"
+                                            CornerRadius="0"
+                                            TextColor="White"
+                                            BackgroundColor="{StaticResource DarkShade}">
+                                        <Button.Behaviors>
+                                            <xct:EventToCommandBehavior EventName="Clicked"
+                                                                              Command="{Binding BindingContext.AddManuallyCommand, Source={x:Reference orderScanScreen}}"
+                                                                              CommandParameter="{Binding .}" />
+                                        </Button.Behaviors>
+                                        <Button.IsVisible>
+                                            <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                                                <Binding Path="IsStandAlone"
+                                                         Converter="{x:StaticResource InvertedBoolConverter}" />
+                                                <Binding Path="IsCompleted"
+                                                         Converter="{x:StaticResource InvertedBoolConverter}" />
+                                            </MultiBinding>
+                                        </Button.IsVisible>
+                                    </Button>
+                                    <cornerView:PancakeView.IsVisible>
+                                        <MultiBinding Converter="{StaticResource VariableMultiValueAndConverter}">
+                                            <Binding Path="IsStandAlone"
+                                                     Converter="{x:StaticResource InvertedBoolConverter}" />
+                                            <Binding Path="IsCompleted"
+                                                     Converter="{x:StaticResource InvertedBoolConverter}" />
+                                        </MultiBinding>
+                                    </cornerView:PancakeView.IsVisible>
+                                </cornerView:PancakeView>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.GroupFooterTemplate>
+            </CollectionView>
+            <Frame  Grid.Row="2"
+                    Margin="15,0,15,15"
+                    Padding="20"
+                    CornerRadius="10"
+                    BackgroundColor="{StaticResource DarkBlueShade}">
+                <Grid Margin="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FlexLayout Grid.Column="0"
+                                HorizontalOptions="Center"
+                                JustifyContent="Center"
+                                VerticalOptions="Center">
+                        <Label Text="{Binding TotalItemsScanned}"
+                               TextColor="White"
+                               FontSize="18"
+                               Grid.Column="0"
+                               FlexLayout.AlignSelf="Center" />
+                        <Label Grid.Column="1"
+                               TextColor="White"
+                               FontSize="18"
+                               Text="/"
+                               FlexLayout.AlignSelf="Center" />
+                        <Label Text="{Binding TotalItemsToScan}"
+                               Grid.Column="2"
+                               TextColor="White"
+                               FontSize="18"
+                               FlexLayout.AlignSelf="Center" />
+                    </FlexLayout>
+                    <FlexLayout JustifyContent="SpaceBetween"
+                                Direction="Row"
+                                VerticalOptions="Center"
+                                Grid.Column="1">
+                        <Label TextColor="White"
+                               VerticalOptions="Center"
+                               FontSize="18"
+                               FlexLayout.AlignSelf="Center"
+                               Text="Items Scanned"
+                               HorizontalTextAlignment="Start" />
+                        <Button IsEnabled="True"
+                                TextColor="White"
+                                BackgroundColor="{StaticResource DarkBlueShade}"
+                                VerticalOptions="Center"
+                                FlexLayout.AlignSelf="Center"
+                                Command="{Binding FinishLoadingCommand}"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                HeightRequest="50"
+                                CornerRadius="15"
+                                Text="Finish" />
+                    </FlexLayout>
+                </Grid>
+            </Frame>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

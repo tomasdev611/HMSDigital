@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.PurchaseOrder.SerializedItemsPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <ContentPage.Content>
+        <StackLayout Margin="15,16" Spacing="15">
+            <Label
+                FontAttributes="Bold"
+                FontSize="16"
+                Text="{Binding SelectedLineItemModel.ItemDescription}"
+                TextColor="{StaticResource PrimaryBlueColor}" />
+            <StackLayout Orientation="Horizontal">
+                <Label
+                    FontSize="14"
+                    Text="Vendor Modal No:"
+                    TextColor="#596167" />
+                <Label
+                    FontSize="14"
+                    Text="{Binding SelectedLineItemModel.ItemId}"
+                    TextColor="#596167" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label
+                    FontSize="14"
+                    Text="Qty Ordered:"
+                    TextColor="#596167" />
+                <Label
+                    FontSize="14"
+                    Text="{Binding SelectedLineItemModel.Quantity}"
+                    TextColor="#596167" />
+            </StackLayout>
+            <StackLayout HorizontalOptions="StartAndExpand" Orientation="Horizontal">
+                <Label
+                    FontSize="14"
+                    Text="Qty Received:"
+                    TextColor="#596167"
+                    VerticalOptions="Center" />
+                <Entry
+                    FontSize="14"
+                    HeightRequest="40"
+                    HorizontalTextAlignment="End"
+                    Keyboard="Numeric"
+                    Text="{Binding SelectedLineItemModel.QuantityRecieved, Mode=TwoWay}"
+                    TextColor="#596167"
+                    VerticalOptions="Center"
+                    WidthRequest="110" />
+            </StackLayout>
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label
+                    FontSize="14"
+                    Text="Scan Asset Tag"
+                    TextColor="#596167"
+                    VerticalOptions="Center" />
+                <Button
+                    BackgroundColor="{StaticResource PrimaryBlueColor}"
+                    Command="{Binding ScanCommand}"
+                    FontSize="14"
+                    Text="Scan"
+                    TextColor="White" />
+            </StackLayout>
+
+            <StackLayout Margin="0,10" BackgroundColor="#EEEFF1">
+                <Grid
+                    Margin="5,0"
+                    ColumnDefinitions="4*,6*"
+                    HeightRequest="40">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="Asset Tag"
+                        TextColor="{StaticResource PrimaryBlueColor}"
+                        VerticalOptions="Center" />
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="Serial Number"
+                        TextColor="{StaticResource PrimaryBlueColor}"
+                        VerticalOptions="Center" />
+                </Grid>
+            </StackLayout>
+
+            <StackLayout
+                Margin="0,10"
+                BackgroundColor="#EEEFF1"
+                BindableLayout.ItemsSource="{Binding AssetTagsModels}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid
+                            Margin="5,0"
+                            ColumnDefinitions="4*,6*"
+                            HeightRequest="40">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="16"
+                                Text="{Binding AssetTag}"
+                                TextColor="{StaticResource PrimaryBlueColor}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontAttributes="Bold"
+                                FontSize="16"
+                                Text="{Binding SerialNumber}"
+                                TextColor="{StaticResource PrimaryBlueColor}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+
+            <Button
+                BackgroundColor="{StaticResource PrimaryBlueColor}"
+                Command="{Binding CloseCommand}"
+                FontSize="14"
+                Text="Receive"
+                TextColor="White" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             IsVisible="{Binding FlashMessageVisible}"
+             xmlns:constants="clr-namespace:MobileApp.Assets.Constants"
+             x:Class="MobileApp.Pages.Templates.FlashMessage">
+  <ContentView.Content>
+      <StackLayout>
+            <Frame BackgroundColor="{StaticResource GreenShade}" 
+                   Margin="15"
+                   HasShadow="False"
+                   Padding="10">
+                <FlexLayout AlignItems="Center">
+                    <Label Text="{Binding FlashMessageText}"
+                           FlexLayout.Grow="1"
+                           TextColor="White" />
+                    <Button TextColor="White"
+                            Text="{x:Static constants:IconCodes.Times}"
+                            BackgroundColor="{StaticResource GreenShade}"
+                            WidthRequest="30"
+                            FontFamily="FA"
+                            Clicked="Dismiss"
+                            HeightRequest="40"/>
+                </FlexLayout>
+            </Frame>
+        </StackLayout>
+  </ContentView.Content>
+</ContentView>

@@ -1,0 +1,78 @@
+<app-modal
+  dialogStyleClass="dispatch-date-modal no-footer"
+  header="Fix Pickup and Delivery Date"
+  [visible]="showFixmodal"
+  *ngIf="showFixmodal"
+  (hide)="closeFixModal($event)"
+  style="width: 42vw !important">
+  <form [formGroup]="dispatchFixForm" (ngSubmit)="submitFix()">
+    <div class="content-container" *ngIf="showFixmodal">
+      <div class="body">
+        <div class="p-grid p-nogutter">
+          <div class="p-grid p-formgrid p-fluid">
+            <div class="p-col-6">
+              <label>Delivery Date</label>
+              <p-calendar
+                [monthNavigator]="true"
+                placeholder="select date and time"
+                (onBlur)="updateDate($event, 'hmsDeliveryDate')"
+                [yearNavigator]="true"
+                [autoZIndex]="false"
+                yearRange="1901:2040"
+                formControlName="hmsDeliveryDate"
+                [panelStyle]="{'z-index': '11005'}"
+                showTime="true"
+                hourFormat="12">
+              </p-calendar>
+            </div>
+            <div class="p-col-6">
+              <label>Actual Pickup Date</label>
+              <p-calendar
+                [monthNavigator]="true"
+                placeholder="select date and time"
+                (onBlur)="updateDate($event, 'pickupDate')"
+                [yearNavigator]="true"
+                [autoZIndex]="false"
+                yearRange="1901:2040"
+                formControlName="pickupDate"
+                [panelStyle]="{'z-index': '11005'}"
+                showTime="true"
+                hourFormat="12">
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid p-formgrid p-fluid p-mt-2 p-mb-3">
+            <div class="p-col-6">
+              <label>Pickup Request Date</label>
+              <p-calendar
+                [monthNavigator]="true"
+                placeholder="select date and time"
+                (onBlur)="updateDate($event, 'hmsPickupRequestDate')"
+                [yearNavigator]="true"
+                [autoZIndex]="false"
+                yearRange="1901:2040"
+                formControlName="hmsPickupRequestDate"
+                [panelStyle]="{'z-index': '11005'}"
+                showTime="true"
+                hourFormat="12">
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <button
+          pButton
+          label="Cancel"
+          (click)="closeFixModal()"
+          class="p-button-secondary"></button>
+        <button
+          pButton
+          label="Submit"
+          type="submit"
+          class="p-btn"
+          [disabled]="dispatchSubmit || checkFormValidity()"></button>
+      </div>
+    </div>
+  </form>
+</app-modal>

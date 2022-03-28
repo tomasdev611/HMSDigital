@@ -1,0 +1,64 @@
+pool:
+  name: Azure Pipelines
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - Report
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      - Common/CoreSDK
+      exclude:
+      - Report/README.md
+pr:
+    branches:
+      include:
+      - dev
+      - e2e
+    paths:
+      include:
+      - Report
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      - Common/CoreSDK
+      exclude:
+      - Report/README.md
+      - Report/Report.Deployment
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: Report/Report.API/Report.API.csproj
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish API'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Report/Report.API/Report.API.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+- task: CopyFiles@2
+  displayName: 'Copy deployment files to Artifacts staging directory'
+  inputs:
+    SourceFolder: Report/Report.Deployment
+    Contents: |
+     *.bat
+     *.json
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

@@ -1,0 +1,5 @@
+:host ::ng-deep {
+  .p-table-scrollable-body {
+    height: calc(100vh - 360px);
+  }
+}

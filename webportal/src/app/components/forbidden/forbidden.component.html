@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="content">
+    <h4>403 - Uh-oh, you do not have access.</h4>
+    <h5>
+      Your account, {{ user?.email }} is not authorized to view this page.
+      <br />
+      You may request access by contacting the admin.
+    </h5>
+    <h5>
+      <a (click)="logout()" class="cursor-pointer">Log out and Log in with different account</a>
+    </h5>
+    <h5 *ngIf="showBack">
+      <a (click)="goBack()" class="cursor-pointer">
+        <i class="pi pi-arrow-left mr-10"></i>Go Back</a
+      >
+    </h5>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+:host ::ng-deep {
+  .p-sidebar {
+    padding: 0;
+    width: 300px;
+    font-size: 16px;
+    overflow: auto;
+    height: 400px;
+    top: 70px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .p-sidebar {
+      width: 250px;
+      font-size: 14px;
+      overflow: auto;
+      height: 250px;
+      top: 60px;
+    }
+  }
+  .profile-image-thumbnail {
+    height: 36px;
+    width: 36px;
+    margin: 0 5px;
+    border-radius: 36px;
+  }
+}
+.username {
+  color: #002049;
+  padding-left: 2em;
+  font-weight: 550;
+  > span {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.contactus {
+  padding-left: 2em;
+}
+.flyout {
+  display: none;
+  flex-direction: column;
+  min-width: 350px;
+  max-width: 350px;
+  width: 0px;
+  right: 0;
+  flex-basis: 500px;
+  background-color: var(--layer-0);
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  height: calc(100vh - 0px);
+  button.close-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: var(--text-color);
+    color: white;
+    border-radius: 50%;
+    padding: 0.5em;
+    border: none;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    > i.pi {
+      align-self: center;
+    }
+  }
+}
+.flyout-open {
+  .flyout {
+    min-width: 350px;
+    display: flex;
+  }
+}
+.contact-info {
+  padding: 1em;
+  > span {
+    display: flex;
+    align-items: center;
+    > span {
+      margin-left: 1em;
+    }
+    > a {
+      color: #000000;
+      text-decoration: underline;
+      margin-left: 1rem;
+    }
+  }
+}

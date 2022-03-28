@@ -1,0 +1,28 @@
+﻿CREATE TABLE [core].[HospiceLocations]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Name] VARCHAR(MAX) NULL, 
+    [HospiceId] int NOT NULL,
+    [SiteId] int NULL DEFAULT NULL,
+    [NetSuiteCustomerId] INT NULL DEFAULT NULL,
+    [AddressId] int NULL DEFAULT NULL,
+    [PhoneNumberId] INT NULL, 
+    [CustomerTypeId] INT NULL, 
+    [Hms2Id] INT NULL,
+    [NetSuiteContractingCustomerId] INT NULL, 
+    [CreatedDateTime] DATETIME2 NOT NULL, 
+    [CreatedByUserId] INT NULL   , 
+    [UpdatedDateTime] DATETIME2 NOT NULL, 
+    [UpdatedByUserId] INT NULL DEFAULT NULL,
+    [IsDeleted] BIT NOT NULL DEFAULT 0, 
+    [DeletedDateTime] DATETIME2 NOT NULL DEFAULT DATEFROMPARTS(1,1,1), 
+    [DeletedByUserId] INT NULL DEFAULT NULL, 
+    CONSTRAINT [FK_HospiceLocations_ToHospices] FOREIGN KEY ([HospiceId]) REFERENCES [core].[Hospices]([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_HospiceLocations_ToUsers_Created] FOREIGN KEY ([CreatedByUserId]) REFERENCES [core].[Users]([Id]),
+    CONSTRAINT [FK_HospiceLocations_ToUsers_Updated] FOREIGN KEY ([UpdatedByUserId]) REFERENCES [core].[Users]([Id]), 
+    CONSTRAINT [FK_HospiceLocations_ToUsers_Deleted] FOREIGN KEY ([DeletedByUserId]) REFERENCES [core].[Users]([Id]), 
+    CONSTRAINT [FK_HospiceLocations_Sites] FOREIGN KEY ([SiteId]) REFERENCES [core].[Sites]([Id]),
+    CONSTRAINT [FK_HospiceLocation_Address] FOREIGN KEY ([AddressId]) REFERENCES [core].[Addresses]([Id]),
+    CONSTRAINT [FK_HospiceLocation_PhoneNumbers] FOREIGN KEY ([PhoneNumberId]) REFERENCES [core].[PhoneNumbers]([Id]),
+    CONSTRAINT [FK_HospiceLocation_CustomerTypes] FOREIGN KEY ([CustomerTypeId]) REFERENCES [core].[CustomerTypes]([Id])
+)

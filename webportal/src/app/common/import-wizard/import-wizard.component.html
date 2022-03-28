@@ -1,0 +1,88 @@
+<p-steps
+  [model]="items"
+  [readonly]="true"
+  [activeIndex]="currentPage"
+  styleClass="iw-steps"></p-steps>
+<p-card [styleClass]="cardClasses">
+  <p-header>
+    <div class="iw-header-container p-grid">
+      <div class="p-grid">
+        <div class="left p-col-6">
+          <button
+            *ngIf="!isLastPage()"
+            pButton
+            class="btn iw-nav-btn"
+            label="Previous"
+            [disabled]="!currentPage || loading"
+            (click)="previousPage()"
+            icon="pi pi-chevron-left"></button>
+          <button
+            *ngIf="isFirstPage()"
+            pButton
+            iconPos="right"
+            class="btn iw-nav-btn"
+            label="Download format"
+            [disabled]="loading"
+            (click)="sampleFile()"
+            icon="pi pi-download"></button>
+        </div>
+        <div class="right p-col-6">
+          <button
+            *ngIf="!isLastPage()"
+            pButton
+            iconPos="right"
+            class="btn iw-nav-btn btn-right"
+            label="Next"
+            [disabled]="isNextDisabled() || loading"
+            (click)="nextPage()"
+            icon="pi pi-chevron-right"></button>
+        </div>
+      </div>
+    </div>
+  </p-header>
+  <ng-container *ngIf="loading; then loadSpinner; else userContent"></ng-container>
+  <ng-template #loadSpinner>
+    <p-progressSpinner
+      [style]="{width: '50px', height: '50px'}"
+      strokeWidth="8"
+      animationDuration=".5s">
+    </p-progressSpinner>
+  </ng-template>
+  <ng-template #userContent>
+    <div class="iw-content-container" [ngSwitch]="currentPage">
+      <p-fileUpload
+        *ngSwitchCase="0"
+        [files]="selectedFiles"
+        (onSelect)="selectFile($event)"
+        [styleClass]="fileClass"
+        auto="true"
+        name="importFile"
+        customUpload="true"
+        showUploadButton="false"
+        (uploadHandler)="uploadFile($event)"
+        accept=".csv"
+        (onRemove)="clearFile()">
+      </p-fileUpload>
+      <app-import-wizard-validator
+        *ngSwitchCase="1"
+        [validRecords]="validRecords"
+        [inValidRecords]="inValidRecords"
+        [tableHeaders]="mappedHeaders"
+        [errors]="errors"
+        [isValid]="isValid">
+      </app-import-wizard-validator>
+      <div *ngSwitchCase="2" class="iw-finish-container">
+        <p>{{ outroMessage }}</p>
+        <i *ngIf="isImportSuccess" class="pi pi-check" style="font-size: 5em; color: green"></i>
+        <i *ngIf="!isImportSuccess" class="pi pi-times" style="font-size: 5em; color: #f8b7bd"></i>
+        <button
+          pButton
+          iconPos="right"
+          class="btn"
+          label="Finish"
+          (click)="CloseWizard()"
+          icon="pi pi-check"></button>
+      </div>
+    </div>
+  </ng-template>
+</p-card>

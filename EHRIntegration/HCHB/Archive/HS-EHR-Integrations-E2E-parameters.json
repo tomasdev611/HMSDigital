@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_HS_EHR_Processor_Function_E2E_name": {
+            "value": null
+        },
+        "storageAccounts_hchbmllpstoragee2e_name": {
+            "value": null
+        },
+        "services_hs_ehr_fhir_api_e2e_name": {
+            "value": null
+        },
+        "virtualNetworks_HS_EHR_HCHB_E2E_vnet_name": {
+            "value": null
+        },
+        "namespaces_HS_EHR_ServiceBusQueue_E2E_name": {
+            "value": null
+        },
+        "virtualMachines_HCHB_MLLP_Listener_VM_E2E_name": {
+            "value": null
+        },
+        "components_HS_EHR_Processor_Function_E2E_name": {
+            "value": null
+        },
+        "networkInterfaces_hchb_mllp_listener_v487_name": {
+            "value": null
+        },
+        "serverfarms_HS_EHR_Function_E2E_AppServicePlan_name": {
+            "value": null
+        },
+        "sites_hs_ehr_hl7_to_fhir_converter_service_e2e_name": {
+            "value": null
+        },
+        "publicIPAddresses_HCHB_MLLP_Listener_VM_E2E_ip_name": {
+            "value": null
+        },
+        "networkSecurityGroups_HCHB_MLLP_Listener_VM_E2E_nsg_name": {
+            "value": null
+        },
+        "components_hs_ehr_hl7_to_fhir_converter_service_e2e_appinsight_name": {
+            "value": null
+        },
+        "smartdetectoralertrules_failure_anomalies___hs_ehr_processor_function_e2e_name": {
+            "value": null
+        },
+        "smartdetectoralertrules_failure_anomalies___hs_ehr_hl7_to_fhir_converter_service_e2e_appinsight_name": {
+            "value": null
+        },
+        "actiongroups_application_insights_smart_detection_externalid": {
+            "value": null
+        }
+    }
+}

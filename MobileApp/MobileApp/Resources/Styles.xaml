@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:controls="clr-namespace:MobileApp.Controls"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" >
+    <Style x:Key="InvalidEntryStyle" TargetType="Entry">
+        <Setter Property="TextColor" Value="Red" />
+    </Style>
+    <Style x:Key="ErrorLabelStyle"
+           TargetType="Label">
+        <Setter Property="TextColor"
+                Value="Red" />
+        <Setter Property="FontSize"
+                Value="Micro" />
+    </Style>
+
+    <Style x:Key="SearchBarStyle" TargetType="controls:SearchEntry">
+        <Setter Property="Margin" Value="16,12"/>
+        <Setter Property="HeightRequest" Value="35"/>
+        <Setter Property="IsTextPredictionEnabled" Value="False"/>
+        <Setter Property="Keyboard" Value="Text"/>
+    </Style>
+</ResourceDictionary>

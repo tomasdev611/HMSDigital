@@ -1,0 +1,65 @@
+<div class="report-container">
+  <div class="p-mt-2 p-d-flex report-row">
+    <div>
+      <app-chart
+        title="Pending Orders"
+        [chartData]="ordersChartData"
+        [tableData]="ordersTableData"
+        (groupingChanged)="pendingGroupingChanged($event)"
+        [totalCount]="ordersCount"
+        [options]="pieChartDataOption"
+        type="doughnut"
+        [tableHeader]="ordersTableHeader"
+        [plugins]="plugin"
+        [groupingOptions]="groupingOptions"
+        [loading]="loadingPendingOrders">
+      </app-chart>
+    </div>
+    <div class="p-ml-2">
+      <app-chart
+        title="Completed Orders"
+        [chartData]="completedOrdersChartData"
+        [tableData]="completedOrdersTable"
+        [options]="pieChartDataOption"
+        type="doughnut"
+        [tableHeader]="completedOrdersTableHeader"
+        [plugins]="plugin"
+        (groupingChanged)="completedGroupingChanged($event)"
+        [loading]="loadingCompletedOrders"
+        [totalCount]="completedOrders">
+      </app-chart>
+    </div>
+    <div class="p-ml-2">
+      <app-chart
+        title="Created pickup orders by"
+        [chartData]="pickupOrdersChartData"
+        [tableData]="pickupOrdersTableData"
+        (groupingChanged)="pickupGroupingChanged($event)"
+        [options]="pieChartDataOption"
+        type="doughnut"
+        [totalCount]="pickupOrdersCount"
+        [tableHeader]="pickupOrdersTableHeader"
+        [plugins]="plugin"
+        [loading]="loadingPickupOrders"
+        [groupingOptions]="pickupGroupingOptions"
+        [showFilterOption]="true"
+        (filterChanged)="pickupFilterChanged($event)">
+      </app-chart>
+    </div>
+  </div>
+  <div class="p-mt-2 p-d-flex report-row">
+    <div class="p-ml-2">
+      <app-chart
+        title="Stacked Bar Test"
+        [chartData]="stackedChartData"
+        [tableData]="stackedTableData"
+        [options]="stackedChartDataOption"
+        type="bar"
+        [tableHeader]="stackedTableHeader"
+        [plugins]="plugin"
+        [loading]="loadingStackedBarData"
+        [showGroupingSelection]="showStackedBarGroupingSelection">
+      </app-chart>
+    </div>
+  </div>
+</div>

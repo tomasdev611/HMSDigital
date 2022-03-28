@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             NavigationPage.HasBackButton="False"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             Title="Profile"
+             x:Class="MobileApp.Pages.Screen.ProfileScreen">
+    <StackLayout BackgroundColor="{StaticResource BackgroundShade}">
+        <FlexLayout JustifyContent="Center"
+                    Margin="0,50">
+            <Label Text="{Binding UserDetails.Name}"
+                   FontAttributes="Bold"
+                   FontSize="Large"
+                   TextColor="Black" />
+        </FlexLayout>
+        <Grid>
+            <StackLayout>
+                <Frame HasShadow="False"
+                   Padding="13"
+                   BackgroundColor="White">
+                    <FlexLayout JustifyContent="SpaceBetween">
+                        <Label Text="Phone number"
+                           FontSize="14"
+                           VerticalOptions="Center"
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                        <Label Text="{Binding PhoneNumber}"
+                           TextColor="Black"
+                           FontAttributes="Bold"
+                           HorizontalOptions="End" />
+                    </FlexLayout>
+                </Frame>
+                <Frame HasShadow="False"
+                   Padding="13"
+                   BackgroundColor="White">
+                    <FlexLayout JustifyContent="SpaceBetween">
+                        <Label Text="Email id"
+                           FontSize="14"
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                        <Label Text="{Binding UserDetails.Email}"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           HorizontalOptions="End" />
+                    </FlexLayout>
+                </Frame>
+                <Frame HasShadow="False"
+                   Padding="13"
+                   BackgroundColor="White">
+                    <StackLayout>
+                        <FlexLayout JustifyContent="SpaceBetween">
+                            <Label Text="Current Site"
+                               VerticalOptions="End"
+                               FontSize="14"
+                               TextColor="Black"
+                               HorizontalOptions="Start" />
+                            <Label Text="{Binding SiteName}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="End"
+                               TextColor="Black" />
+                        </FlexLayout>
+                        <Grid>
+                            <StackLayout Grid.Column="0">
+                                <Label Text="{Binding SiteLatitude, StringFormat='Lat: {0}'}"
+                                    TextColor="Black"
+                                    FontSize="10" />
+                                <Label Text="{Binding SiteLongitude, StringFormat='Long: {0}'}"
+                                    TextColor="Black"
+                                    FontSize="10" />
+                            </StackLayout>
+                            <Label Text="{Binding SiteAddress}"
+                                   Grid.Column="1"
+                                   HorizontalTextAlignment="End"
+                                   LineBreakMode="WordWrap"
+                                   VerticalOptions="Center"
+                                   FontAttributes="Bold"
+                                   FontSize="12"
+                                   TextColor="Black" />
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame HasShadow="False"
+                   Padding="13"                   
+                   BackgroundColor="White">
+                    <StackLayout>
+                        <FlexLayout JustifyContent="SpaceBetween">
+                            <Label Grid.Row="0"
+                               Text="Current Locations"
+                               VerticalOptions="End"
+                               FontSize="14"
+                               TextColor="Black"
+                               HorizontalOptions="Start" />
+                            <Label VerticalOptions="Center"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               Grid.Column="1"
+                               Text="{Binding CurrentLocation}"
+                               TextColor="Black"/>
+                        </FlexLayout>
+                        <FlexLayout JustifyContent="SpaceBetween"
+                                AlignItems="Center">
+                            <StackLayout>
+                                <Label Grid.Column="1"
+                                   Text="{Binding CurrentLatitude, StringFormat='Lat: {0}'}"
+                                   TextColor="Black"
+                                   FontSize="10"
+                                   HorizontalOptions="Start" />
+                                <Label Grid.Column="1"
+                                   Text="{Binding CurrentLongitude, StringFormat='Long: {0}'}"
+                                   TextColor="Black"
+                                   FontSize="10"
+                                   HorizontalOptions="Start" />
+                            </StackLayout>
+
+                        </FlexLayout>
+                    </StackLayout>
+                </Frame>
+                <Frame HasShadow="False"
+                       IsVisible="{Binding ShouldShowVehicle}"
+                       Padding="13"
+                       BackgroundColor="White">
+                    <FlexLayout JustifyContent="SpaceBetween">
+                        <Label Grid.Column="0"
+                               Text="Assigned Truck"
+                               FontSize="14"
+                               TextColor="Black"
+                               HorizontalOptions="Start" />
+                        <Label Grid.Column="1"
+                               Text="{Binding VehicleName}"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               HorizontalOptions="End" />
+                    </FlexLayout>
+                </Frame>
+            </StackLayout>
+            <AbsoluteLayout VerticalOptions="Center"
+                            HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsLoading}" />
+            </AbsoluteLayout>
+        </Grid>
+        <Frame HasShadow="True"
+               Padding="0,2,15,2"
+               Margin="0"
+               CornerRadius="0"
+               BackgroundColor="{StaticResource LightBlueShade}"
+               VerticalOptions="EndAndExpand">
+            <Grid>
+                <Image Source="{xct:ImageResource Id=MobileApp.Assets.Images.appLogo.png}"
+                       Margin="5,0"
+                       Grid.Column="0"
+                       HorizontalOptions="Start" />
+                <Label Grid.Column="1"
+                       x:Name="branchVersion"
+                       FontSize="10"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center" />
+                <Label Grid.Column="2"
+                       Margin="5,12"
+                       Text="Logout"
+                       IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                       FontAttributes="Bold"
+                       TextDecorations="Underline"
+                       HorizontalOptions="End">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
+        </Frame>
+    </StackLayout>
+</ContentPage>

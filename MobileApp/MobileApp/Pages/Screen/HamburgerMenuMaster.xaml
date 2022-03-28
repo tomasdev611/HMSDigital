@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileApp.Pages.Screen.HamburgerMenuMaster"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             Title="Master">
+    <StackLayout BackgroundColor="{StaticResource E6ECF3}">
+
+        <Image 
+               Source="{xct:ImageResource Id=MobileApp.Assets.Images.appLogo.png}"
+               Scale="1.5"
+               HorizontalOptions="Center"
+               Margin="0,60,0,20"/>
+
+        <BoxView Color="LightGray"
+                 HeightRequest="1" />
+
+        <ListView
+                  x:Name="MenuItemsListView"
+                  SeparatorVisibility="None"
+                  BackgroundColor="{StaticResource E6ECF3}"                  
+                  ItemsSource="{Binding MenuItems}">
+            <ListView.Behaviors>
+                <xct:EventToCommandBehavior EventName="ItemTapped"
+                                                  Command="{Binding MenuItemSelectedCommand}"/>
+            </ListView.Behaviors>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Label VerticalOptions="FillAndExpand"
+                                   Padding="30,10"
+                                   HorizontalOptions="FillAndExpand"
+                                   FontAttributes="Bold"
+                                   TextColor="Black"
+                                   FontSize="20"
+                                   VerticalTextAlignment="Center"
+                                   Text="{Binding Title}" />
+
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackLayout Margin="30,10" VerticalOptions="End">
+            <Label Text="{Binding UserName}"
+                   FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Text="Hospice Source"
+                   TextColor="Black" />
+        </StackLayout>
+
+    </StackLayout>
+</ContentPage>

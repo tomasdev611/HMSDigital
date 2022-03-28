@@ -1,0 +1,30 @@
+<div class="p-grid p-nogutter patient-wrapper" *ngIf="patient">
+  <div class="p-grid p-nogutter">
+    <div class="p-col-1 form-label">Patient Name :</div>
+    <div class="p-col-2 form-data">{{ patient?.firstName }} {{ patient?.lastName }}</div>
+    <div class="p-col-2 form-label" *ngIf="patient.hospice">Hospice Name :</div>
+    <div class="p-col-4 form-data" *ngIf="patient.hospice">{{ patient?.hospice?.name }}</div>
+    <a
+      *ngIf="showOrderHistory"
+      class="p-col-2 form-data"
+      [routerLink]="['/patients/edit/' + patient?.id]"
+      [queryParams]="{view: 'order'}"
+      target="_blank"
+      >Order History</a
+    >
+  </div>
+  <div class="p-grid p-nogutter">
+    <div class="p-col-1 form-label">DOB :</div>
+    <div class="p-col-2 form-data">{{ patient?.dateOfBirth | date: 'LL/dd/yyyy' }}</div>
+    <div class="p-col-2 form-label">Hospice Location :</div>
+    <div class="p-col-4 form-data">{{ patient?.hospiceLocation?.name }}</div>
+    <a
+      *ngIf="showInventory"
+      class="p-col-2 form-data"
+      [routerLink]="['/patients/edit/' + patient?.id]"
+      target="_blank"
+      [queryParams]="{view: 'inventory'}"
+      >Current Inventory</a
+    >
+  </div>
+</div>

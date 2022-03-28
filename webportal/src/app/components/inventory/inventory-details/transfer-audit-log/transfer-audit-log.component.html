@@ -1,0 +1,13 @@
+<div class="sub">
+  <app-body-header displayTitle="Inventory Item Details" backText="Back"></app-body-header>
+  <app-table-virtual-scroll
+    [list]="allLogs"
+    [pageSize]="pageSize"
+    [loading]="logsLoading"
+    [pageLoadNextOffset]="10"
+    filterFields="[]"
+    [headers]="logsHeaders"
+    [continuationTokenLazyLoading]="true"
+    (fetchNext)="getInventoryAuditLogs()">
+  </app-table-virtual-scroll>
+</div>

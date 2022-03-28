@@ -1,0 +1,29 @@
+:host ::ng-deep {
+  .p-tabview {
+    height: calc(100vh - 180px);
+    .p-tabview-panels {
+      .p-tabview-panel {
+        height: 100%;
+      }
+      height: 100%;
+    }
+    .p-table {
+      height: 90%;
+      .p-table-scrollable-wrapper {
+        .p-table-scrollable-view {
+          height: 100%;
+        }
+        height: 100%;
+      }
+    }
+    .p-table-scrollable-body {
+      // overflow: visible;
+      height: 100% !important;
+      max-height: calc(100vh - 320px);
+    }
+  }
+  .mappings-grid {
+    position: relative;
+    bottom: -2em;
+  }
+}

@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms" xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+             x:Class="MobileApp.Pages.CommonPages.BarcodeScanner">
+
+    <ContentPage.Content>
+        <RelativeLayout BackgroundColor="Black">
+            <zxing:ZXingScannerView
+                 IsVisible="{Binding ShouldEnableCamScanner}"        
+                 IsScanning="True"
+                 ScanResultCommand="{Binding OnDeviceScanCompleteCommand}"     
+                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5}"
+            />
+            <ActivityIndicator Color="White"
+                               IsVisible="true"
+                               IsRunning="{Binding IsLoading}"
+                               RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45}"
+                               RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.4}"
+                               Scale="2" />
+            <Label TextColor="Green"
+                   Text="{Binding ScannedTag, StringFormat='Scanned Tag: {0}'}"
+                   IsVisible="{Binding ScannedTag, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                   HorizontalOptions="Center"
+                   RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.55}" />
+            <Label TextColor="Red"
+                   x:Name="errorText"
+                   FontSize="12"
+                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                   HorizontalOptions="Center"
+                   RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.6}" />
+            <Grid BackgroundColor="White"
+                  RowSpacing="0"
+                  RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.65}"
+                  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.35}"
+                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3*" />
+                </Grid.RowDefinitions>
+                <Label Text="Scan Inventory"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       FontSize="20"
+                       HorizontalOptions="Center"
+                       Grid.Row="0" />
+                <Grid Grid.Row="1">
+                    <Label Text="Item Name:"
+                           HorizontalOptions="End"
+                           FontAttributes="Bold" />
+                    <Label Text="{Binding InventoryDetails.Item.Name}"
+                           FontSize="13"
+                           HorizontalOptions="Start"
+                           Grid.Column="1" />
+                </Grid>
+                <Grid Grid.Row="3">
+                    <Label Text="Serial Number: "
+                           HorizontalOptions="End"
+                           FontAttributes="Bold" />
+                    <Label Text="{Binding InventoryDetails.SerialNumber}"
+                           FontSize="13"
+                           HorizontalOptions="Start"
+                           Grid.Column="1" />
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Label Text="Asset Tag: "
+                           HorizontalOptions="End"
+                           FontAttributes="Bold" />
+                    <Label Text="{Binding InventoryDetails.AssetTagNumber}"
+                           FontSize="13"
+                           HorizontalOptions="Start"
+                           Grid.Column="1" />
+                </Grid>
+                <Button Margin="10"
+                        Grid.Row="4"
+                        FontSize="15"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                        x:Name="finishScanning"
+                        BackgroundColor="{StaticResource GreenShade}"
+                        CornerRadius="15"
+                        Text="Done"
+                        Command="{Binding FinishScanningCommand}"
+                        TextColor="White" />
+            </Grid>
+        </RelativeLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,6 @@
+<app-filters
+  [filterConfiguration]="filterConfigs"
+  (filter)="filterPatient($event)"
+  (filterBarHidden)="removeFilterConf()"
+  (filterBarVisible)="buildfilterConf()"
+  (autocompleteSearch)="searchField($event)"></app-filters>

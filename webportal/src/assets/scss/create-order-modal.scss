@@ -1,0 +1,327 @@
+.hms-dialog {
+  padding: 2em 5em;
+  .header {
+    display: flex;
+    justify-content: center;
+    font-size: 25px;
+    font-weight: 600;
+  }
+  .order-selections {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-start;
+
+    .p-button {
+      background-color: #002049 !important;
+      justify-content: center;
+      border: none !important;
+      width: 100% !important;
+      border-radius: 3px !important;
+      padding: 1em;
+      margin: 10px 0;
+      &:not(.p-highlight) {
+        background-color: #f7f7f7 !important;
+      }
+      &.p-highlight {
+        color: #ffffff !important;
+      }
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+  .body {
+    display: flex;
+    > div {
+      margin: 15px 0;
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: center;
+
+    > button {
+      width: 150px;
+      margin: 1em;
+    }
+  }
+}
+
+.order-dialog {
+  .body {
+    > div {
+      padding: 0.5em;
+      &:first-child {
+        margin-right: 0.5em;
+      }
+    }
+    .order-type-list {
+      min-width: 400px;
+      flex-direction: column;
+      align-content: center;
+      .p-col {
+        flex-grow: 0;
+      }
+    }
+    .patients-list {
+      min-width: 400px;
+      .patient-list-item {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        > span {
+          margin: 0 0.3em;
+        }
+        > i {
+          position: absolute;
+          right: 0;
+          font-size: 11px;
+          bottom: 0;
+          max-width: 60%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding-right: 3px;
+        }
+      }
+      > div.p-grid:first-child {
+        &::after {
+          display: none;
+        }
+      }
+      .co-patient-search {
+        margin: 0.5em 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .co-patients-list {
+        height: 250px;
+        .p-progress-spinner {
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      .searchbar-wrapper {
+        width: 100%;
+      }
+      .p-listbox {
+        width: 400px;
+        margin-top: 1em;
+        border: none;
+        font-size: 14px;
+        .p-listbox-list {
+          .p-listbox-item {
+            height: 50px;
+            display: flex !important;
+            align-items: center;
+            margin: 0.5em 0;
+            border-radius: 5px;
+            background-color: #f7f7f7 !important;
+            &.p-highlight {
+              background-color: #002049 !important;
+              box-shadow: none;
+            }
+          }
+        }
+      }
+      .co-patient-filters {
+        margin-top: 0.2em;
+        width: 100%;
+        .p-grid {
+          .p-grid {
+            padding-left: 0;
+            padding-right: 0;
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            justify-content: stretch;
+            > span {
+              display: none;
+            }
+            > div {
+              flex-grow: 3;
+              flex-shrink: 1;
+              .p-datepicker,
+              .p-multiselect-panel {
+                left: revert !important;
+                right: 0;
+              }
+            }
+            > button {
+              &.clear-filter {
+                width: 20px;
+                height: 20px;
+                margin-right: 0;
+                margin-left: 0;
+              }
+            }
+          }
+        }
+      }
+      .sub-section {
+        font-size: 11px;
+      }
+      .fix-list-item {
+        .p-listbox-item {
+          height: 64px !important;
+        }
+      }
+    }
+    .fix-list {
+      .co-patients-list {
+        height: 280px;
+      }
+      .p-listbox {
+        width: 600px;
+      }
+    }
+  }
+  .p-dialog-content {
+    .content-container {
+      .body {
+        .select-patient-container {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        }
+        .patients-list {
+          flex-direction: column;
+          .p-grid {
+            ::afer {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+    // padding: 2em 5em !important;
+    .co-add-patient {
+      border: none !important;
+      box-shadow: none;
+      &:focus {
+        box-shadow: none !important;
+        outline: none;
+      }
+      > span {
+        &.p-button-icon-left {
+          color: #c1d82f;
+        }
+      }
+    }
+    .order-label {
+      font-size: 18px;
+      color: #002049;
+    }
+  }
+
+  .p-dialog-draggabble {
+    min-width: 1000px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .order-dialog {
+    .p-dialog-content {
+      padding: 1.5em 3em !important;
+      width: 70vw;
+      .order-label {
+        font-size: 18px;
+        text-align: center;
+      }
+    }
+    .body {
+      .order-type-list {
+        min-width: auto;
+      }
+      > div {
+        padding: 0;
+        &:first-child {
+          margin-right: 0;
+        }
+      }
+      .patients-list {
+        min-width: unset;
+        margin-top: 10px;
+        .p-listbox {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .hms-dialog {
+    .header {
+      font-size: 22px;
+    }
+    .body {
+      justify-content: center;
+      > div {
+        margin: 0 0;
+      }
+    }
+  }
+}
+@media screen and (max-width: 480px) {
+  .order-dialog {
+    .p-dialog-content {
+      padding: 1em 2em !important;
+      width: 80vw;
+      .order-label {
+        font-size: 16px;
+        text-align: center;
+      }
+    }
+    .body {
+      .order-type-list {
+        min-width: auto;
+      }
+      > div {
+        padding: 0;
+        &:first-child {
+          margin-right: 0;
+        }
+      }
+      .patients-list {
+        .select-patient-container {
+          display: flex;
+        }
+        .p-listbox {
+          .p-listbox-list {
+            .p-listbox-item {
+              height: 50px;
+            }
+          }
+        }
+        .co-patients-list {
+          .p-grid {
+            .p-grid {
+              > button {
+                &.clear-filter {
+                  width: 20px;
+                  height: 20px;
+                  margin-right: 0;
+                  margin-left: 0;
+                  margin-top: 3px;
+                  margin-bottom: 3px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .hms-dialog {
+    .header {
+      font-size: 18px;
+    }
+    .body {
+      > div {
+        margin: 0 0;
+      }
+    }
+  }
+}

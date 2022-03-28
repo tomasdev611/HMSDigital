@@ -1,0 +1,93 @@
+<div [ngClass]="{'flyout-open': detailsViewOpen}">
+  <app-body-header displayTitle="Subscription Items" backText="Back"></app-body-header>
+  <app-table-virtual-scroll
+    [list]="subscriptionItemResponse?.records"
+    [pageSize]="subscriptionItemResponse?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    [totalRecords]="subscriptionItemResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="subscriptionHeaders"
+    [pageNumber]="subscriptionItemResponse?.pageNumber"
+    [totalPage]="subscriptionItemResponse?.totalPageCount"
+    [selection]="true"
+    (fetchNext)="fetchNext($event)"
+    (rowSelected)="itemSelected($event)">
+  </app-table-virtual-scroll>
+  <div class="flyout">
+    <button class="close-icon" (click)="closeItemDetails()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-main">
+      <div class="flyout-label">
+        <span class="flyout-title">{{ selectedItem?.name }}</span>
+      </div>
+      <div class="subscription-detail">
+        <div class="item">
+          <span>Id</span>
+          <span>{{ selectedItem?.id }}</span>
+        </div>
+        <div class="item">
+          <span>NetSuite Subscription Item Id</span>
+          <span>{{ selectedItem?.netSuiteSubscriptionItemId }}</span>
+        </div>
+        <div class="item">
+          <span>NetSuite Customer Id</span>
+          <span>{{ selectedItem?.netSuiteCustomerId }}</span>
+        </div>
+        <div class="item">
+          <span>Item Description</span>
+          <span>{{ selectedItem?.itemDescription }}</span>
+        </div>
+        <div class="item">
+          <span>Rate Type</span>
+          <span>{{ selectedItem?.rateType }}</span>
+        </div>
+        <div class="item">
+          <span>Rate Plan</span>
+          <span>{{ selectedItem?.ratePlan }}</span>
+        </div>
+        <div class="item">
+          <span>Start Date</span>
+          <span>{{ selectedItem?.startDate | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>End Date</span>
+          <span>{{ selectedItem?.endDate | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>Bill In Arrears</span>
+          <span>{{ selectedItem?.billInArrears }}</span>
+        </div>
+        <div class="item">
+          <span>Charge Schedule Used</span>
+          <span>{{ selectedItem?.chargeScheduleUsed }}</span>
+        </div>
+        <div class="item">
+          <span>Currency</span>
+          <span>{{ selectedItem?.currency }}</span>
+        </div>
+        <div class="item">
+          <span>Exclude Charges From Billing When</span>
+          <span>{{ selectedItem?.excludeChargesFromBillingWhen }}</span>
+        </div>
+        <div class="item">
+          <span>Pro Ration Type</span>
+          <span>{{ selectedItem?.proRationType }}</span>
+        </div>
+        <div class="item">
+          <span>IsInactive</span>
+          <span>{{ selectedItem?.isInactive }}</span>
+        </div>
+        <div class="item">
+          <span>Created Date Time</span>
+          <span>{{ selectedItem?.createdDateTime | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>Last Modified Date Time</span>
+          <span>{{ selectedItem?.lastModifiedDatetime | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

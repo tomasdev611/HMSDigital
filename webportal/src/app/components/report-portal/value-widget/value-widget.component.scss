@@ -1,0 +1,25 @@
+.value-widget-container {
+  position: relative;
+  border: 1px solid #e6e6e9;
+  box-sizing: border-box;
+  border-radius: 12px;
+  min-height: 157px;
+  min-width: 330px;
+  color: #002049;
+  padding-top: 16px;
+  padding-left: 16px;
+  .title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .container {
+    position: absolute;
+    top: 45%;
+    display: flex;
+    justify-content: left;
+    font-weight: bold;
+    font-size: 44px;
+    line-height: 32px;
+    width: 100%;
+  }
+}

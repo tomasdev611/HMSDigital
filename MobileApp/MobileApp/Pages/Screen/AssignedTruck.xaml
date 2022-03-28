@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.Screen.AssignedTruck">
+
+    <Grid Margin="10">
+
+        <StackLayout Grid.Row="0" VerticalOptions="End" Margin="0,0,0,10">
+            <Label HorizontalOptions="Center" Text="Hello" FontSize="35" />
+            <Label HorizontalOptions="Center" Text="{Binding DriverName}" FontAttributes="Bold" FontSize="35"/>
+        </StackLayout>
+
+        <StackLayout Grid.Row="1" VerticalOptions="End">
+            <Label IsVisible="{Binding IsVehicleAssigned, Converter={StaticResource InvertedBoolConverter}}" Text="No truck Assigned" HorizontalOptions="Center" HorizontalTextAlignment="Center" Margin="20" FontSize="25" />
+
+            <Label Text="(CVN NUMBER)" HorizontalOptions="Center" IsVisible="{Binding IsVehicleAssigned}"/>
+            <Label Text="{Binding DriverDetails.CurrentVehicle.Cvn}" FontSize="30" HorizontalOptions="Center" FontAttributes="Bold" />
+            <Label Text="You have been assigned this truck for today" IsVisible="{Binding IsVehicleAssigned}" HorizontalTextAlignment="Center" Margin="5" FontSize="25" />
+        </StackLayout>
+
+        <ActivityIndicator IsRunning="{Binding IsLoading}" HorizontalOptions="Center"/>
+
+        <Button x:Name="truckAccept"
+                    IsEnabled="True"
+                    Grid.Row="2"
+                    IsVisible="{Binding OrderCompleted, Converter={StaticResource InvertedBoolConverter}}"
+                    Text="Accept"
+                    Command="{Binding AcceptTruckCommand}"
+                    BackgroundColor="{StaticResource GreenShade}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    VerticalOptions="End"/>
+
+        <StackLayout Grid.Row="2" IsVisible="{Binding OrderCompleted}" VerticalOptions="End" x:Name="completedFrame" >
+            <Label Text="You have completed all the orders assigned to this truck for today" HorizontalOptions="Center" HorizontalTextAlignment="Center" Margin="20" FontSize="15" />
+
+            <Grid Margin="10,5">
+                <Button Grid.Column="0" CornerRadius="5" Text="Drop it Off" BackgroundColor="{StaticResource DarkShade}" TextColor="White" FontAttributes="Bold"/>
+                <Button Text="Keep it" CornerRadius="5" Grid.Column="1" BackgroundColor="{StaticResource LightShade}" TextColor="White" FontAttributes="Bold"/>
+            </Grid>
+        </StackLayout>
+
+    </Grid>
+</ContentPage>

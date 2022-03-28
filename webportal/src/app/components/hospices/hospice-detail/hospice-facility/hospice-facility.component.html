@@ -1,0 +1,80 @@
+<div class="p-grid p-nogutter p-jc-end mb-10">
+  <div class="p-col-4 btn-right">
+    <button
+      pButton
+      class="btn-right"
+      [routerLink]="['/hospice/' + hospiceId + '/facilities/add']"
+      label="Add"
+      icon="pi pi-plus"
+      [disabled]="facilitiesLoading"
+      *ngIf="hasPermission('Facility', 'Create')"></button>
+    <button
+      pButton
+      class="btn-right"
+      [routerLink]="['/hospice/' + hospiceId + '/facilities/import']"
+      label="Import"
+      style="margin-right: 10px"
+      icon="pi pi-upload"
+      [disabled]="facilitiesLoading"
+      *ngIf="hasPermission('Facility', 'Create')"></button>
+  </div>
+</div>
+
+<app-table-virtual-scroll
+  [list]="facilityResponse?.records"
+  [pageSize]="facilityResponse?.pageSize"
+  [loading]="facilitiesLoading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="facilityResponse?.totalRecordCount"
+  filterFields="[]"
+  [headers]="facilitiesHeaders"
+  [pageNumber]="facilityResponse?.pageNumber"
+  [totalPage]="facilityResponse?.totalPageCount"
+  [selection]="true"
+  (actionBtnHandler)="fetchPatients($event?.object)">
+</app-table-virtual-scroll>
+
+<p-sidebar
+  [(visible)]="showPatients"
+  position="right"
+  [baseZIndex]="10000"
+  [style]="{width: '28em'}"
+  [dismissible]="true"
+  [showCloseIcon]="false">
+  <button class="close-icon" (click)="showPatients = false">
+    <i class="pi pi-times"></i>
+  </button>
+  <div class="flyout-label">
+    <span>Assigned Patients</span>
+  </div>
+  <p-table
+    #dt
+    [value]="patients"
+    class="flyout-table"
+    dataKey="id"
+    [rowHover]="true"
+    [responsive]="true"
+    [scrollable]="true"
+    [loading]="patientsLoading">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="p-pl-3">Patient</th>
+        <th style="width: 30%" class="p-pl-3">Status</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-patient>
+      <tr class="p-selectable-row">
+        <td class="cursor-pointer p-pl-3">
+          <p class="patient-title" [routerLink]="['/patients/edit/' + patient.id]">
+            {{ patient.firstName }} {{ patient.lastName }}
+          </p>
+        </td>
+        <td style="width: 30%" class="p-pl-3">
+          <span class="patient-status" [ngClass]="{active: patient.active}">
+            {{ patient.active ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-sidebar>

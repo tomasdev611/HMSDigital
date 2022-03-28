@@ -1,0 +1,16 @@
+@media screen and (max-width: 768px) {
+  .p-tabview.p-tabview-top .p-tabview-nav {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+}
+form {
+  .p-grid {
+    margin: 0;
+    .p-inputtext,
+    .p-calendar {
+      flex: 1;
+    }
+  }
+}

@@ -1,0 +1,327 @@
+<div class="dispatch" [ngClass]="{'flyout-open': detailsViewOpen}">
+  <div class="p-helper-clearfix">
+    <div class="p-grid p-justify-between dispatch-header no-margin">
+      <div class="p-col-9 no-padding">
+        <div class="p-grid p-justify-between no-margin">
+          <div class="p-justify-center">
+            <span class="back-button pi pi-arrow-left icon" (click)="goBack()"></span>
+          </div>
+          <div>
+            <span class="badge">{{ getCount('Partial Fulfillment') }}</span> PARTIAL FULFILLMENT
+            ORDERS
+          </div>
+          <div>
+            <span class="badge">{{ getCount('Completed') }}</span> COMPLETED ORDERS
+          </div>
+          <div>
+            <span class="badge">{{ getCount('Planned') }}</span> ORDERS PENDING
+          </div>
+        </div>
+      </div>
+      <div class="p-col-2 no-padding">
+        <span class="btn-right"
+          ><span class="badge">{{ dispatchInsRes.length }}</span> ORDERS ASSIGNED</span
+        >
+      </div>
+    </div>
+  </div>
+  <div class="p-grid no-margin no-padding">
+    <div class="p-col-8 calendar">
+      <div class="top-bar">
+        <p-calendar
+          [monthNavigator]="true"
+          [yearNavigator]="true"
+          placeholder="MM/DD/YYYY"
+          yearRange="1940:2040"
+          [inputStyle]="{display: 'none'}"
+          [styleClass]="'dispatch-date-selection'"
+          hourFormat="12"
+          [showIcon]="true"
+          [(ngModel)]="viewDate"
+          (onSelect)="onChangeOrderDate($event)"
+          icon="pi pi-calendar icon"
+          [minDate]="today">
+        </p-calendar>
+        <span
+          class="cursor-pointer label"
+          mwlCalendarToday
+          [(viewDate)]="viewDate"
+          (click)="onChangeDayView()">
+          {{ isToday(viewDate) ? 'Today' : (viewDate | date: 'fullDate') }}
+        </span>
+      </div>
+      <app-dispatch-scheduler
+        *ngIf="!loading && trucks && trucks.length > 0"
+        [viewDate]="viewDate"
+        [events]="events"
+        [trucks]="trucks"
+        (eventTimesChanged)="eventDropped($event)"
+        (truckChanged)="truckChanged($event)"
+        (changeDroppedIndex)="activeDroppedIndex($event)"
+        (optimize)="getOptimizedRoutes($event)"
+        (assignToTruck)="getTruckAssignment($event)"
+        (showOrderDetails)="showOrderDetails($event)">
+      </app-dispatch-scheduler>
+      <p-progressSpinner
+        [class.scheduler]="!loading && loadingScheduler"
+        *ngIf="loading || loadingScheduler">
+      </p-progressSpinner>
+      <h5 *ngIf="!loading && trucks?.length === 0">No trucks available.</h5>
+    </div>
+    <div class="p-col-4">
+      <div class="p-grid map-orders-container">
+        <div class="p-col-12 no-padding map-view">
+          <div id="orderMap"></div>
+        </div>
+        <div
+          class="p-d-flex p-justify-center p-my-2"
+          *ngIf="driverOptimizationFeatureFlag"
+          style="width: 100%">
+          <button
+            pButton
+            (click)="openOrdersSelection()"
+            [disabled]="loading || loadingScheduler"
+            label="Optimize"
+            *ngIf="orders.length > 0"></button>
+          <button
+            pButton
+            class="p-ml-3"
+            (click)="showPossibleTime()"
+            label="Check Drivers Availability"></button>
+        </div>
+        <div
+          class="p-col-12 no-padding draggable-list"
+          mwlDroppable
+          (drop)="removeFromScheduler($event.dropData.event)"
+          dragOverClass="drag-over">
+          <app-dispatch-list [orders]="orders" [activeView]="'assignView'"></app-dispatch-list>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-order-flyout
+    [currentOrder]="currentOrder"
+    [fulfilledItems]="fulfilledItems"
+    [accessPatientProfile]="true"
+    (closeFlyout)="closeOrderDetails($event)"></app-order-flyout>
+
+  <app-modal
+    header="Confirm order assignment"
+    [visible]="assignOrderVisible"
+    (hide)="closeAssignOrderPreview()"
+    class="no-footer">
+    <div class="schedule-wrapper mono text">
+      <h3>
+        Kindly confirm that you want to assign the following order to truck
+        {{ eventsForTruck[0]?.meta?.truck?.name }}
+      </h3>
+      <div class="schedule current">
+        <div *ngFor="let event of eventsForTruck" class="schedule-item">
+          <span class="item-title">{{ event.title }}</span>
+          <span class="duration">
+            {{ event.start | date: 'shortTime' }} - {{ event.end | date: 'shortTime' }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid route-opt">
+      <div class="p-grid p-justify-end">
+        <button
+          pButton
+          label="Cancel"
+          (click)="closeAssignOrderPreview()"
+          [disabled]="loadingRouteOptimzer"
+          icon="pi pi-times"></button>
+        <button
+          pButton
+          label="Confirm"
+          (click)="assignOrderToTruck()"
+          [disabled]="loadingRouteOptimzer"
+          icon="pi pi-save"></button>
+      </div>
+    </div>
+  </app-modal>
+
+  <app-modal
+    header="Select drivers and orders"
+    [visible]="selectOrdersVisible"
+    (hide)="closeOrdersSelection()"
+    #selectOrdermodal
+    dialogStyleClass="driver-optimize-selection-modal">
+    <div class="spinner-container">
+      <p-progressSpinner
+        *ngIf="selectOrdersVisible && optimizeLoading"
+        fill="none"
+        animationDuration=".5s">
+      </p-progressSpinner>
+    </div>
+    <div>
+      <div class="select-header p-d-flex p-align-center p-p-2 p-mb-3">
+        <h4 class="p-mt-0 p-mb-0">Select Drivers</h4>
+        <div class="p-ml-3 p-d-flex">
+          <p-checkbox
+            [(ngModel)]="selectAllTrucks"
+            [binary]="true"
+            (onChange)="selectAllTrucksOptimization($event)"></p-checkbox>
+          <strong class="p-ml-2">Select All</strong>
+          <p *ngIf="selectedTrucks.length > 0" class="no-margin p-ml-2">
+            {{ selectedTrucks.length }} trucks selected
+          </p>
+        </div>
+        <div *ngIf="selectedTrucks.length > 5" class="p-ml-3 error">
+          You can not include more than 5 Drivers for optimization.
+        </div>
+      </div>
+      <div class="p-mb-2">
+        * Drivers with already assigned orders cannot be included in the optimization.
+      </div>
+      <div *ngFor="let truck of trucks">
+        <div class="p-d-flex p-mb-2">
+          <p-checkbox
+            [(ngModel)]="truck.optimizeSelected"
+            [disabled]="truck.hasAssignedOrders"
+            [binary]="true"
+            (onChange)="selectTruckOptimization($event, truck)">
+          </p-checkbox>
+          <strong [ngClass]="truck.hasAssignedOrders ? 'p-ml-4 disabled-truck' : 'p-ml-4'">{{
+            truck.cvn
+          }}</strong>
+          <span [ngClass]="truck.hasAssignedOrders ? 'p-ml-4 disabled-truck' : 'p-ml-4'">{{
+            truck.currentDriverName
+          }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-mt-3" style="width: 60vw">
+      <div class="select-header p-d-flex p-align-center p-p-2 p-mb-3">
+        <h4 class="p-mt-0 p-mb-0">Select Orders</h4>
+        <div class="p-ml-3 p-d-flex">
+          <p-checkbox
+            [(ngModel)]="selectAllOrders"
+            [binary]="true"
+            (onChange)="selectAllOrdersOptimization($event)"></p-checkbox>
+          <strong class="p-ml-2">Select All</strong>
+          <p *ngIf="selectedOrders.length > 0" class="no-margin p-ml-2">
+            {{ selectedOrders.length }} orders selected
+          </p>
+        </div>
+      </div>
+      <div *ngFor="let order of orders">
+        <div class="p-d-flex p-align-baseline p-mb-2 dispatch">
+          <p-checkbox
+            [(ngModel)]="order.optimizeSelected"
+            [binary]="true"
+            (onChange)="selectOrderOptimization($event, order)"
+            class="p-mr-4"></p-checkbox>
+          <app-dispatch-list-item
+            class="p-grid no-margin"
+            [order]="order"
+            [activeView]="'mapView'"></app-dispatch-list-item>
+        </div>
+      </div>
+    </div>
+    <div class="p-d-flex p-justify-end">
+      <button
+        pButton
+        (click)="optimizeOrders()"
+        [disabled]="
+          optimizeLoading ||
+          selectedTrucks.length === 0 ||
+          selectedTrucks.length > 5 ||
+          selectedOrders.length === 0
+        ">
+        {{ rescheduleOrderPassed ? 'Optimize' : 'Next' }}
+      </button>
+    </div>
+  </app-modal>
+
+  <app-modal
+    header="Check Reschedulable Orders"
+    [visible]="reschedulableOrderVisbile"
+    (hide)="closeCheckRescheduleOrderModal()"
+    #checkRescheduleOrderModal
+    dialogStyleClass="driver-optimize-selection-modal">
+    <p>Unable to optimize the follow orders. Please verify that the orders are correct.</p>
+    <div class="p-d-flex" style="width: 60vw">
+      <div class="p-mt-0" class="reschedule-available-time p-mr-3">
+        <h4>Available Times Of Drivers</h4>
+        <div *ngFor="let truck of trucksAvailableTimes" class="p-d-flex p-flex-column p-mb-2">
+          <div>
+            <strong>- {{ truck.cvn }}</strong>
+            <span class="p-ml-4">{{ truck.currentDriverName }}</span>
+          </div>
+          <div *ngFor="let time of truck.availableTimes" class="p-ml-2 p-mt-1 available-time">
+            {{ time.start | date: 'h:mm a, MMM d' }} - {{ time.end | date: 'h:mm a, MMM d' }}
+          </div>
+        </div>
+      </div>
+      <div class="p-mt-0" class="reschedule-order-container">
+        <div class="p-d-flex">
+          <h4>Unassigned Orders</h4>
+          <button pButton label="Reschedule Orders" class="p-m-3"></button>
+        </div>
+        <div *ngFor="let order of orders">
+          <div class="p-d-flex p-align-baseline p-mb-2 dispatch">
+            <app-dispatch-list-item
+              class="p-grid no-margin"
+              [order]="order"
+              [activeView]="'mapView'"></app-dispatch-list-item>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+
+  <app-modal
+    header="Confirm to change order dates"
+    [visible]="orderDateChangeVisible"
+    #changeOrderDateModal
+    (hide)="closeOrderDateChangeModal()">
+    <p>
+      Some selected orders have a different order date than today.
+      <br />
+      Do you want to change the order date of them?
+    </p>
+    <div class="p-d-flex p-justify-between">
+      <button pButton (click)="confirmOrdersDateChange()" label="Yes"></button>
+      <button pButton (click)="performOptimization()" label="No"></button>
+    </div>
+  </app-modal>
+
+  <app-modal
+    header="Optimization Status"
+    [visible]="optimizationStatusModalVisible"
+    #optimizationStatusModal
+    (hide)="closeOptimizationStatusModal()">
+    <div *ngIf="routeOptimizerResponse?.unUsedTrucks?.length > 0">
+      <strong>Following trucks are unused for optimization.</strong>
+      <div
+        *ngFor="let truck of routeOptimizerResponse.unUsedTrucks"
+        class="p-d-flex p-flex-column p-mt-2">
+        <div>
+          <strong>- {{ truck.cvn }}</strong>
+          <span class="p-ml-4">{{ truck.currentDriverName }}</span>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="routeOptimizerResponse?.unAssignedOrders?.length > 0"
+      style="width: 60vw"
+      class="p-mt-3">
+      <strong
+        >Unable to optimize the follow orders. Please verify that the orders are correct</strong
+      >
+      <div *ngFor="let order of routeOptimizerResponse?.unAssignedOrders">
+        <div class="p-d-flex p-align-baseline p-mt-2 dispatch">
+          <app-dispatch-list-item
+            class="p-grid no-margin"
+            [order]="order"
+            [activeView]="'mapView'"></app-dispatch-list-item>
+        </div>
+      </div>
+    </div>
+    <div class="p-d-flex p-justify-end p-mt-2">
+      <button pButton (click)="closeOptimizationStatusModal()" label="Close"></button>
+    </div>
+  </app-modal>
+</div>

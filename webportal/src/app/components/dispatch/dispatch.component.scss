@@ -1,0 +1,80 @@
+:host ::ng-deep {
+  .p-inputgroup {
+    width: auto;
+  }
+  .p-component {
+    font-size: 14px;
+  }
+  .p-dropdown .p-dropdown-label {
+    min-width: 6.5em;
+  }
+  .p-dataview .p-dataview-content {
+    height: 10%;
+    margin-top: 3em;
+    margin-left: 0.7em;
+    border: none;
+    background-color: transparent;
+  }
+  .selected-order-info {
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    padding: 0 0.5em 0 0.8em;
+    margin-bottom: -2em;
+    width: 100%;
+    font-size: large;
+    &.mapView {
+      width: 33.33% !important;
+    }
+  }
+  .map-view {
+    height: 78%;
+    display: flex;
+    margin-top: 2.7em;
+  }
+  #orderMap {
+    background: grey;
+    padding-left: 2em;
+    height: 78vh;
+    width: 60.5vw;
+    margin-left: 1em;
+    margin-right: -1em;
+  }
+  .p-paginator {
+    text-align: center;
+    .p-paginator-right-content {
+      margin-left: 1em;
+      font-size: 1.2em;
+      position: absolute;
+      left: 0%;
+      &:hover {
+        background: grey;
+      }
+    }
+    .p-paginator-left-content {
+      margin-right: 1em;
+      font-size: 1.2em;
+      position: absolute;
+      right: 0%;
+      &:hover {
+        background: grey;
+      }
+    }
+    .p-paginator-current {
+      color: #ffffff;
+      margin-left: 6em;
+    }
+  }
+  .show-only-section {
+    .back-button {
+      color: #ffffff;
+      font-size: 16px;
+    }
+  }
+  .p-selectbutton .p-button.p-highlight {
+    background-color: #007ad9 !important;
+    border-color: #007ad9 !important;
+    color: #ffffff !important;
+  }
+}

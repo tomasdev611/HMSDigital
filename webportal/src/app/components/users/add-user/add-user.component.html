@@ -1,0 +1,97 @@
+<div class="sub">
+  <app-body-header displayTitle="User Add" backText="Back"> </app-body-header>
+  <div class="forms-wrapper">
+    <p-panel header="User Information" [style]="{marginTop: '10px'}">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmitUser(userForm.value)">
+        <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+          <div class="p-grid">
+            <div class="p-col-10 btn-right">
+              <button
+                pButton
+                class="btn-right"
+                type="submit"
+                label="Save"
+                icon="pi pi-save"
+                [disabled]="
+                  !(
+                    (userForm.touched || userForm.dirty) &&
+                    userForm.valid &&
+                    !formSubmit &&
+                    userType !== 'Hospice'
+                  )
+                "></button>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">First Name :</div>
+            <div class="p-col-3">
+              <input id="firstName" type="text" size="20" pInputText formControlName="firstName" />
+            </div>
+            <div class="p-col-2 form-label">Last Name :</div>
+            <div class="p-col-3">
+              <input id="lastName" type="text" size="30" pInputText formControlName="lastName" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Email :</div>
+            <div class="p-col-3">
+              <input id="email" type="text" size="20" pInputText formControlName="email" />
+            </div>
+            <div class="p-col-2 form-label">Mobile :</div>
+            <div class="p-col-3">
+              <p-inputMask
+                size="20"
+                mask="(999) 999-9999"
+                unmask="true"
+                formControlName="phoneNumber"
+                placeholder="(555) 010-0100"></p-inputMask>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Type :</div>
+            <div class="p-col-4" [style]="{marginTop: '9px'}">
+              <p-radioButton
+                name="userType"
+                [value]="'Internal'"
+                label="Internal"
+                [(ngModel)]="userType"
+                [ngModelOptions]="{standalone: true}">
+              </p-radioButton>
+              <p-radioButton
+                name="userType"
+                [value]="'Hospice'"
+                label="Hospice"
+                [(ngModel)]="userType"
+                [ngModelOptions]="{standalone: true}"
+                [style]="{marginLeft: '1em'}"></p-radioButton>
+              <p-radioButton
+                name="userType"
+                [value]="'DME'"
+                label="DME"
+                [(ngModel)]="userType"
+                [ngModelOptions]="{standalone: true}"
+                [style]="{marginLeft: '1em'}"></p-radioButton>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div *ngIf="sites && userType">
+        <app-user-role-list
+          [assignedUserRoles]="assignedUserRoles"
+          (addUserRole)="addUserRole($event)"
+          *ngIf="userType !== 'Hospice'"
+          (deleteUserRole)="removeUserRole($event)"
+          [roleType]="userType">
+        </app-user-role-list>
+        <div class="hospice-member" *ngIf="userType === 'Hospice'">
+          <h5>
+            Please use
+            <a class="cursor-pointer" [routerLink]="['/hospice']">Hospice Member Management </a>
+            to add Hospice users.
+          </h5>
+          <h5></h5>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+</div>

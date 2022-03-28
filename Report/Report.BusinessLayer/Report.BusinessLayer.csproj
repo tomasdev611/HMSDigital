@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>HMSDigital.Report.BusinessLayer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ChartJSCore" Version="1.5.8" />
+    <PackageReference Include="LinqKit" Version="1.1.26" />
+    <PackageReference Include="Sieve" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.BusinessLayer\Common.BusinessLayer.csproj" />
+    <ProjectReference Include="..\..\Common\Common.SDK\Common.SDK.csproj" />
+    <ProjectReference Include="..\Report.Data\Report.Data.csproj" />
+    <ProjectReference Include="..\Report.ViewModels\Report.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

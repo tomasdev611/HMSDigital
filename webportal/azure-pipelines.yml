@@ -1,0 +1,110 @@
+pool:
+  name: Azure Pipelines
+  demands: npm
+  vmImage: 'ubuntu-latest'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - webportal
+      exclude:
+      - webportal/README.md
+pr:
+    branches:
+      include:
+      - dev
+      - e2e
+    paths:
+      include:
+      - webportal
+      exclude:
+      - webportal/README.md
+
+steps:
+- task: PowerShell@2
+  displayName: Determine target branch
+  inputs:
+      targetType: 'inline'
+      script: |
+        Write-Host "Env:BUILD_SOURCEBRANCHNAME = $Env:BUILD_SOURCEBRANCHNAME"
+        Write-Host "Env:BUILD_REASON = $Env:BUILD_REASON"
+        $TargetBranch = $Env:BUILD_SOURCEBRANCHNAME
+        if($env:BUILD_REASON -eq 'PullRequest')
+        {
+        Write-Host "Env:SYSTEM_PULLREQUEST_TARGETBRANCH = $env:SYSTEM_PULLREQUEST_TARGETBRANCH"
+        $TargetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+        }
+        Write-Host "Target branch is $TargetBranch"
+        switch($TargetBranch) {
+        'dev' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]dev"; }
+        'e2e' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]e2e"; }
+        'training' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]training"; }
+        'release' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]production"; }
+        default {Write-Host "##vso[task.setvariable variable=hmsEnvironment]NONE"; }
+        }
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    workingDir: webportal
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm run style-check'
+  inputs:
+    command: custom
+    workingDir: webportal
+    verbose: false
+    customCommand: 'run style-check'
+
+- task: Npm@1
+  displayName: 'npm run lint'
+  inputs:
+    command: custom
+    workingDir: webportal
+    verbose: false
+    customCommand: 'run lint --  --format=stylish'
+
+- task: Npm@1
+  displayName: 'npm run test'
+  inputs:
+    command: custom
+    workingDir: webportal
+    verbose: false
+    customCommand: 'run test -- --watch=false --browsers=ChromeHeadless --code-coverage'
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results junit/TESTS*.xml'
+  inputs:
+    testResultsFiles: 'junit/TESTS*.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/webportal'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage from/coverage/cobertura-coverage.xml'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/webportal/coverage/cobertura-coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/webportal/coverage'
+
+- task: Npm@1
+  displayName: 'npm build $(hmsEnvironment)'
+  inputs:
+    command: custom
+    workingDir: webportal
+    verbose: false
+    customCommand: 'run build -- --configuration=$(hmsEnvironment)'
+
+- task: ArchiveFiles@2
+  displayName: 'Archive webportal\dist\webportal'
+  inputs:
+    rootFolderOrFile: 'webportal/dist/webportal'
+    includeRootFolder: false
+    archiveFile: '$(Build.ArtifactStagingDirectory)/webportal.$(hmsEnvironment).zip'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

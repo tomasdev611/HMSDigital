@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             NavigationPage.BackButtonTitle=""
+             BackgroundColor="{StaticResource BackgroundColor}"
+             Title="LoadList"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileApp.Pages.CommonPages.ItemsListView">
+    <StackLayout VerticalOptions="FillAndExpand">
+        <ActivityIndicator x:Name="loader"
+                           IsRunning="{Binding IsLoading}" />
+        <ScrollView Margin="5,10"
+                    VerticalOptions="FillAndExpand">
+            <ListView SeparatorVisibility="None"
+                      x:Name="listView"
+                      BackgroundColor="White"
+                      HasUnevenRows="True"
+                      ItemsSource="{Binding ItemsList}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame CornerRadius="10"
+                                   Margin="10"
+                                   Padding="15"
+                                   BackgroundColor="White">
+                                <Grid Padding="10,0"
+                                      ColumnSpacing="0"
+                                      BackgroundColor="White">
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="100" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Text="{Binding ItemName}"
+                                               Grid.Column="0"
+                                               FontSize="15"
+                                               HorizontalOptions="Start"
+                                               VerticalOptions="Center" />
+                                        <Label Grid.Column="1"
+                                               Margin="2"
+                                               Text="{Binding Quantity,StringFormat='Quantity {0}'}"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="End"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource DarkShade}" />
+                                    </Grid>
+                                </Grid>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+    </StackLayout>
+</ContentPage>

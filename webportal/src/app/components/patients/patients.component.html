@@ -1,0 +1,180 @@
+<div [ngClass]="{'flyout-open': detailsViewOpen}">
+  <div class="patient-table hms-table">
+    <app-body-header
+      displayTitle="Patients"
+      [listCount]="patientResponse?.totalRecordCount"
+      actionBtnUrl="./add"
+      actionBtnText="Add a Patient"
+      [showSearchBar]="false">
+      <app-patients-filters
+        class="patient-filters"
+        (filter)="filterPatientsBySearch($event)"></app-patients-filters>
+    </app-body-header>
+    <div class="status-toggle-filter">
+      <strong><small>Pending Patients Only</small></strong>
+      <p-inputSwitch
+        class="ml-10 mr-10"
+        [(ngModel)]="filterPatientStatus"
+        (onChange)="filterPatientByStatus($event)">
+      </p-inputSwitch>
+    </div>
+    <app-table-virtual-scroll
+      #patientsTable
+      [list]="patientResponse?.records"
+      [pageSize]="patientRequest?.pageSize"
+      [loading]="loading"
+      [pageLoadNextOffset]="10"
+      [totalRecords]="patientResponse?.totalRecordCount"
+      filterFields="[]"
+      [headers]="headers"
+      [pageNumber]="patientResponse?.pageNumber || 0"
+      scrollHeightCustom="calc(100vh - 232px)"
+      [totalPage]="patientResponse?.totalPageCount || 0"
+      [selection]="true"
+      (fetchNext)="nextPatients($event)"
+      (rowSelected)="patientSelected($event)"
+      (sort)="sortPatients($event)"
+      (actionBtnHandler)="showOrdering($event?.object)">
+    </app-table-virtual-scroll>
+  </div>
+  <div class="flyout">
+    <button class="close-icon" (click)="closeOrderDetails()">
+      <i class="pi pi-times"></i>
+    </button>
+
+    <div class="flyout-main-details">
+      <div class="flyout-label">
+        <span class="flyout-title">{{ currentPatientDetails?.name }}</span>
+        <div
+          *ngIf="isInternalUser && currentPatientDetails?.uniqueId"
+          class="unique-id"
+          (click)="copyToClipBoard(currentPatientDetails.uniqueId)"
+          [pTooltip]="'Copy'"
+          tooltipPosition="bottom">
+          <span>Patient ID</span>
+          <span> {{ currentPatientDetails.uniqueId }}<i class="pi pi-copy"></i> </span>
+        </div>
+
+        <span *ngIf="isInternalUser && currentPatientDetails?.creatorName" class="creator-name">
+          {{ currentPatientDetails.creatorName }}
+        </span>
+      </div>
+      <div class="patient-profile">
+        <div
+          *ngFor="let address of currentPatientDetails?.patientAddress; index as i"
+          class="flyout-detail-element p-mt-0">
+          <div class="flyout-detail-label">Address {{ i + 1 }}</div>
+          <div class="flyout-detail-value">
+            {{
+              address?.address.addressLine1 +
+                ', ' +
+                address?.address.city +
+                ', ' +
+                address?.address?.state +
+                ' ' +
+                address?.address.zipCode
+            }}
+          </div>
+        </div>
+        <div
+          *ngFor="let facility of currentPatientDetails?.patientFacilityAddress; index as i"
+          class="flyout-detail-element">
+          <div class="flyout-detail-label">Facility Address {{ i + 1 }}</div>
+          <div class="flyout-detail-value">
+            {{
+              facility?.addressLine1 +
+                ', ' +
+                facility?.city +
+                ', ' +
+                facility?.state +
+                ' ' +
+                facility?.zipCode
+            }}
+          </div>
+        </div>
+        <div
+          *ngFor="let number of currentPatientDetails?.phoneNumbers; index as i"
+          class="flyout-detail-element">
+          <div class="flyout-detail-label">{{ number.numberType }} Number</div>
+          <div class="flyout-detail-value">{{ formatPhoneNumber(number.number) }}</div>
+        </div>
+        <div class="flyout-detail-element">
+          <div class="flyout-detail-label">Height</div>
+          <div class="flyout-detail-value">{{ currentPatientDetails?.patientHeight }} cm</div>
+        </div>
+        <div class="flyout-detail-element">
+          <div class="flyout-detail-label">Weight</div>
+          <div class="flyout-detail-value">{{ currentPatientDetails?.patientWeight }} lbs</div>
+        </div>
+        <div class="flyout-detail-element">
+          <div class="flyout-detail-label">Hospice Location</div>
+          <div class="flyout-detail-value">{{ currentPatientDetails?.hospice }}</div>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <button
+          type="button"
+          pButton
+          label="View Order History"
+          [routerLink]="['/patients/edit/' + currentPatientDetails?.id]"
+          [queryParams]="{view: 'order'}"
+          class="p-button-order"></button>
+      </div>
+    </div>
+    <div class="flyout-patient-notes">
+      <h3 class="flyout-patient-notes-label">PATIENT NOTES</h3>
+      <div class="notes-container">
+        <div *ngFor="let note of currentPatientDetails?.patientNotes">
+          <div class="note-item">
+            {{ note.note }}
+          </div>
+          <div class="note">
+            <a class="ml-10">{{ note.createdDateTime | date: 'MMM d, y, h:mm a' }}</a>
+            <a>{{ note.createdByUserName }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flyout-inventory">
+      <div class="flyout-inventory-title">
+        <div>Current Inventory</div>
+        <div>{{ patientInventoryResponse?.totalRecordCount }} Items</div>
+      </div>
+      <div *ngIf="!inventoryLoading" class="inventory-container">
+        <div *ngFor="let inventory of groupedInventories" class="inventory-item">
+          <div class="inventory-item-list">
+            <span>{{ inventory?.itemName }}</span>
+            <div *ngFor="let item of inventory">
+              <span class="asset-tag">{{ item.assetTagNumber }}</span>
+            </div>
+          </div>
+          <div>{{ inventory?.totalQuantity }}</div>
+        </div>
+        <div class="inventory-paginator" *ngIf="patientInventoryResponse.totalPageCount !== 0">
+          <div>
+            Page {{ patientInventoryResponse?.pageNumber }} of
+            {{ patientInventoryResponse?.totalPageCount }}
+          </div>
+          <div>
+            <span
+              class="pi pi-caret-left paginator"
+              *ngIf="patientInventoryResponse.pageNumber > 1"
+              (click)="inventoryPagePrevious()"></span>
+            <span
+              class="pi pi-caret-right paginator"
+              *ngIf="
+                patientInventoryResponse.pageNumber !== patientInventoryResponse.totalPageCount
+              "
+              (click)="inventoryPageNext()"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-create-order-modal #createordermodal [patientContext]="orderingPatient">
+</app-create-order-modal>
+<app-confirm-dialog
+  (accepted)="confirmAccepted()"
+  (rejected)="confirmRejected()"
+  #confirmDialog></app-confirm-dialog>

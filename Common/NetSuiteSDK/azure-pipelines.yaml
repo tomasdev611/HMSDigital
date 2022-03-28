@@ -1,0 +1,46 @@
+pool:
+  name: Azure Pipelines
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+  major: 1
+  minor: $[format('{0:yy}', pipeline.startTime)]
+  patch: $[format('{0:MMdd}', pipeline.startTime)]
+  build: $[counter(variables['build.reason'], 0)]
+trigger:
+    branches:
+      include:
+      - dev
+    paths:
+      include:
+      - Common/NetSuiteSDK
+      exclude:
+      - Common/NetSuiteSDK/README.md
+pr: none
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: 'Common\NetSuiteSDK\NetSuiteSDK.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
+  inputs:
+    command: 'custom'
+    projects: 'Common\NetSuiteSDK\NetSuiteSDK.csproj'
+    custom: 'pack'
+    arguments: '-o $(Build.ArtifactStagingDirectory) /p:Version=$(major).$(minor).$(patch).$(build) /p:Configuration=release --verbosity Detailed'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet push'
+  inputs:
+    command: push
+    publishVstsFeed: '902dc6c4-e674-46d7-8d6a-1683cf95a3fe'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()

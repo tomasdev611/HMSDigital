@@ -1,0 +1,24 @@
+<p-tabView (onChange)="onTabChange($event)">
+  <p-tabPanel header="Input Mappings" [selected]="mappingView === 'input'">
+    <app-input-mappings
+      [fields]="fields"
+      (save)="onSave($event)"
+      [mappings]="inputMappings"
+      [mappingList]="inputMappingList"
+      [dataTypes]="dataTypes"
+      (cancel)="onCancel()">
+    </app-input-mappings>
+  </p-tabPanel>
+  <p-tabPanel header="Output Mappings" [selected]="mappingView === 'output'">
+    <app-output-mappings
+      [fields]="fields"
+      (save)="onSave($event)"
+      [mappings]="outputMappings"
+      [mappingList]="outputMappingList"
+      [dataTypes]="dataTypes"
+      (cancel)="onCancel()">
+    </app-output-mappings>
+  </p-tabPanel>
+</p-tabView>
+
+<app-confirm-dialog (accepted)="cancelConfirmed()" #confirmDialog></app-confirm-dialog>

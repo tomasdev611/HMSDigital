@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"            
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.Screen.InventoryLoad">
+
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand">
+            <Grid Margin="20,10,0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+                <RadioButton Grid.Row="0" Content="Load Inventory" TextColor="Black" FontAttributes="Bold" IsChecked="{Binding IsLoadSelected}"/>
+                <RadioButton Content="Drop Inventory" Grid.Row="1" TextColor="Black" FontAttributes="Bold" IsChecked="{Binding IsDropSelected}"/>
+                <StackLayout Grid.Row="2" IsVisible="{Binding IsLocationPresent, Converter={StaticResource InvertedBoolConverter}}">
+                    <Label Text="Select location from here" />
+                    <Picker Title="Select Location"
+                                FlexLayout.Grow="1"
+                                Margin="0"
+                                HeightRequest="50"
+                                ItemsSource="{Binding LocationList}"                                
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedLocation}"
+                                FontSize="Medium">
+                    </Picker>
+                </StackLayout>
+            </Grid>
+            <Label Text="Enter tag here to load inventory manually" FontSize="15" Margin="20,20,0,0"/>
+            <Grid BackgroundColor="White"
+                  Padding="20"
+                  RowSpacing="10" VerticalOptions="Start">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <Entry IsVisible="true"
+                       FontSize="15"
+                       VerticalOptions="FillAndExpand"
+                       Placeholder="Asset Tag or Serial Number"
+                       Text="{Binding SerialNumber}"
+                       Grid.Row="0" />
+            </Grid>
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                       TextColor="Red"
+                       FontSize="13"
+                       Margin="10" />
+
+            <Grid VerticalOptions="End">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Text="{Binding ButtonActionText,StringFormat='Scan &amp; {0}'}"
+                        IsEnabled="True"
+                        CornerRadius="10"
+                        Margin="10,0,10,0"
+                        WidthRequest="150"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        Grid.Row="0"
+                        BackgroundColor="{StaticResource LightShade}"
+                        Grid.Column="0"
+                        Command="{Binding ScanInventoryCommand}" />
+                <Button
+                        IsEnabled="True"
+                        Margin="0,0,10,0"
+                        WidthRequest="150"
+                        Grid.Row="0"
+                        Text="{Binding ButtonActionText,StringFormat='{0} Manually'}"
+                        CornerRadius="10"
+                        TextColor="White"
+                        Grid.Column="1"
+                        VerticalOptions="End"
+                        FontAttributes="Bold"
+                        Command="{Binding GetInventoryCommand}"
+                        BackgroundColor="{StaticResource DarkShade}"/>
+
+                <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding SuccessMessage}"
+                   IsVisible="{Binding SuccessMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                       TextColor="Green"
+                       FontSize="15"
+                       Margin="10"
+                       HorizontalTextAlignment="Center"/>
+            </Grid>
+
+            <Frame Padding="0" IsVisible="{Binding IsInventoryAvailable}" VerticalOptions="End" CornerRadius="15" Margin="10">
+                <StackLayout>
+                    <cornerView:PancakeView CornerRadius="20,20,0,0" HeightRequest="30" Padding="5" BackgroundColor="{x:StaticResource LightBlueShade}">
+                        <Label HorizontalTextAlignment="Center" VerticalOptions="Center" Text="Scanned Item Details"/>
+                    </cornerView:PancakeView >
+                    <Grid BackgroundColor="White"
+                          Margin="10"
+                          RowSpacing="0"
+                          HorizontalOptions="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Margin="5" FontSize="13" Text="{Binding InventoryDetails.Item.Name, StringFormat='Item Name: {0}'}"
+                           HorizontalOptions="Start" />
+
+                        <Label FontSize="13"  Margin="5" Grid.Row="1" Text="{Binding InventoryDetails.SerialNumber, StringFormat='Serial Number: {0}'}"
+                           HorizontalOptions="Start"
+                           />
+                        <Label FontSize="13" Grid.Row="2"
+                              Margin="5" Text="{Binding InventoryDetails.AssetTagNumber, StringFormat='Asset tag Number: {0}'}"
+                           HorizontalOptions="Start"/>
+                    </Grid>
+                    <cornerView:PancakeView CornerRadius="0,0,15,15" BackgroundColor="{x:StaticResource GreenShade}">
+                        <Button Text="{Binding ButtonActionText,StringFormat='Confirm &amp; {0}'}"                                              
+                       Command="{Binding LoadInventoryCommand}"
+                        IsVisible="{Binding IsInventoryAvailable}"                                            
+                                                TextColor="White"
+                        FontAttributes="Bold"
+                        BackgroundColor="{StaticResource GreenShade}" />
+                    </cornerView:PancakeView>
+                </StackLayout>
+            </Frame>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                   RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5}"
+                                   RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

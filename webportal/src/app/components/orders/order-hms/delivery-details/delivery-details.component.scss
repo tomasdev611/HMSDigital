@@ -1,0 +1,25 @@
+.address-wrapper {
+  background-color: #edf1f4;
+  width: 100%;
+}
+.dropdown-panel {
+  width: 100%;
+}
+:host ::ng-deep {
+  .order-label {
+    text-align: start !important;
+    margin-left: 0.5em;
+  }
+}
+
+.empty-address-note {
+  font-style: italic;
+  font-weight: 500;
+}
+
+.edit-address-link {
+  float: right;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+}

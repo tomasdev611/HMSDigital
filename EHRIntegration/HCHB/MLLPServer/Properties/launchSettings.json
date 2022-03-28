@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "MLLPServer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+:host ::ng-deep {
+  .p-autocomplete {
+    border: 1px solid #5c6270 !important;
+    border-radius: 5px;
+    input.p-inputtext {
+      border: none;
+      box-shadow: none;
+      // width: 300px;
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .p-autocomplete-dropdown.p-button {
+      background-color: #ffffff !important;
+      border: none !important;
+      color: #848484 !important;
+      box-shadow: none;
+      width: 2.357rem;
+    }
+  }
+  .p-dropdown {
+    .p-dropdown-label {
+      font-size: 16px;
+      min-width: 8em;
+    }
+  }
+}

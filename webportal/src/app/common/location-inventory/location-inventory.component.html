@@ -1,0 +1,25 @@
+<div class="p-grid p-m-0 p-pl-3" *ngIf="selectedVehicle">
+  <div class="p-grid">
+    <div class="p-col-2">Driver Name :</div>
+    <div class="p-col-4">
+      {{ selectedVehicle?.currentDriverName ? selectedVehicle?.currentDriverName : ' - ' }}
+    </div>
+    <div class="p-col-2">VIN :</div>
+    <div class="p-col-4">{{ selectedVehicle?.vin }}</div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-2">CVN :</div>
+    <div class="p-col-4">{{ selectedVehicle?.cvn }}</div>
+    <div class="p-col-2">License Plate :</div>
+    <div class="p-col-4">{{ selectedVehicle?.licensePlate }}</div>
+  </div>
+</div>
+<app-table
+  [list]="inventoryResponse?.records"
+  rows="25"
+  [loading]="loading"
+  [paginate]="false"
+  [showPaginator]="false"
+  [headers]="inventoryHeaders"
+  (sort)="sortInventory($event)"
+  [getRowClassType]="'inventory'"></app-table>

@@ -1,0 +1,84 @@
+:host ::ng-deep {
+  .hero-content {
+    height: 46px;
+    position: relative;
+    background-color: #eaeaea;
+    > span {
+      font-size: 1.2em;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+  }
+  .p-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+  }
+  .p-card {
+    height: 100%;
+    font-size: 14px;
+  }
+  .p-card-body {
+    padding: 10px;
+    .p-card-title {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #eaeaea;
+      padding: 0.4em;
+      height: 44px;
+      font-size: 1em;
+      font-weight: bold;
+      margin-bottom: 0em;
+    }
+    .p-card-content {
+      padding: 0;
+    }
+    .p-button {
+      font-size: smaller;
+    }
+    .p-chkbox-label {
+      font-size: 12px;
+    }
+  }
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    .button {
+      width: 50%;
+      padding: 0.5em;
+      .p-button {
+        width: 99%;
+        margin-top: 0em;
+      }
+    }
+  }
+
+  .p-progress-spinner {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 50%;
+    left: 87%;
+    transform: translate(-50%, -50%);
+  }
+  .p-button.p-button-text-only .p-button-text {
+    padding: 0.429em 0.3em;
+  }
+  .patient-inputs {
+    display: flex;
+    padding: 5px 5px 0px 5px;
+    input {
+      font-size: 12px;
+    }
+  }
+  .system-checkbox {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+}

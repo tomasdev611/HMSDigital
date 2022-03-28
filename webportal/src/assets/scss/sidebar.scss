@@ -1,0 +1,26 @@
+.sidebar {
+  // position: fixed;
+  width: 100%;
+  height: calc(100vh - 68px);
+  z-index: 102;
+  overflow: auto;
+  -webkit-transition: margin-left 0.3s;
+  transition: margin-left 0.3s;
+  background: $sidebar-color;
+  .sidebar-scroll-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+.p-widget-overlay.p-sidebar-mask {
+  z-index: 0 !important;
+}
+@media screen and (max-width: 768px) {
+  .sidebar {
+    height: calc(100vh - 112px);
+  }
+}

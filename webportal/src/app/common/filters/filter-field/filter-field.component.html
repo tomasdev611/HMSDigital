@@ -1,0 +1,107 @@
+<ng-container *ngIf="shouldShow(filterTypesList.MultiSelect)">
+  <p-multiSelect
+    [defaultLabel]="label"
+    [displaySelectedLabel]="true"
+    maxSelectedLabels="1"
+    [pTooltip]="label"
+    tooltipPosition="bottom"
+    [options]="filterValues"
+    [(ngModel)]="values"
+    (onChange)="filterValueChanged()"
+    [disabled]="filterValues.length === 1"
+    title="">
+  </p-multiSelect>
+</ng-container>
+
+<p-autoComplete
+  *ngIf="shouldShow(filterTypesList.Autocomplete)"
+  [(ngModel)]="values"
+  [pTooltip]="label"
+  tooltipPosition="bottom"
+  [suggestions]="filterValues"
+  (onSelect)="autocompleteSelected($event)"
+  autoHighlight="true"
+  title=""
+  (completeMethod)="search($event)"
+  [dropdown]="true"
+  field="name"
+  (onClear)="removeFilter()"
+  [placeholder]="label">
+</p-autoComplete>
+
+<p-dropdown
+  *ngIf="shouldShow(filterTypesList.Dropdown)"
+  [options]="filterValues"
+  [(ngModel)]="values"
+  (onChange)="dropDownSelected($event)"
+  optionLabel="name"
+  placeholder="Status">
+  <ng-template pTemplate="selectedItem">
+    <div *ngIf="values">
+      <div *ngIf="!values?.doubleValue" [ngClass]="values.className">{{ values.name }}</div>
+      <div *ngIf="values?.doubleValue" class="p-d-flex">
+        <div *ngFor="let caption of values.name; let i = index">
+          <div [ngClass]="values.className[i]" style="margin-right: 10px">{{ caption }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template let-item pTemplate="item">
+    <div *ngIf="!item.value?.doubleValue" [ngClass]="item.value.className">
+      {{ item.value.name }}
+    </div>
+    <div *ngIf="item.value?.doubleValue" class="p-d-flex">
+      <div *ngFor="let caption of item.value.name; let i = index">
+        <div [ngClass]="item.value.className[i]" style="margin-right: 10px">{{ caption }}</div>
+      </div>
+    </div>
+  </ng-template>
+</p-dropdown>
+
+<p-calendar
+  (onClickOutside)="(!datePickerConfig?.noDateAlteration)"
+  [pTooltip]="label"
+  [monthNavigator]="true"
+  [yearNavigator]="true"
+  yearRange="1900:2030"
+  tooltipPosition="bottom"
+  (onSelect)="!datePickerConfig?.noDateAlteration && dateSelected()"
+  (onClose)="(datePickerConfig?.noDateAlteration)"
+  [maxDate]="datePickerConfig?.maxDate"
+  [placeholder]="label"
+  *ngIf="shouldShow(filterTypesList.DatePicker)"
+  [(ngModel)]="values"
+  [showTime]="datePickerConfig?.showTime"
+  showButtonBar="true"
+  (onClearClick)="dateSelected()"
+  (onInput)="dateSelected()"></p-calendar>
+
+<p-calendar
+  [pTooltip]="label"
+  tooltipPosition="bottom"
+  (onSelect)="dateRangeSelected($event)"
+  [monthNavigator]="true"
+  [yearNavigator]="true"
+  yearRange="1900:2030"
+  [maxDate]="datePickerConfig?.maxDate"
+  (onClose)="dateRangeSelected($event, true)"
+  [placeholder]="label"
+  *ngIf="shouldShow(filterTypesList.DateRangePicker)"
+  [(ngModel)]="values"
+  selectionMode="range"
+  [readonlyInput]="true"
+  dateFormat="dd M yy"
+  (onClearClick)="dateRangeSelected($event)"
+  showButtonBar="true"></p-calendar>
+
+<input
+  type="text"
+  *ngIf="shouldShow(filterTypesList.TextInput)"
+  pInputText
+  [(ngModel)]="values"
+  [placeholder]="label"
+  #inputFilter
+  min="0"
+  title=""
+  [pTooltip]="label"
+  tooltipPosition="bottom" />

@@ -1,0 +1,174 @@
+<div [ngClass]="{sub: true, 'flyout-open': creditHoldHistoryOpen}">
+  <form
+    *ngIf="hasPermission('Hospice', 'CreditHold')"
+    class="credithold-form"
+    [formGroup]="creditHoldForm"
+    (ngSubmit)="onSubmitCreditHold(creditHoldForm.value)"
+    autocomplete="off">
+    <div class="p-grid p-grid-responsive p-grid-pad p-fluid">
+      <div class="credits-wrapper">
+        <div class="p-grid p-nogutter">
+          <div class="p-col-1 form-label">Credit-Hold :</div>
+          <div class="p-col-2 form-data">
+            <p-inputSwitch
+              formControlName="isCreditOnHold"
+              [disabled]="!selectedHospice?.id || !hasPermission('Hospice', 'CreditHold')"
+              (onChange)="creditHoldValidators()"></p-inputSwitch>
+          </div>
+          <div class="p-col-2 form-data">
+            <a class="cursor-pointer" (click)="toggleCreditHoldHistory()"
+              >View Credit-Hold History</a
+            >
+          </div>
+        </div>
+        <div class="p-grid p-nogutter" *ngIf="selectedHospice?.creditHoldNote">
+          <div class="p-col-1 form-label">Note :</div>
+          <div class="p-col-4 form-data">
+            {{ selectedHospice.creditHoldNote }}
+          </div>
+        </div>
+        <div class="p-grid p-nogutter" *ngIf="selectedHospice?.creditHoldByUserName">
+          <div class="p-col-1 form-label">Updated By :</div>
+          <div class="p-col-4 form-data">
+            {{ selectedHospice.creditHoldByUserName }}
+          </div>
+        </div>
+        <div class="p-grid p-nogutter" *ngIf="selectedHospice?.creditHoldDateTime">
+          <div class="p-col-1 form-label">Date :</div>
+          <div class="p-col-4 form-data">
+            {{ selectedHospice.creditHoldDateTime | date: 'MMM d, y, h:mm a' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="settings-container">
+    <button
+      pButton
+      *ngIf="false"
+      [routerLink]="['./settings/members/mappings']"
+      [queryParams]="{view: 'input'}"
+      label="Configure upload CSV Mappings"
+      style="margin-right: 10px"
+      icon="pi pi-sitemap"></button>
+    <button
+      pButton
+      *ngIf="false"
+      [routerLink]="['./settings/members/mappings']"
+      [queryParams]="{view: 'output'}"
+      label="Configure download CSV Mappings"
+      style="margin-right: 10px"
+      icon="pi pi-sitemap"></button>
+    <button
+      pButton
+      label="Member bulk upload format"
+      style="margin-right: 10px"
+      icon="pi pi-download"
+      (click)="getHospiceMemberInputMappings()"></button>
+    <button
+      pButton
+      label="Facility bulk upload format"
+      style="margin-right: 10px"
+      icon="pi pi-download"
+      (click)="getHospiceFacilityInputMappings()"></button>
+  </div>
+  <div class="flyout">
+    <button class="close-icon" (click)="toggleCreditHoldHistory()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div>
+      <div class="flyout-header-label">
+        <span>Credit Hold History</span>
+      </div>
+      <div class="flyout-table-wrapper">
+        <div class="p-grid flyout-table-container">
+          <p-table
+            #dt
+            [value]="creditHoldHistory"
+            class="flyout-audit-table"
+            dataKey="auditId"
+            [rowHover]="true"
+            [responsive]="true"
+            [scrollable]="true"
+            [loading]="creditHoldHistoryLoading">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 16%">Credit-Hold</th>
+                <th style="width: 34%">Note</th>
+                <th style="width: 25%">Updated By</th>
+                <th style="width: 25%">Date</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-credithistory>
+              <tr class="p-selectable-row">
+                <td style="width: 16%">
+                  <div class="cursor-pointer">
+                    {{ credithistory?.isCreditOnHold ? 'On' : 'Off' }}
+                  </div>
+                </td>
+                <td style="width: 34%">
+                  {{ credithistory.creditHoldNote }}
+                </td>
+                <td style="width: 25%">
+                  <div>
+                    {{ credithistory.creditHoldByUserName }}
+                  </div>
+                </td>
+                <td style="width: 25%">
+                  <div>
+                    {{ credithistory.creditHoldDateTime | date: 'MMM d, y, h:mm a' }}
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  dialogStyleClass="order-dialog no-footer"
+  header="Credit-Hold"
+  [visible]="selectedHospice?.isCreditOnHold !== creditHoldForm.controls.isCreditOnHold.value"
+  *ngIf="selectedHospice?.isCreditOnHold !== creditHoldForm.controls.isCreditOnHold.value"
+  (hide)="setcreditHoldForm()">
+  <form
+    [formGroup]="creditHoldForm"
+    (ngSubmit)="onSubmitCreditHold(creditHoldForm.value)"
+    autocomplete="off">
+    <div class="content-container">
+      <div class="header">Credit-Hold</div>
+      <div class="body">
+        <div style="margin: 0">
+          <div class="mb-5">Note {{ isRequiredFileds('creditHoldNote') ? '*' : '' }} :</div>
+          <textarea
+            pInputTextarea
+            id="creditHoldNote"
+            type="text"
+            [rows]="7"
+            formControlName="creditHoldNote"
+            placeholder="Your note"
+            style="width: 25em"></textarea>
+        </div>
+      </div>
+      <div class="footer">
+        <button
+          pButton
+          label="Cancel"
+          type="button"
+          icon="pi pi-times"
+          class="p-button-secondary"
+          (click)="setcreditHoldForm()"></button>
+        <button
+          pButton
+          type="button"
+          label="{{ creditHoldForm.controls.isCreditOnHold.value ? 'PUT HOLD' : 'REMOVE HOLD' }}"
+          icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+          (click)="creditHoldForm.valid && onSubmitCreditHold(creditHoldForm.value)"
+          [disabled]="creditHoldForm.invalid"></button>
+      </div>
+    </div>
+  </form>
+</app-modal>

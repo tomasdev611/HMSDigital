@@ -1,0 +1,109 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - xcode
+  - Xamarin.iOS
+  vmImage: 'macOS-11'
+variables:
+  - group: AppleSigning
+  - name: BuildConfiguration
+    value: 'Release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - MobileApp
+      exclude:
+      - MobileApp/README.md
+      - MobileApp/MobileApp.Android
+pr:
+    branches:
+      include:
+      - dev
+    paths:
+      include:
+      - MobileApp
+      exclude:
+      - MobileApp/README.md
+      - MobileApp/MobileApp.Android
+
+steps:
+- task: InstallAppleCertificate@2
+  displayName: 'Install an Apple certificate'
+  inputs:
+    certSecureFile: 'b305c236-40ee-4ad1-8948-3045cfac7cdd'
+    certPwd: '$(P12password)'
+
+- task: InstallAppleProvisioningProfile@1
+  displayName: 'Install an Apple provisioning profile'
+  inputs:
+    provisioningProfileLocation: 'secureFiles'
+    provProfileSecureFile: '77f8b64e-0780-4025-9587-a9c0b7d1a641'
+
+- task: PowerShell@2
+  displayName: Determine target branch
+  inputs:
+      targetType: 'inline'
+      script: |
+        Write-Host "Env:BUILD_SOURCEBRANCHNAME = $Env:BUILD_SOURCEBRANCHNAME"
+        Write-Host "Env:BUILD_REASON = $Env:BUILD_REASON"
+        $TargetBranch = $Env:BUILD_SOURCEBRANCHNAME
+        if($env:BUILD_REASON -eq 'PullRequest')
+        {
+        Write-Host "Env:SYSTEM_PULLREQUEST_TARGETBRANCH = $env:SYSTEM_PULLREQUEST_TARGETBRANCH"
+        $TargetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+        }
+        Write-Host "Target branch is $TargetBranch"
+        switch($TargetBranch) {
+        'dev' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]dev"; }
+        'e2e' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]e2e"; }
+        'training' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]training"; }
+        'release' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]prod"; }
+        default {Write-Host "##vso[task.setvariable variable=hmsEnvironment]NONE"; }
+        }
+
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet 4.x'
+  inputs:
+    versionSpec: 4.x
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: MobileApp/MobileApp.sln
+    
+- bash: |
+   sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_9
+   
+- bash: |
+   echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_13.0.app;sudo xcode-select --switch /Applications/Xcode_13.0.app/Contents/Developer
+
+- task: XamariniOS@2
+  displayName: 'Build Xamarin.iOS solution MobileApp/MobileApp.sln'
+  inputs:
+    solutionFile: MobileApp/MobileApp.sln
+    configuration: '$(BuildConfiguration)'
+    args: '-p:HmsEnvironment=$(hmsEnvironment)'
+    workingDirectory: MobileApp
+    signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+    signingProvisioningProfileID: '$(APPLE_PROV_PROFILE_UUID)'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: MobileApp
+    Contents: '**/*.ipa'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()

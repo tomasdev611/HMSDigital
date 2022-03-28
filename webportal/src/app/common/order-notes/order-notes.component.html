@@ -1,0 +1,45 @@
+<div class="order-notes-container p-grid p-nogutter p-jc-start p-mb-3">
+  <div class="p-col-6">
+    <h5 class="p-grid p-nogutter p-mb-1">
+      Add Order Notes
+      <span class="help-text">
+        <i class="pi pi-question-circle"></i>(Please click enter to add another note)
+      </span>
+    </h5>
+    <p-chips
+      class="order-notes-input"
+      [(ngModel)]="orderNotes"
+      (onBlur)="onNotesBlurred($event)"
+      (ngModelChange)="onNotesUpdated($event)">
+      <ng-template let-note pTemplate="item">
+        <div class="note-text">
+          {{ note }}
+        </div>
+      </ng-template>
+    </p-chips>
+  </div>
+
+  <div
+    *ngIf="orderHeaderNotes && orderHeaderNotes?.length > 0"
+    class="order-header-notes-container p-col-6">
+    <div class="p-grid p-nogutter p-jc-start p-mb-3">
+      <h5 class="p-grid">Order Notes</h5>
+      <div class="notes-list" style="width: 100%">
+        <p-listbox [options]="orderHeaderNotes" [readonly]="true">
+          <ng-template pTemplate="item" let-noteObj>
+            <div class="note-item">
+              <span class="note-text">{{ noteObj.note }}</span>
+              <div class="note-details">
+                <span class="date"
+                  >{{ noteObj.createdByUserName }} ({{
+                    getDateFromString(noteObj.createdDateTime) | date: 'MMM d, y, h:mm a'
+                  }})</span
+                >
+              </div>
+            </div>
+          </ng-template>
+        </p-listbox>
+      </div>
+    </div>
+  </div>
+</div>

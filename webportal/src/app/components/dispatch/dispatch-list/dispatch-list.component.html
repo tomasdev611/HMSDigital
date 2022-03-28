@@ -1,0 +1,47 @@
+<div [ngClass]="{'dispatch-list-container': activeView === 'mapView'}">
+  <p-dataView
+    class="dispatch-dataview"
+    *ngIf="!loading"
+    [value]="orderList"
+    [rows]="100"
+    filterBy="filterBy"
+    paginatorDropdownScrollHeight="200px"
+    [paginator]="showPaginator && orderList?.length > 0"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Page {{ pageNumber || 0 }} of {{ totalPage || 0 }}">
+    <ng-template let-order pTemplate="listItem">
+      <app-dispatch-list-item
+        *ngIf="activeView !== 'assignView'"
+        class="p-grid no-margin dispatch-item-wrapper"
+        [ngClass]="{'marked-order': activeView === 'mapView' && markedOrderId === order?.id}"
+        [order]="order"
+        [activeView]="activeView"
+        (orderSelected)="selectOrder($event)"
+        [markedOrderId]="markedOrderId">
+      </app-dispatch-list-item>
+      <app-dispatch-list-item
+        *ngIf="activeView === 'assignView'"
+        mwlDraggable
+        [dropData]="{event: order.event}"
+        class="p-grid no-margin"
+        [order]="order"
+        [activeView]="activeView"
+        (orderSelected)="selectOrder($event)">
+      </app-dispatch-list-item>
+    </ng-template>
+    <ng-template pTemplate="paginatorright" let-state>
+      <div
+        *ngIf="paginate"
+        [class.disabled]="pageNumber <= 1"
+        (click)="pageNumber > 1 ? getPrev() : ''">
+        <span class="pi pi-caret-left"></span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="paginatorleft" let-state>
+      <div *ngIf="paginate" [class.disabled]="pageNumber === totalPage" (click)="getNext()">
+        <span class="pi pi-caret-right"></span>
+      </div>
+    </ng-template>
+  </p-dataView>
+  <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+</div>

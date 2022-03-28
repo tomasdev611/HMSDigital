@@ -1,0 +1,58 @@
+<p-treeTable
+  [value]="nodes?.data"
+  [paginator]="paginate"
+  [scrollable]="true"
+  [rows]="20"
+  [columns]="headers"
+  selectionMode="checkbox"
+  [(selection)]="selectedRows"
+  [showCurrentPageReport]="true"
+  (onNodeUnselect)="onRowSelection($event, false)"
+  (onNodeSelect)="onRowSelection($event, true)"
+  currentPageReportTemplate="Page {{ pageResponse?.pageNumber || 0 }} of {{
+    pageResponse?.totalPageCount || 0
+  }}">
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th [ngClass]="{sm: !selection, md: selection}"></th>
+      <th *ngFor="let col of columns">
+        {{ col.label }}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+    <tr>
+      <td class="row-actions" [ngClass]="{sm: !selection, md: selection}">
+        <p-treeTableToggler
+          *ngIf="!rowNode.node.leaf"
+          [rowNode]="rowNode"
+          [style]="{width: '3em', marginLeft: '0'}">
+        </p-treeTableToggler>
+        <p-treeTableCheckbox
+          *ngIf="rowSelectable(rowNode.node)"
+          (onChange)="onRowSelection($event, false)"
+          [value]="rowNode"
+          [style]="{width: '3em'}">
+        </p-treeTableCheckbox>
+      </td>
+      <td *ngFor="let col of columns; let i = index">
+        {{ getValueByField(rowNode.node.data, col.field) }}
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td>No records found</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="paginatorright" let-state>
+    <div (click)="emitPrev()">
+      <span class="pi pi-caret-left"></span>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="paginatorleft" let-state>
+    <div (click)="emitNext()">
+      <span class="pi pi-caret-right"></span>
+    </div>
+  </ng-template>
+</p-treeTable>

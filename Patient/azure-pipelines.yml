@@ -1,0 +1,75 @@
+pool:
+  name: Azure Pipelines
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+      - release
+    paths:
+      include:
+      - Patient
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      exclude:
+      - Patient/README.md
+pr:
+    branches:
+      include:
+      - dev
+      - e2e
+    paths:
+      include:
+      - Patient
+      - Common/Common.API
+      - Common/Common.BusinessLayer
+      - Common/Common.ViewModels
+      exclude:
+      - Patient/README.md
+      - Patient/Patient.Deployment
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: Patient/Patient.API/Patient.API.csproj
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Patient/Patient.API/Patient.API.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: Patient/Patient.Test/Patient.Test.csproj
+    arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+- task: CopyFiles@2
+  displayName: 'Copy deployment files to Artifacts staging directory'
+  inputs:
+    SourceFolder: Patient/Patient.Deployment
+    Contents: |
+     *.bat
+     *.json
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

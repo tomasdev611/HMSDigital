@@ -1,0 +1,53 @@
+<div class="p-p-2 chart-container">
+  <div>
+    <div class="p-d-flex p-justify-between">
+      <div class="p-d-flex">
+        <span>{{ title }}</span>
+        <span (click)="toggleChart()" class="p-ml-3">
+          <i [ngClass]="toggleIconClass" pTooltip="Toggle View"></i>
+        </span>
+      </div>
+      <div class="p-ml-3" style="max-width: 40%">
+        <div *ngIf="showGroupingSelection" class="p-mb-1">
+          <p-dropdown
+            (onChange)="groupingSelectionChanged()"
+            [(ngModel)]="grouping"
+            [options]="groupingOptions"
+            dataKey="id"
+            name="value"
+            optionLabel="label"
+            placeholder="Select a Grouping"></p-dropdown>
+        </div>
+        <div *ngIf="showFilterOption">
+          <p-dropdown
+            (onChange)="filterSelectionChanged()"
+            [(ngModel)]="filter"
+            [options]="filterOptions"
+            dataKey="id"
+            name="value"
+            optionLabel="label"
+            placeholder="Filter"></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="main-container" *ngIf="toggleView">
+      <p-chart [data]="chartData" [options]="options" [plugins]="plugins" [type]="type"></p-chart>
+      <div *ngIf="type === 'doughnut'" class="total">
+        <span>{{ totalCount }}</span>
+        <span>Total</span>
+      </div>
+    </div>
+    <app-table
+      *ngIf="!toggleView"
+      [headers]="tableHeader"
+      [list]="tableData"
+      [loading]="loading"
+      [paginate]="false"
+      [showPaginator]="false"
+      rows="25">
+    </app-table>
+  </div>
+  <div class="loading">
+    <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+  </div>
+</div>

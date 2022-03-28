@@ -1,0 +1,31 @@
+:host ::ng-deep {
+  .p-table-tbody > tr:focus > td {
+    box-shadow: none !important;
+  }
+  .value-d-flex .table-value {
+    display: flex;
+  }
+  .table-value {
+    &.success {
+      background: #149e14;
+      padding: 0 5px;
+      border-radius: 10px;
+      color: white;
+    }
+    &.info {
+      background: #007ad9;
+      padding: 0 7px;
+      border-radius: 14px;
+      color: white;
+    }
+  }
+  .table-body-col {
+    display: block;
+  }
+  //responsive
+  @media screen and (max-width: 48em) {
+    .table-body-col {
+      display: flex;
+    }
+  }
+}

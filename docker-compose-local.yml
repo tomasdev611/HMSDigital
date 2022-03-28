@@ -1,0 +1,75 @@
+version: "3.3"
+services:
+  core-api:
+    image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+    command: dotnet run --project /var/src/Core/Core.API/Core.API.csproj
+    networks:
+      - hmsd_network
+    ports:
+      - 5000:5000
+      - 5001:80
+    depends_on:
+      - hmsd-db
+      - hms2-db
+    environment:
+      - ConnectionStrings__HMSDigitalDbConnection=Server=hmsd-db;Database=HMSDigital;User Id=sa;Password=secretSanta7;
+      - ConnectionStrings__HMS2DbConnection=Server=hms2-db;Database=hms;Uid=root;Pwd=secretSanta7;
+      - ConnectionStrings__HMSOnlineDbConnection=Server=hms2-db;Database=inventory;Uid=root;Pwd=secretSanta7;
+    volumes:
+      - .:/var/src/
+  # notification:
+  #   image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+  #   command: dotnet run --project /var/src/Notification/Notification.API
+  #   networks:
+  #     - hmsd_network
+  #   ports:
+  #     - 5001:80
+  #   depends_on:
+  #     - hmsd-db
+  #   environment:
+  #     - ConnectionStrings__HMSDigitalDbConnection=Server=hmsd-db;Database=HMSDigital;User Id=sa;Password=secretSanta7;
+  #   volumes:
+  #     - .:/var/src/
+  # patients:
+  #   image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+  #   command: dotnet run --project /var/src/Patient/Patient.API
+  #   networks:
+  #     - hmsd_network
+  #   ports:
+  #     - 5002:80
+  #   depends_on:
+  #     - hmsd-db
+  #   environment:
+  #     - ConnectionStrings__HMSDigitalDbConnection=Server=hmsd-db;Database=HMSDigital;User Id=sa;Password=secretSanta7;
+  #   volumes:
+  #     - .:/var/src/
+  hmsd-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:
+      - hmsd_network
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssqlvolume:/var/src/opt/mssql
+    environment:
+      - ACCEPT_EULA="Y"
+      - MSSQL_SA_PASSWORD=secretSanta7
+      - MSSQL_PID=Express
+  hms2-db:
+    image: mysql:5.6
+    networks:
+      - hmsd_network
+    environment:
+      MYSQL_ROOT_PASSWORD: secretSanta7
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqlvolume:/var/src/lib/mysql
+volumes:
+  mysqlvolume:
+    external: true
+  mssqlvolume:
+    external: true
+networks:
+  hmsd_network:
+    driver: bridge

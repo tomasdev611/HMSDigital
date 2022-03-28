@@ -1,0 +1,184 @@
+<div class="flyout">
+  <button class="close-icon" (click)="closeOrderDetails()">
+    <i class="pi pi-times"></i>
+  </button>
+  <div class="order-label">
+    <span class="patient-name">{{ currentOrder?.patient?.name }}</span>
+    <span class="hospice-location">{{ currentOrder?.hospiceLocation }}</span>
+    <div class="patient-detail" *ngIf="accessPatientProfile">
+      <a
+        [routerLink]="['/patients/edit/' + currentOrder?.patient?.id]"
+        [queryParams]="{view: 'order'}"
+        >Order History</a
+      >
+      <a
+        [routerLink]="['/patients/edit/' + currentOrder?.patient?.id]"
+        [queryParams]="{view: 'inventory'}"
+        class="ml-20"
+        >Current Inventory</a
+      >
+    </div>
+  </div>
+  <div class="order-header p-grid p-nogutter">
+    <span class="details p-grid p-nogutter">
+      <span class="key p-col-6">Primary Contact Number</span>
+      <span class="value p-col-6"> {{ getPrimaryContact() }}</span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="shouldShowAddr('pickup')">
+      <span class="key p-col-6">Pickup Address</span>
+      <span class="value p-col-6">
+        {{ getFormattedAddress('pickup') }}
+      </span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="shouldShowAddr('delivery')">
+      <span class="key p-col-6">Delivery Address</span>
+      <span class="value p-col-6">
+        {{ getFormattedAddress('delivery') }}
+      </span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="currentOrder?.hospiceLocation">
+      <span class="key p-col-6">Hospice Location</span>
+      <span class="value p-col-6">{{ currentOrder?.hospiceLocation }}</span>
+    </span>
+  </div>
+  <div class="order-instructions">
+    <p-tabView>
+      <p-tabPanel header="Order Notes">
+        <ng-container *ngIf="!currentOrder?.orderNotes?.length">
+          <div class="instructions-list">No order notes are available</div>
+        </ng-container>
+        <div class="instructions-list" *ngIf="currentOrder?.orderNotes?.length">
+          <div *ngFor="let orderNote of currentOrder?.orderNotes">
+            <div class="instruction-item">
+              {{ orderNote.note }}
+            </div>
+            <div class="note">
+              <a class="ml-10">{{ orderNote.createdDateTime | date: 'MMM d, y, h:mm a' }}</a>
+              <a>{{ orderNote.createdByUserName }}</a>
+            </div>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="Patient Notes">
+        <ng-container *ngIf="!currentOrder?.patientNotes?.length">
+          <div class="instructions-list">No patients notes are available</div>
+        </ng-container>
+        <div class="instructions-list" *ngIf="currentOrder?.patientNotes">
+          <div *ngFor="let note of currentOrder.patientNotes">
+            <div class="instruction-item">
+              {{ note.note }}
+            </div>
+            <div class="note">
+              <a class="ml-10">{{ note.createdDateTime | date: 'MMM d, y, h:mm a' }}</a>
+              <a>{{ note.createdByUserName }}</a>
+            </div>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+  <div class="order-header p-grid p-nogutter nurse-info">
+    <span class="details p-grid p-nogutter" *ngIf="currentOrder?.pickupReason">
+      <span class="key p-col-4">Reason</span>
+      <span class="value p-col-8"> {{ currentOrder?.pickupReason }}</span>
+    </span>
+    <span
+      class="details p-grid p-nogutter"
+      *ngIf="isInternalUser && currentOrder?.externalOrderNumber">
+      <span class="key p-col-4">TPA #</span>
+      <span class="value p-col-8"> {{ currentOrder?.externalOrderNumber }}</span>
+    </span>
+    <span class="details p-grid p-nogutter">
+      <span class="key p-col-4">Ordering Nurse</span>
+      <span class="value p-col-8"> {{ currentOrder?.nurse }}</span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="isInternalUser && currentOrder?.createdByUser">
+      <span class="key p-col-4">Created By</span>
+      <span class="value p-col-8"> {{ currentOrder?.createdByUser }}</span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="isInternalUser && currentOrder?.modifiedByUser">
+      <span class="key p-col-4">Modified By</span>
+      <span class="value p-col-8"> {{ currentOrder?.modifiedByUser }}</span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="isInternalUser && currentOrder?.site?.name">
+      <span class="key p-col-4">Assigned Site</span>
+      <span class="value p-col-8"> {{ currentOrder?.site?.name }}</span>
+    </span>
+    <span class="details p-grid p-nogutter" *ngIf="isInternalUser && currentOrder?.assignedDriver">
+      <span class="key p-col-4">Assigned Driver</span>
+      <span class="value p-col-8"> {{ currentOrder?.assignedDriver }}</span>
+    </span>
+  </div>
+  <div class="order-items">
+    <div class="line-item-header">
+      <span class="line-item-title">Order Items</span>
+      <span class="order-action line-item-title">
+        <a *ngIf="showEditOrder" (click)="editOrder()">Edit Order</a>
+      </span>
+      <span class="order-action line-item-title">
+        <a *ngIf="showCancelOrder" (click)="cancelOrder()">Cancel Order</a>
+      </span>
+      <span class="line-item-count">{{ currentOrder?.orderLineItems?.length || 0 }} Items</span>
+    </div>
+    <div class="line-item-list">
+      <ng-container *ngIf="!currentOrder?.orderLineItems?.length">
+        <div>No order items are available</div>
+      </ng-container>
+      <ul
+        class="p-grid p-nogutter p-justify-space-between"
+        *ngIf="currentOrder?.orderLineItems?.length">
+        <li
+          class="p-grid p-nogutter line-item"
+          *ngFor="let lineItem of currentOrder?.orderLineItems">
+          <div class="p-col-11 item-name">
+            {{ lineItem?.item?.name }}
+            <span
+              class="p-tag p-tag-rounded line-item-action {{ lineItem?.action?.toLowerCase() }}"
+              >{{ lineItem?.action }}</span
+            >
+          </div>
+          <div class="p-col-1 item-quantity">{{ lineItem?.itemCount || 0 }}</div>
+          <div
+            class="item-equipments ml-10 mt-5 p-col-10"
+            *ngFor="let equipment of lineItem.equipmentSettings">
+            <span>{{ getEquipmentSettingName(equipment) }}</span>
+            <span>{{ getEquipmentSettingValue(equipment) }}</span>
+          </div>
+          <div class="fulfilled-items mt-5">
+            <span
+              class="p-col-12 fulfilled-info"
+              *ngFor="
+                let fulfilledItem of getFulfilledItemsForLineItem(lineItem.id);
+                last as isLast;
+                count as count
+              ">
+              <span class="chip">Fulfilled</span>
+              <span
+                >{{ fulfilledItem.serialNumber || '' }}
+                {{ fulfilledItem.assetTag ? '(' + fulfilledItem.assetTag + ')' : '' }}</span
+              >
+              <div class="time-info">
+                {{ fulfilledItem.fulfillmentEndDateTime | date: 'LLL dd, yyyy, h:mm a' }}
+              </div>
+              <span class="fulfilled-status" *ngIf="isLast"
+                >{{ getFulfilledLineItemsCount(lineItem.id) || 0 }} out of
+                {{ lineItem.itemCount || 0 }} fulfilled
+              </span>
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<app-cancel-order-dialog
+  *ngIf="shouldShowCancelOrderDialog"
+  [isVisible]="shouldShowCancelOrderDialog"
+  [fulfilledItems]="fulfilledItems"
+  (closeDialog)="closeCancelOrderDialog()"
+  (cancelOrder)="cancelOrderLineItems($event)"
+  [loading]="false"
+  [order]="currentOrder"
+  [loading]="cancelOrderLoading">
+</app-cancel-order-dialog>

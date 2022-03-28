@@ -1,0 +1,182 @@
+<p-table
+  #dataVirtualTable
+  *ngIf="visible"
+  [value]="virtualScrollList"
+  dataKey="id"
+  styleClass="p-table"
+  [ngClass]="{'no-scroll': loading}"
+  [rowHover]="true"
+  [rows]="pageSize - pageLoadNextOffset"
+  [loading]="loading"
+  [responsive]="true"
+  [virtualScrollDelay]="250"
+  [scrollable]="true"
+  [selectionMode]="multiSelection ? 'multiple' : 'single'"
+  [globalFilterFields]="filterFields"
+  [virtualScroll]="true"
+  [virtualRowHeight]="50"
+  scrollHeight="calc(100vh - 254px)"
+  [lazy]="true"
+  (onLazyLoad)="!loading && loadDataLazy($event)"
+  (onRowUnselect)="onRowSelection($event, false)"
+  (onRowSelect)="onRowSelection($event, true)"
+  [(selection)]="selectedRows">
+  <ng-template pTemplate="header">
+    <tr>
+      <th [ngClass]="{sm: true}" *ngIf="checkboxSelection"></th>
+      <th *ngFor="let header of headers" [ngClass]="header?.class ? header.class : ''">
+        {{ header?.label | uppercase }}
+        <app-sort-icon
+          *ngIf="header?.sortable"
+          [field]="header?.field"
+          [orderIndex]="getOrderIndex(header)"
+          (sort)="sortField($event, header?.sortField)">
+        </app-sort-icon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-obj let-index="rowIndex">
+    <tr class="p-selectable-row" [pSelectableRow]="obj">
+      <td [ngClass]="{sm: true}" *ngIf="checkboxSelection">
+        <p-tableCheckbox [value]="obj"></p-tableCheckbox>
+      </td>
+      <td
+        *ngFor="let header of headers"
+        [class]="header?.class"
+        [ngClass]="{'cursor-pointer': header.bodyRouteParams}"
+        (click)="navigateOnClick(header, obj)">
+        <div style="display: flex">
+          <span class="table-mobile-header">
+            {{ header?.label | uppercase }}
+          </span>
+          <span
+            class="table-value"
+            [ngClass]="getBodyClassByFieldValue(obj, header.field, header.bodyClassType)"
+            [pTooltip]="getToolTipText(obj, header.field, header.tooltipTextField)">
+            <span *ngIf="shouldShowMore(obj, header.field)">
+              {{ getValueByField(obj, header.field, header.fieldType, 150) }}
+              <a *ngIf="showHideOption" class="td-load-more" (click)="onShowMoreValue(obj)"
+                >...more</a
+              >
+              <a *ngIf="!showHideOption">...</a>
+            </span>
+            <span
+              *ngIf="
+                getValueCharacterLength(obj, header.field) <= 150 ||
+                moreValue === obj[moreCompareField]
+              ">
+              {{ getValueByField(obj, header.field, header.fieldType) }}
+              <a
+                *ngIf="shouldHideMore(obj, header.field, header.fieldType)"
+                class="td-load-more"
+                (click)="onHideMoreValue()"
+                >hide</a
+              >
+            </span>
+            <i
+              *ngIf="header?.addOnTdIcon && showAddOnTdIcon(obj)"
+              [class]="header?.addOnTdIcon"
+              [class.cursor-pointer]="header?.addOnTdIconTooltip"
+              tooltipPosition="top"
+              [pTooltip]="header?.addOnTdIconTooltip"
+              [tooltipZIndex]="tooltipZIndex"></i>
+          </span>
+        </div>
+        <div style="display: flex">
+          <a
+            pButton
+            *ngIf="header?.field === 'name'"
+            type="button"
+            class="p-button-secondary mobile-action-btn"
+            icon="pi pi-plus"
+            (click)="action(obj, index)">
+          </a>
+          <a
+            pButton
+            *ngIf="header?.field === 'name'"
+            type="button"
+            style="margin-left: 12px"
+            class="p-button-secondary mobile-action-btn"
+            icon="pi pi-pencil"
+            [routerLink]="getRouterLink(obj, headers)"
+            [queryParams]="getQueryParams(obj, headers)"></a>
+        </div>
+
+        <div *ngIf="header?.bodyIcon" [ngClass]="header.bodyIcon"></div>
+        <p-inputSwitch
+          *ngIf="header?.inputSwitch"
+          [disabled]="submit || header?.readOnly"
+          (onChange)="toggleAction($event, obj)"
+          [(ngModel)]="obj[header.inputSwitchValue]"></p-inputSwitch>
+        <a
+          pButton
+          *ngIf="header?.infoBtn"
+          type="button"
+          class="p-button-secondary"
+          [icon]="header?.infoBtnIcon"
+          [routerLink]="[header?.infoBtnLink, obj[header?.linkParams]]"
+          [queryParams]="header?.queryParams"
+          [pTooltip]="header?.infoBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"></a>
+        <a
+          pButton
+          *ngIf="header?.editBtn"
+          type="button"
+          [ngStyle]="{'margin-left': header?.infoBtn ? '12px' : '0'}"
+          class="p-button-secondary"
+          [icon]="header?.editBtnIcon"
+          [routerLink]="[header?.editBtnLink, obj[header?.linkParams]]"
+          [queryParams]="obj[header?.queryParams]"
+          [pTooltip]="header?.editBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"
+          style="width: auto; padding-left: 0.7rem; padding-right: 0.7rem"></a>
+        <button
+          pButton
+          *ngIf="header?.deleteBtn"
+          [ngStyle]="{'margin-left': header?.editBtn ? '12px' : '0'}"
+          type="button"
+          class="p-button-secondary"
+          [icon]="header?.deleteBtnIcon"
+          (click)="delete(obj, index)"
+          [pTooltip]="header?.deleteBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"></button>
+        <a
+          pButton
+          *ngIf="header?.actionBtn"
+          [ngStyle]="{'margin-left': header?.editBtn || header?.deleteBtn ? '12px' : '0'}"
+          type="button"
+          class="p-button-secondary"
+          [icon]="header?.actionBtnIcon"
+          (click)="action(obj, index)"
+          [pTooltip]="header?.actionBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"
+          [label]="header?.actionBtnLabel"></a>
+        <button
+          pButton
+          *ngIf="header.conditionalBtn && getValueByField(obj, header.conditionalField)"
+          class="p-button-secondary"
+          type="button"
+          [label]="header?.conditionalBtn"
+          (click)="conditionalBtnClicked(obj, index)"></button>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="loadingbody">
+    <tr style="height: 58px">
+      <td *ngFor="let col of headers">
+        <div class="loading-text"></div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td class="p-pl-3">No records found</td>
+    </tr>
+  </ng-template>
+</p-table>

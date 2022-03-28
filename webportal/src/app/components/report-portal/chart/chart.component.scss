@@ -1,0 +1,38 @@
+.chart-container {
+  position: relative;
+  border: 1px solid #e6e6e9;
+  box-sizing: border-box;
+  border-radius: 12px;
+  height: 300px;
+  color: #002049;
+  font-weight: bold;
+  font-size: 16px;
+  .toggle {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  .main-container {
+    position: relative;
+    .total {
+      position: absolute;
+      top: calc(40% - 20px);
+      width: 20%;
+      right: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 32px;
+      text-align: center;
+      height: 48px;
+    }
+  }
+  .loading {
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+  }
+}

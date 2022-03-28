@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             Title="Inventory"
+             x:Class="MobileApp.Pages.Screen.CurrentInventory">
+
+    <ContentPage.Content>
+        <RefreshView IsRefreshing="{Binding IsInventoryRefreshing, Mode=OneWay}"
+                     Command="{Binding RefreshInventoryCommand}">
+            <CollectionView ItemsSource="{Binding InventoryGroupList}"
+                            EmptyView="No Inventory is available"
+                            IsGrouped="True"
+                            Margin="10">
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource DarkShade}">
+                            <Grid 
+                                  VerticalOptions="Center"
+                                HeightRequest="20">
+                                <Label Grid.Column="0"
+                                       Text="{Binding Name}"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource CyanColor}"></Label>
+                                <Label Grid.Column="1"
+                                       Text="{Binding Count, StringFormat='Quantity: {0}'}"
+                                       HorizontalOptions="End"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource CyanColor}"></Label>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid BackgroundColor="{StaticResource LightBlueShade}"
+                          Padding="10, 0, 10, 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0"
+                               Text="{Binding AssetTagNumber}" VerticalOptions="Center"></Label>
+                            <Label Grid.Column="1"
+                                   Margin="10"
+                                   IsVisible="{Binding SerialNumber , Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                                   Text="{Binding SerialNumber, StringFormat='({0})'}"
+                                   VerticalOptions="Center"></Label>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.GroupFooterTemplate>
+                    <DataTemplate>
+                        <BoxView></BoxView>
+                    </DataTemplate>
+                </CollectionView.GroupFooterTemplate>
+            </CollectionView>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>

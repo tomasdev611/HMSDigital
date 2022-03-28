@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+        <HmsEnvironment>dev</HmsEnvironment>
+        <Configurations>Debug;Test;Release</Configurations>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>portable</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
+      <DebugType>portable</DebugType>
+      <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+        <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="Assets\Fonts\FASolid.otf" />
+      <None Remove="ViewModels\InventoryManagement\" />
+      <None Remove="Interface\Services\" />
+      <None Remove="Pages\Screen\PurchaseOrder\" />
+      <None Remove="Microsoft.AppCenter" />
+      <None Remove="Microsoft.AppCenter.Crashes" />
+      <None Remove="Microsoft.AppCenter.Analytics" />
+      <None Remove="Controls\" />
+      <None Remove="Assets\Images\searchIcon.png" />
+      <None Remove="DIPS.Xamarin.UI" />
+      <None Remove="Refractored.MvvmHelpers" />
+      <None Remove="Pages\Screen\InventoryManagement\" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+        <PackageReference Include="refit" Version="5.2.1" />
+        <PackageReference Include="Plugin.Toast" Version="2.2.0" />
+        <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
+        <PackageReference Include="sqlite-net-pcl" Version="1.8.0-beta" />
+        <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.759" />
+        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2083" />
+        <PackageReference Include="Plugin.PushNotification" Version="3.6.9" />
+        <PackageReference Include="ZXing.Net.Mobile.Forms" Version="3.1.0-beta2" />
+        <PackageReference Include="ZXing.Net.Mobile" Version="3.1.0-beta2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Xamarin.CommunityToolkit" Version="1.2.0" />
+        <PackageReference Include="JsonDiffPatch.Net" Version="2.3.0" />
+        <PackageReference Include="Microsoft.AppCenter" Version="4.4.0" />
+        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
+        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
+        <PackageReference Include="DIPS.Xamarin.UI" Version="8.0.4" />
+        <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Pages\Screen\" />
+        <Folder Include="Pages\CommonPages\" />
+        <Folder Include="Pages\PopUpMenu\" />
+        <Folder Include="DataBaseAttributes\" />
+        <Folder Include="Pages\Templates\" />
+        <Folder Include="Utils\" />
+        <Folder Include="Utils\TemplateSelector\" />
+        <Folder Include="Utils\Converter\" />
+        <Folder Include="Utils\Validator\" />
+        <Folder Include="Resources\" />
+        <Folder Include="ViewModels\PurchaseOrder\" />
+        <Folder Include="Interface\Services\" />
+        <Folder Include="Pages\Screen\PurchaseOrder\" />
+        <Folder Include="Controls\" />
+        <Folder Include="Pages\Screen\InventoryManagement\" />
+        <Folder Include="ViewModels\InventoryManagement\" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Assets\Fonts\FASolid.otf" />
+        <EmbeddedResource Include="Assets\Images\email.png" />
+        <EmbeddedResource Include="Assets\Images\appLogo.png" />
+        <EmbeddedResource Include="Assets\Images\showPassword.png" />
+        <EmbeddedResource Include="Assets\Images\hidePassword.png" />
+        <EmbeddedResource Include="Assets\Images\corona.png" />
+        <EmbeddedResource Include="Assets\Images\menuIcon.png" />
+        <EmbeddedResource Include="Assets\Images\CancelIcon.png" />
+        <EmbeddedResource Include="Assets\Images\rightArrow.png" />
+        <EmbeddedResource Include="settings.$(HmsEnvironment).json" Link="settings.json" Condition="Exists('settings.$(HmsEnvironment).json')" />
+        <EmbeddedResource Include="settings.dev.json" Link="settings.json" Condition="!Exists('settings.$(HmsEnvironment).json')" />
+        <EmbeddedResource Include="Assets\Images\searchIcon.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Pages\Screen\ProfilePage.xaml.cs">
+            <DependentUpon>ProfilePage.xaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Screen\HamburgerMenu.xaml.cs">
+            <DependentUpon>HamburgerMenu.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\Screen\HamburgerMenuMaster.xaml.cs">
+            <DependentUpon>HamburgerMenuMaster.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\CommonPages\PopUpScreen.xaml.cs">
+            <DependentUpon>PopUpScreen.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\Screen\CurrentInventory.xaml.cs">
+            <DependentUpon>CurrentInventory.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\Screen\LoadListScan.xaml.cs">
+          <DependentUpon>LoadListScan.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\PopUpMenu\DetailedOrderNotes.xaml.cs">
+          <DependentUpon>DetailedOrderNotes.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\PopUpMenu\LocationPopup.xaml.cs">
+          <DependentUpon>LocationPopup.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="Pages\Templates\OrderTypeLabel.xaml.cs">
+          <DependentUpon>OrderTypeLabel.xaml</DependentUpon>
+        </Compile>        
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Pages\CommonPages\BarcodeScanner.xaml">
+            <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Screen\AddInventoryItem.xaml">
+          <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Screen\InventoryAuditView.xaml">
+          <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Screen\InventoryLoad.xaml">
+            <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Screen\CurrentInventory.xaml">
+            <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Templates\OrderTypeLabel.xaml">
+          <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Templates\FlashMessage.xaml">
+          <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Templates\HorizontalDivider.xaml">
+          <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Pages\Templates\InventoryItemCard.xaml">
+          <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        </EmbeddedResource>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,34 @@
+{
+    "clickables": {
+        
+        "parameterized": {
+            
+            "Action Button": {
+                "xpath" : "//button[@label=\"BUTTON-LABEL\"]",
+                "placeholder": "BUTTON-LABEL"
+            },
+            
+            "Order Type": {
+                "xpath": "//div[@role=\"button\"][normalize-space(text())=\"ORDER-TYPE\"]",
+                "placeholder": "ORDER-TYPE"
+            }
+        },
+
+        "uniques": {
+            "Close modal": {
+                "findBy": "xpath",
+                "xpath": "//div[@role=\"dialog\"]/div/div/a/span"
+            }
+        }
+    },
+
+    "waitables": {
+        
+        "uniques": {
+            "Modal": {
+                "findBy": "xpath",
+                "xpath": "//div[@role=\"dialog\"]"
+            }
+        }
+    }
+}

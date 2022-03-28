@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.InventoryManagement.CreateTransferOrderPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <ContentPage.Content>
+        <StackLayout Margin="15,16" Spacing="15">
+            <Grid ColumnDefinitions="7*, 3*">
+                <StackLayout>
+                    <Label
+                        FontSize="14"
+                        Text="Transfer ID:"
+                        TextColor="#596167" />
+                    <Label
+                        FontSize="14"
+                        Text="{Binding TransferId}"
+                        TextColor="#596167" />
+                </StackLayout>
+                <StackLayout Grid.Column="1">
+                    <Label
+                        FontSize="14"
+                        Text="Date:"
+                        TextColor="#596167" />
+                    <Label
+                        FontSize="14"
+                        Text="{Binding CurrentDate, StringFormat='{0:d}'}"
+                        TextColor="#596167" />
+                </StackLayout>
+            </Grid>
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label
+                    FontSize="14"
+                    Text="Transfer Location To:"
+                    TextColor="#596167"
+                    VerticalOptions="Center" />
+                <Entry
+                    FontSize="14"
+                    HeightRequest="40"
+                    HorizontalOptions="FillAndExpand"
+                    Keyboard="Numeric"
+                    Text="{Binding SelectedLineItemModel.QuantityRecieved, Mode=TwoWay}"
+                    TextColor="#596167"
+                    VerticalOptions="Center"
+                    WidthRequest="110" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    Text="Add inventory items to Create Order"
+                    TextColor="{StaticResource PrimaryBlueColor}"
+                    VerticalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label
+                    FontSize="14"
+                    Text="Search Inventory ID / Description "
+                    TextColor="#596167"
+                    VerticalOptions="Center" />
+                <Entry
+                    FontSize="14"
+                    HeightRequest="40"
+                    Keyboard="Numeric"
+                    Text="{Binding SelectedLineItemModel.QuantityRecieved, Mode=TwoWay}"
+                    TextColor="#596167"
+                    VerticalOptions="Center"
+                    WidthRequest="110" />
+            </StackLayout>
+
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label
+                    FontSize="14"
+                    Text="Scan Asset Tag"
+                    TextColor="#596167"
+                    VerticalOptions="Center" />
+                <Button
+                    BackgroundColor="{StaticResource PrimaryBlueColor}"
+                    Command="{Binding CloseCommand}"
+                    FontSize="14"
+                    Text="Scan"
+                    TextColor="White" />
+            </StackLayout>
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

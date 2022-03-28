@@ -1,0 +1,50 @@
+<div [ngClass]="{'flyout-open': detailsViewOpen}">
+  <app-body-header displayTitle="Contract Items" backText="Back"></app-body-header>
+  <app-table-virtual-scroll
+    [list]="contractItemResponse?.records"
+    [pageSize]="contractItemResponse?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    [totalRecords]="contractItemResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="contractItemHeaders"
+    [pageNumber]="contractItemResponse?.pageNumber"
+    [totalPage]="contractItemResponse?.totalPageCount"
+    [selection]="true"
+    (fetchNext)="fetchNext($event)"
+    (rowSelected)="itemSelected($event)">
+  </app-table-virtual-scroll>
+  <div class="flyout">
+    <button class="close-icon" (click)="closeItemDetails()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-main">
+      <div class="subscription-detail">
+        <div class="item">
+          <span>Contract Item Name</span>
+          <span>{{ selectedItem?.item?.name }}</span>
+        </div>
+        <div class="item">
+          <span>Is Per Diem</span>
+          <span>{{ selectedItem?.isPerDiem ? 'Yes' : 'No' }}</span>
+        </div>
+        <div class="item">
+          <span>Rental Price</span>
+          <span>{{ selectedItem?.rentalPrice }}</span>
+        </div>
+        <div class="item">
+          <span>Sale Price</span>
+          <span>{{ selectedItem?.salePrice }}</span>
+        </div>
+        <div class="item">
+          <span>Show On Order Screen</span>
+          <span>{{ selectedItem?.showOnOrderScreen ? 'Yes' : 'No' }}</span>
+        </div>
+        <div class="item">
+          <span>No Approval Required</span>
+          <span>{{ selectedItem?.noApprovalRequired ? 'Yes' : 'No' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

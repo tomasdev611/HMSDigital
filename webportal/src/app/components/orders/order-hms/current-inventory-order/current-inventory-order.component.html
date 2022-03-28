@@ -1,0 +1,98 @@
+<div class="content">
+  <div class="p-d-flex p-jc-between">
+    <div>
+      <div class="title title-header">{{ patientInfo?.firstName }} {{ patientInfo?.lastName }}</div>
+      <div>{{ patientInfo?.dateOfBirth | date: 'longDate' }}</div>
+    </div>
+    <a
+      class="link"
+      *ngIf="showUpdatePatientLink"
+      [routerLink]="['/patients/edit/' + patientInfo?.id]"
+      >Update Patient
+    </a>
+  </div>
+  <div class="title">{{ formatPhoneNumber(patientInfo?.phoneNumbers[0]?.number) }}</div>
+  <div class="title p-mb-3">
+    {{ patientInfo?.hospiceLocation?.name }} ({{ patientInfo?.hospice?.name }})
+  </div>
+
+  <p-accordion
+    [multiple]="true"
+    expandIcon="pi pi-fw pi-chevron-down"
+    collapseIcon="pi pi-fw pi-chevron-up"
+    class="p-mt-3">
+    <p-accordionTab
+      header="Current Order"
+      *ngIf="showCurrentOrder"
+      class="p-mt-3"
+      [(selected)]="activeState.currentOrder">
+      <div *ngIf="cartItems?.length" class="cart-items">
+        <ul class="p-grid p-nogutter p-justify-space-between">
+          <li class="p-grid p-nogutter line-item" *ngFor="let item of cartItems">
+            <div class="p-col-8 item-name">{{ item?.item?.name }}</div>
+            <div class="p-col-4 product-grid-item-bottom">
+              <span class="p-mx-1 flex-center p-jc-center">
+                <i
+                  class="pi pi-minus-circle"
+                  [class.disabled]="checkDisabled(item, 'decrement')"
+                  (click)="!checkDisabled(item, 'decrement') && updateCart('decrement', item)"></i>
+                <span class="cart-count">{{ item?.count }}</span>
+                <i class="pi pi-plus-circle" (click)="updateCart('increment', item)"></i>
+                <i
+                  class="pi pi-trash p-ml-2"
+                  [class.disabled]="checkDisabled(item, 'delete')"
+                  (click)="!checkDisabled(item, 'delete') && updateCart('remove', item)"></i>
+              </span>
+            </div>
+            <br />
+            <div
+              class="item-equipments ml-10 mt-5 p-col-10"
+              *ngFor="let equipment of item.equipmentSettings">
+              <span>{{ equipment.name }}</span>
+              <span>{{ equipment.value }}</span>
+            </div>
+            <div class="fulfilled-items mt-5">
+              <span
+                class="p-col-12 fulfilled-info"
+                *ngFor="
+                  let fulfilledItem of getFulfilledItemsForLineItem(item.id);
+                  last as isLast;
+                  count as count
+                ">
+                <span class="chip">Fulfilled</span>
+                <span
+                  >{{ fulfilledItem.serialNumber || '' }}
+                  {{ fulfilledItem.assetTag ? '(' + fulfilledItem.assetTag + ')' : '' }}</span
+                >
+                <div class="time-info">
+                  {{ fulfilledItem.fulfillmentEndDateTime | date: 'LLL dd, yyyy, h:mm a' }}
+                </div>
+                <span class="fulfilled-status" *ngIf="isLast"
+                  >{{ getFulfilledLineItemsCount(item.id) || 0 }} out of
+                  {{ item.count || 0 }} fulfilled
+                </span>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="!cartItems?.length" class="cart-items">No Items in orders</div>
+    </p-accordionTab>
+    <p-accordionTab header="Current Patient Inventory" [(selected)]="activeState.currentInventory">
+      <div *ngIf="patientInventories?.length" class="patient-inventory">
+        <ul class="p-grid p-nogutter p-justify-space-between">
+          <li class="p-grid p-nogutter line-item" *ngFor="let item of patientInventories">
+            <div class="p-col-11 item-name">{{ item?.itemName }}</div>
+            <div class="p-col-1 item-quantity">{{ item?.quantity || 0 }}</div>
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="!patientInventories?.length" class="cart-items">
+        No Items in Patient Inventory
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>
+<div class="p-d-flex p-flex-column p-jc-between p-flex-md-row p-sticky action-btns">
+  <ng-content></ng-content>
+</div>

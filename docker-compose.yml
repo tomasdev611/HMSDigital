@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  core-api:
+    build:
+      context: .
+      dockerfile: ./Core/Dockerfile
+    networks:
+      - hmsd_network
+    ports:
+      - 5000:80
+    depends_on:
+      - hmsd-db
+    environment:
+      - ConnectionStrings__HMSDigitalDbConnection=Server=hmsd-db;Database=HMSDigital;User Id=sa;Password=secretSanta7;
+  notification:
+    build:
+      context: .
+      dockerfile: ./Notification/Dockerfile
+    networks:
+      - hmsd_network
+    ports:
+      - 5001:80
+    depends_on:
+      - hmsd-db
+    environment:
+      - ConnectionStrings__HMSDigitalDbConnection=Server=hmsd-db;Database=HMSDigital;User Id=sa;Password=secretSanta7;
+  patients:
+    build:
+      context: .
+      dockerfile: ./Patient/Dockerfile
+    networks:
+      - hmsd_network
+    ports:
+      - 5002:80
+    depends_on:
+      - hmsd-db
+    environment:
+      - ConnectionStrings__HMSDigitalDbConnection=Server=hmsd-db;Database=HMSDigital;User Id=sa;Password=secretSanta7;
+  hmsd-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:
+      - hmsd_network
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssqlvolume:/var/src/opt/mssql
+    environment:
+      - ACCEPT_EULA="Y"
+      - MSSQL_SA_PASSWORD=secretSanta7
+      - MSSQL_PID=Express
+volumes:
+  mssqlvolume:
+networks:
+  hmsd_network:
+    driver: bridge

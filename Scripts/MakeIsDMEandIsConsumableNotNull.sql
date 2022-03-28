@@ -1,0 +1,3 @@
+ALTER TABLE core.Items ALTER COLUMN IsDME bit NOT NULL;
+
+ALTER TABLE core.Items ALTER COLUMN IsConsumable bit NOT NULL;

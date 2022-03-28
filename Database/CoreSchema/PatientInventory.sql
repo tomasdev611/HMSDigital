@@ -1,0 +1,25 @@
+﻿CREATE TABLE [core].[PatientInventory]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [ItemId] INT NOT NULL, 
+    [ItemCount] INT NOT NULL DEFAULT 1, 
+    [OrderHeaderId] INT NULL, 
+    [HospiceId] INT NULL,
+    [HospiceLocationId] INT NULL,
+    [PatientUUID] UNIQUEIDENTIFIER NOT NULL,
+    [DeliveryAddressUUID] UNIQUEIDENTIFIER NULL,
+    [StatusId] INT NOT NULL,
+    [InventoryId] INT NULL,  
+    [OrderLineItemId] INT NULL, 
+    [DataBridgeRunUUID] UNIQUEIDENTIFIER NULL,
+    [DataBridgeRunDateTime] DATETIME2 NULL,
+    [IsExceptionFulfillment] BIT NOT NULL DEFAULT 0,
+    [AdditionalField1] VARCHAR(MAX) NULL, 
+    [AdditionalField2] INT NULL, 
+    CONSTRAINT [FK_PatientInventory_ToItems] FOREIGN KEY ([ItemId]) REFERENCES [core].[Items]([Id]),
+    CONSTRAINT [FK_PatientInventory_ToInventoryStatusTypes] FOREIGN KEY ([StatusId]) REFERENCES [core].[InventoryStatusTypes]([Id]),
+    CONSTRAINT [FK_PatientInventory_OrderHeader] FOREIGN KEY ([OrderHeaderId]) REFERENCES [core].[OrderHeaders]([Id]),
+    CONSTRAINT [FK_PatientInventory_OrderLineItems] FOREIGN KEY ([OrderLineItemId]) REFERENCES [core].[OrderLineItems]([Id]),
+    CONSTRAINT [FK_PatientInventory_Inventory] FOREIGN KEY ([InventoryId]) REFERENCES [core].[Inventory]([Id]),
+   
+)

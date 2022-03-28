@@ -1,0 +1,97 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - MSBuild
+  - Xamarin.Android
+  - JDK
+  vmImage: 'windows-latest'
+variables:
+  BuildConfiguration: 'release'
+trigger:
+    branches:
+      include:
+      - dev
+      - e2e
+      - training
+    paths:
+      include:
+      - MobileApp
+      exclude:
+      - MobileApp/README.md
+      - MobileApp/MobileApp.iOS
+pr:
+    branches:
+      include:
+      - dev
+    paths:
+      include:
+      - MobileApp
+      exclude:
+      - MobileApp/README.md
+      - MobileApp/MobileApp.iOS
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: MobileApp/MobileApp.sln
+
+- task: PowerShell@2
+  displayName: Determine target branch
+  inputs:
+      targetType: 'inline'
+      script: |
+        Write-Host "Env:BUILD_SOURCEBRANCHNAME = $Env:BUILD_SOURCEBRANCHNAME"
+        Write-Host "Env:BUILD_REASON = $Env:BUILD_REASON"
+        $TargetBranch = $Env:BUILD_SOURCEBRANCHNAME
+        if($env:BUILD_REASON -eq 'PullRequest')
+        {
+        Write-Host "Env:SYSTEM_PULLREQUEST_TARGETBRANCH = $env:SYSTEM_PULLREQUEST_TARGETBRANCH"
+        $TargetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+        }
+        Write-Host "Target branch is $TargetBranch"
+        switch($TargetBranch) {
+        'dev' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]dev"; }
+        'e2e' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]e2e"; }
+        'training' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]training"; }
+        'release' {Write-Host "##vso[task.setvariable variable=hmsEnvironment]prod"; }
+        default {Write-Host "##vso[task.setvariable variable=hmsEnvironment]NONE"; }
+        }
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android project'
+  inputs:
+    projectFile: MobileApp/MobileApp.Android/MobileApp.Android.csproj
+    outputDirectory: '$(build.binariesdirectory)/$(BuildConfiguration)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '-p:HmsEnvironment=$(hmsEnvironment)'
+    msbuildVersionOption: latest
+
+- task: AndroidSigning@3
+  displayName: 'Signing and aligning APK file(s)'
+  inputs:
+    apkFiles: '$(build.binariesdirectory)/$(BuildConfiguration)/*.apk'
+    apksign: true
+    apksignerKeystoreFile: 'hmsd-mobile.keystore'
+    apksignerKeystorePassword: '$(apksignerKeystorePassword)'
+    apksignerKeystoreAlias: 'hmsd-mobile'
+    apksignerKeyPassword: '$(apksignerKeystorePassword)'
+    zipalign: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(build.binariesdirectory)/$(BuildConfiguration)'
+    Contents: '**/*.apk'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()

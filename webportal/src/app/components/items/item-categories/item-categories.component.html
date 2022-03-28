@@ -1,0 +1,16 @@
+<div style="padding-top: 0.5rem">
+  <app-table-virtual-scroll
+    #categoriesTable
+    [list]="categoriesResponse?.records"
+    [pageSize]="categoriesReqeust?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="5"
+    [totalRecords]="categoriesResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="categoriesHeaders"
+    [pageNumber]="categoriesResponse?.pageNumber || 0"
+    [totalPage]="categoriesResponse?.totalPageCount || 0"
+    [selection]="true"
+    (fetchNext)="fetchNext($event)">
+  </app-table-virtual-scroll>
+</div>

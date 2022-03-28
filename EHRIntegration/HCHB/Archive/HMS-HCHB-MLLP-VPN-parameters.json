@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverfarms_EastUSPlan_name": {
+            "value": null
+        },
+        "routeTables_mllp_vpn_route_name": {
+            "value": null
+        },
+        "connections_HCHB_Integration_name": {
+            "value": null
+        },
+        "localNetworkGateways_HCHB_KC_name": {
+            "value": null
+        },
+        "publicIPAddresses_HS_VPN_HCHB_name": {
+            "value": null
+        },
+        "storageAccounts_234234234655555_name": {
+            "value": null
+        },
+        "virtualNetworks_VNet_mllplistener_name": {
+            "value": null
+        },
+        "storageAccounts_mllpprimarystorage_name": {
+            "value": null
+        },
+        "networkInterfaces_mllplistenervm156_name": {
+            "value": null
+        },
+        "virtualNetworkGateways_VPN_Gateway_HCHB_name": {
+            "value": null
+        },
+        "networkSecurityGroups_MLLPListenerVM_nsg_name": {
+            "value": null
+        },
+        "publicIPAddresses_hchb_vpm_prod_public_ip_name": {
+            "value": null
+        },
+        "networkSecurityGroups_nsg_mllptcplistener_Subnet_0_name": {
+            "value": null
+        }
+    }
+}

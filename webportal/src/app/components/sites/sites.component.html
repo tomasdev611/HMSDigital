@@ -1,0 +1,65 @@
+<div class="hms-table site-container">
+  <app-body-header displayTitle="Sites" [listCount]="sitesResponse?.totalRecordCount">
+    <div class="p-grid p-nogutter p-jc-end">
+      <div *ngIf="showHeirarchialDiagram" class="view-toggle">
+        <p-radioButton
+          name="diagramDirection"
+          [value]="'vertical'"
+          label="Vertical"
+          [(ngModel)]="diagramDirection"
+          class="mr-10"
+          (onClick)="diagramDirectionChange()">
+        </p-radioButton>
+        <p-radioButton
+          name="diagramDirection"
+          [value]="'horizontal'"
+          label="Horizontal"
+          [(ngModel)]="diagramDirection"
+          (onClick)="diagramDirectionChange()">
+        </p-radioButton>
+      </div>
+      <app-sites-filters
+        *ngIf="!showHeirarchialDiagram"
+        class="site-filters"
+        (filter)="filterSites($event)">
+      </app-sites-filters>
+      <div style="align-self: center">
+        <button
+          type="button"
+          pButton
+          (click)="toggleTableAndDiagram()"
+          [label]="showHeirarchialDiagram ? 'View Site Table' : 'View Site Hierarchy'"
+          [routerLink]="[]"
+          class="p-button-order"></button>
+      </div>
+    </div>
+  </app-body-header>
+  <app-table-virtual-scroll
+    #sitesTable
+    *ngIf="!showHeirarchialDiagram"
+    [list]="sitesResponse?.records"
+    [pageSize]="sitesResponse?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    scrollHeightCustom="calc(100vh - 210px)"
+    [totalRecords]="sitesResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="headers"
+    [pageNumber]="sitesResponse?.pageNumber || 0"
+    [totalPage]="sitesResponse?.totalPageCount"
+    (fetchNext)="getNext($event)"
+    (sort)="sortSites($event)">
+  </app-table-virtual-scroll>
+  <pan-zoom
+    #siteHeirarchy
+    [config]="panZoomConfig"
+    class="site-tree"
+    *ngIf="showHeirarchialDiagram"
+    style="position: absolute">
+    <ngx-org-chart
+      [nodes]="heirarchialSites"
+      [direction]="diagramDirection"
+      (itemClick)="onSiteClick($event)">
+    </ngx-org-chart>
+  </pan-zoom>
+</div>

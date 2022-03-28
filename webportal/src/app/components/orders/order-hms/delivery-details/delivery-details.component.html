@@ -1,0 +1,195 @@
+<div class="main-view">
+  <div class="order-details p-grid p-nogutter patient-wrapper" *ngIf="editmode && orderHeader">
+    <div class="p-grid p-nogutter">
+      <div class="p-col-2 form-label order-label">Order # :</div>
+      <div class="p-col-4 form-data">{{ orderHeader?.orderNumber }}</div>
+    </div>
+  </div>
+  <form
+    [formGroup]="deliveryDetailsForm"
+    (ngSubmit)="onSubmit(deliveryDetailsForm.value)"
+    autocomplete="none"
+    *ngIf="patient">
+    <div class="p-grid p-nogutter p-jc-start p-pb-3 p-pt-3">
+      <h5 class="p-grid p-mb-2">
+        <span class="p-col-3">Delivery Address * </span>
+        <span class="p-col-3 p-ai-center cursor-pointer" (click)="navigateToAddAddress()">
+          <i class="pi pi-plus-circle"></i> &nbsp;Add Address
+        </span>
+      </h5>
+      <div class="p-grid">
+        <div
+          class="p-p-2 p-mb-1 red empty-address-note"
+          *ngIf="!deliveryAddresses || !deliveryAddresses?.length">
+          No Addresses available for this patient, please add address
+        </div>
+        <div class="p-p-2 p-mb-1 address-wrapper" *ngFor="let address of deliveryAddresses">
+          <p-radioButton
+            name="deliveryAddress"
+            inputId="address.address"
+            [value]="address.address"
+            formControlName="deliveryAddress"
+            (onClick)="addressChanged(address.address)">
+          </p-radioButton>
+          <label [for]="address.address" class="p-mb-1 p-ml-2"
+            >{{ address.address ? getAddress(address.address) : '' }}
+          </label>
+          <a (click)="navigateToAddAddress()" class="edit-address-link">Edit </a>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid p-nogutter p-pb-3 p-pt-3">
+      <h5 class="p-grid p-nogutter p-mb-2">Delivery Timing *</h5>
+      <div class="p-grid p-ai-center">
+        <div class="p-col-3">
+          <p-radioButton
+            name="deliveryTimingMode"
+            value="high-priority"
+            label="High Priority"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="deliveryTimeMode"
+            (ngModelChange)="deliveryTimingModeChanged($event)">
+          </p-radioButton>
+        </div>
+        <div class="p-col-2">
+          <p-radioButton
+            name="deliveryHours"
+            [value]="2"
+            label="2 Hours"
+            [disabled]="deliveryTimeMode === 'regular'"
+            formControlName="deliveryHours">
+          </p-radioButton>
+        </div>
+        <div class="p-col-2">
+          <p-radioButton
+            name="deliveryHours"
+            [value]="4"
+            label="4 Hours"
+            [disabled]="deliveryTimeMode === 'regular'"
+            formControlName="deliveryHours">
+          </p-radioButton>
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <div class="p-col-3">
+          <p-radioButton
+            name="deliveryTimingMode"
+            value="regular"
+            label="Regular"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="deliveryTimeMode"
+            (ngModelChange)="deliveryTimingModeChanged($event)">
+          </p-radioButton>
+        </div>
+
+        <div class="p-col-4 p-pr-2">
+          <h5 class="p-grid p-nogutter">Delivery Date *</h5>
+          <p-calendar
+            [disabled]="deliveryTimeMode === 'high-priority'"
+            [monthNavigator]="true"
+            placeholder="Select a delivery date"
+            [yearNavigator]="true"
+            [autoZIndex]="false"
+            yearRange="2021:2040"
+            [panelStyle]="{'z-index': '11005'}"
+            formControlName="requestedDate"
+            inputStyleClass="inline-edit-calendar"
+            [minDate]="today">
+          </p-calendar>
+        </div>
+        <div class="p-col-4 p-pr-2" *ngIf="deliveryTimeOptions?.length > 0">
+          <h5 class="p-grid p-nogutter">Delivery Time *</h5>
+          <p-dropdown
+            [options]="deliveryTimeOptions"
+            filter="true"
+            formControlName="deliveryTime"
+            [showClear]="true"
+            placeholder="Select a Delivery Time"
+            [panelStyle]="{width: '100%'}"
+            [(ngModel)]="pickupTime">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid p-nogutter p-pb-3 p-pt-3" *ngIf="patient?.patientNotes?.length > 0">
+      <div class="p-col-4">
+        <h5 class="p-grid p-nogutter p-mb-1">Patient Instructions</h5>
+        <p-listbox [options]="patient?.patientNotes" [readonly]="true">
+          <ng-template pTemplate="item" let-noteObj>
+            <div class="note-item">
+              <span class="note-text">{{ noteObj.note }}</span>
+              <div class="note-details">
+                <span class="date"
+                  >{{ noteObj.createdByUserName }} ({{
+                    getDateFromString(noteObj.createdDateTime) | date: 'MMM d, y, h:mm a'
+                  }})</span
+                >
+              </div>
+            </div>
+          </ng-template>
+        </p-listbox>
+      </div>
+    </div>
+    <div class="p-grid p-nogutter p-pb-3 p-pt-3">
+      <div class="p-col-4 p-pr-3">
+        <div class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+          <h5 class="p-grid p-nogutter p-mb-1 p-jc-between">
+            Ordering Nurse *
+            <span class="p-ai-center p-d-flex cursor-pointer" (click)="navigateToAddNurse()">
+              <i class="pi pi-plus-circle"></i> &nbsp;Add Nurse
+            </span>
+          </h5>
+          <p-dropdown
+            [options]="nurses"
+            filter="true"
+            [showClear]="true"
+            class="dropdown-panel"
+            formControlName="hospiceMemberId"
+            placeholder="Select Ordering Nurse"
+            [panelStyle]="{width: '100%'}">
+          </p-dropdown>
+        </div>
+        <div *ngIf="shouldShowTpaOrderField()" class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+          <h5 class="p-grid p-nogutter p-mb-1">TPA Order #</h5>
+          <input
+            id="tpaOrder"
+            type="text"
+            size="40"
+            pInputText
+            autocomplete="none"
+            formControlName="externalOrderNumber" />
+        </div>
+      </div>
+      <div class="p-col-8">
+        <app-order-notes formControlName="orderNote" [orderHeaderNotes]="orderHeader?.orderNotes">
+        </app-order-notes>
+      </div>
+    </div>
+  </form>
+</div>
+<app-current-inventory-order
+  class="rightside-view"
+  *ngIf="patient?.id"
+  [patientInfo]="patient"
+  [patientInventories]="patientInventories"
+  [cartItems]="cartItems"
+  [editmode]="editmode"
+  (updateCartHandler)="updateCart($event)"
+  [fulfilledItems]="fulfilledItems">
+  <div class="p-pr-2">
+    <button
+      pButton
+      label="Return to Products"
+      class="p-button-secondary p-mt-3"
+      (click)="returnToProducts()"></button>
+  </div>
+  <button
+    [pTooltip]="checkFormValidity(deliveryDetailsForm)"
+    tooltipPosition="top"
+    [escape]="false"
+    pButton
+    label="Proceed to Review"
+    class="p-mt-3"
+    (click)="proceedToReview()"
+    [class.btn-disabled]="checkFormValidity(deliveryDetailsForm).length > 0"></button>
+</app-current-inventory-order>

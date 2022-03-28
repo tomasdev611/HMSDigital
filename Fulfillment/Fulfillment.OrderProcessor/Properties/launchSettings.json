@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Fulfillment.OrderProcessor": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local"
+      }
+    }
+  }
+}

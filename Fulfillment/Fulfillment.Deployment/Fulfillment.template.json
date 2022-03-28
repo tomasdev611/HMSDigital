@@ -1,0 +1,161 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appServicePlanSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "appServicePlanSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "coreApiUrl": {
+      "type": "string"
+    },
+    "dbAdminLogin": {
+      "type": "string"
+    },
+    "dbAdminPassword": {
+      "type": "securestring"
+    },
+    "dbName": {
+      "type": "string"
+    },
+    "fulfillmentAppAlwaysOn": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "fulfillmentAppName": {
+      "type": "string"
+    },
+    "hmsInternalClientSecret": {
+      "type": "securestring"
+    },
+    "mapsAccessKey": {
+      "type": "securestring"
+    },
+    "sqlserverName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]",
+        "capacity": "[parameters('appServicePlanSkuCapacity')]"
+      },
+      "properties": {
+        "name": "[parameters('appServicePlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('fulfillmentAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('appServicePlanName'))]": "empty",
+        "displayName": "FulfillmentService"
+      },
+      "properties": {
+        "name": "[parameters('fulfillmentAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": "[parameters('fulfillmentAppAlwaysOn')]"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites/', parameters('fulfillmentAppName'))]"
+          ],
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('fulfillmentAppName'))).InstrumentationKey]",
+            "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('fulfillmentAppName'))).InstrumentationKey]",
+            "ASPNETCORE_ENVIRONMENT ": "[parameters('aspNetCoreEnvironment')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "BingMaps:AccessKey": "[parameters('mapsAccessKey')]",
+            "ConnectionStrings:HMSDigitalDbConnection": "[concat('Data Source=tcp:', parameters('sqlserverName'),'.database.windows.net,1433;Initial Catalog=', parameters('dbName'), ';User Id=', parameters('dbAdminLogin'), '@', parameters('sqlserverName'), ';Password=', parameters('dbAdminPassword'), ';')]",
+            "Core:ApiUrl": "[parameters('coreApiUrl')]",
+            "Core:IdentityClient:ClientSecret": "[parameters('hmsInternalClientSecret')]",
+            "Serilog:WriteTo:2:Args:connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('fulfillmentAppName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', parameters('fulfillmentAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('fulfillmentAppName'))]": "Resource",
+        "displayName": "fulfillmentAppInsightsComponent"
+      },
+      "properties": {
+        "ApplicationId": "[parameters('fulfillmentAppName')]"
+      }
+    },
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-04-01",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "kind": "StorageV2"
+    }
+  ]
+}

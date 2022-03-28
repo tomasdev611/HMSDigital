@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Notification.NotificationProcessor": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local"
+      }
+    }
+  }
+}

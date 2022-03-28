@@ -1,0 +1,18 @@
+<div class="sidebar">
+  <div class="sidebar-scroll-content">
+    <div>
+      <div class="dispatch-menu">
+        <button
+          type="button"
+          pButton
+          label="Switch to Dispatch"
+          *ngIf="checkPermission('Dispatch', 'Read')"
+          [routerLink]="['/dispatch']"
+          class="p-button-secondary dispatch-btn"
+          icon="pi pi-refresh"></button>
+      </div>
+      <p-tabMenu [model]="menuItems" styleClass="main-menu" [activeItem]="activeItem"> </p-tabMenu>
+    </div>
+    <p-tabMenu [model]="bottomMenuItems" styleClass="bottom-menu"> </p-tabMenu>
+  </div>
+</div>

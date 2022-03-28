@@ -1,0 +1,58 @@
+<p-tabView>
+  <p-tabPanel *ngIf="shouldShowInValidRecord()" [header]="invalidRecordsReport">
+    <p-table
+      [columns]="tableHeaders"
+      [scrollable]="true"
+      [value]="inValidRecords"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="invalidRecordsReport">
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" style="width: 250px" />
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let column of columns">
+            {{ column.label }}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-index="rowIndex" let-columns="columns">
+        <tr class="iw-row iw-invalid-records">
+          <td *ngFor="let col of columns" pTooltip="{{ errors[index] }}" tooltipPosition="bottom">
+            {{ rowData[col.field] }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
+  <p-tabPanel *ngIf="shouldShowValidRecord()" [header]="validRecordsReport">
+    <p-table
+      [columns]="tableHeaders"
+      [scrollable]="true"
+      [value]="validRecords"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="validRecordsReport">
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" style="width: 250px" />
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let column of columns">
+            {{ column.label }}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr class="iw-row iw-valid-records">
+          <td *ngFor="let col of columns" pTooltip="{{ rowData[col.field] }}">
+            {{ rowData[col.field] }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
+</p-tabView>

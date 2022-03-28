@@ -1,0 +1,25 @@
+:host ::ng-deep {
+  .main-menu {
+    padding-top: 4em;
+  }
+  .bottom-menu {
+    margin-bottom: 5px;
+  }
+  .dispatch-menu {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1em;
+    margin-bottom: -2em;
+    margin-left: -0.6em;
+    button {
+      color: #c1d82f !important;
+      .p-button-icon-left {
+        left: 0em;
+      }
+      &:focus {
+        box-shadow: 0 0 0 0.2em #c1d82f !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+:host ::ng-deep {
+  .p-paginator {
+    .p-paginator-pages {
+      display: inline-block !important;
+    }
+    > a {
+      display: inline-block !important;
+    }
+  }
+
+  .p-tabview {
+    .p-tabview-panels {
+      .p-tabview-panel {
+        p-table {
+          .p-table {
+            height: calc(100vh - 450px) !important;
+            .p-table-scrollable-wrapper {
+              .p-table-scrollable-view {
+                height: inherit;
+                .p-table-scrollable-body {
+                  height: inherit;
+                }
+              }
+              height: inherit;
+            }
+          }
+        }
+        height: calc(100vh - 400px) !important;
+      }
+    }
+  }
+
+  .p-table {
+    .p-paginator {
+      margin-top: 40px;
+    }
+    .p-table-tbody {
+      tr {
+        td {
+          // height: 2em;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          text-align: center;
+        }
+      }
+    }
+    .p-table-thead {
+      tr {
+        th {
+          position: sticky;
+          color: var(--text-color);
+          background-color: var(--layer-2);
+          height: 3em;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+.iw-row {
+  &.iw-invalid-records {
+    background-color: rgba($color: #f8b7bd, $alpha: 0.8) !important;
+  }
+  &.iw-valid-records {
+    background-color: rgba($color: #00ff00, $alpha: 0.1) !important;
+  }
+}

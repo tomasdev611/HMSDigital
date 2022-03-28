@@ -1,0 +1,16 @@
+.p-panelmenu {
+  .p-panelmenu-panel {
+    .p-panelmenu-header {
+      &.p-state-active {
+        a.p-panelmenu-header-link,
+        a.p-panelmenu-header-link:hover {
+          color: #fff;
+          background-color: #5c6270;
+          border: none;
+          outline: none;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}

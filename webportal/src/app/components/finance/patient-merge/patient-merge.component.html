@@ -1,0 +1,167 @@
+<div class="heading">
+  <h4>Search for patient you want to merge</h4>
+  <p-autoComplete
+    [(ngModel)]="tobeMergedPatient"
+    [suggestions]="patients"
+    (onSelect)="patientSelectedToMerge($event)"
+    autoHighlight="true"
+    title=""
+    (completeMethod)="search($event)"
+    [dropdown]="true"
+    field="name"
+    (onClear)="clearPatientSuggestions()"
+    (onDropdownClick)="handleDropdown($event)"
+    placeholder="Search Patient">
+    <ng-template let-patient pTemplate="item">
+      <div>{{ patient?.firstName }} {{ patient?.lastName }}</div>
+      <span style="font-size: 12px">{{ patient?.hospiceLocation?.name }}</span>
+    </ng-template>
+  </p-autoComplete>
+  <div class="actions">
+    <button type="button" pButton (click)="showMergeHistory()">Show Merge History</button>
+    <button
+      type="button"
+      pButton
+      icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+      *ngIf="
+        tobeMergedPatient?.uniqueId &&
+        patient?.hospiceLocationId === tobeMergedPatient?.hospiceLocationId
+      "
+      [label]="'Submit Merge'"
+      (click)="submitMerge()"
+      [style]="{float: 'right'}"
+      [disabled]="formSubmit"></button>
+  </div>
+</div>
+<div
+  class="hospice-member"
+  *ngIf="
+    tobeMergedPatient?.hospiceLocationId &&
+    patient?.hospiceLocationId !== tobeMergedPatient?.hospiceLocationId
+  ">
+  <h5 class="merge-error-message">
+    Selected patients belong to two different hospice location and are unable to merge. Please use
+    Fix Patient hospice tab above to change hospice location and merge them.
+  </h5>
+</div>
+<p-table
+  *ngIf="
+    tobeMergedPatient?.uniqueId &&
+    tobeMergedPatient?.hospiceLocationId &&
+    patient?.hospiceLocationId === tobeMergedPatient?.hospiceLocationId
+  "
+  #table
+  [value]="mergeHeader"
+  class="patient-merge-table"
+  dataKey="uniqueId"
+  [rowHover]="true"
+  [responsive]="true"
+  [scrollable]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 20%"></th>
+      <th style="width: 3%">
+        <p-radioButton
+          [disabled]="formSubmit"
+          *ngIf="patient"
+          name="groupname"
+          value="1"
+          [(ngModel)]="patient.selected"
+          (onClick)="selectAll('firstValue', tobeMergedPatient)"></p-radioButton>
+      </th>
+      <th>Primary Patient</th>
+      <th style="width: 3%">
+        <p-radioButton
+          [disabled]="formSubmit"
+          *ngIf="tobeMergedPatient"
+          name="groupname"
+          value="1"
+          [(ngModel)]="tobeMergedPatient.selected"
+          (onClick)="selectAll('secondValue', patient)"></p-radioButton>
+      </th>
+      <th>Secondary Patient</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-value let-editing="editing" let-index="rowIndex">
+    <tr class="p-selectable-row" [pSelectableRow]="value" [pEditableRow]="value">
+      <td style="width: 20%">
+        {{ value?.label }}
+      </td>
+      <td style="width: 3%">
+        <p-radioButton
+          [disabled]="formSubmit"
+          name="groupname"
+          value="firstValue"
+          [(ngModel)]="value.selected"
+          (onClick)="selectValue(tobeMergedPatient)"></p-radioButton>
+      </td>
+      <td>{{ getValue(value?.firstValue, value?.fieldType) }}</td>
+      <td style="width: 3%">
+        <p-radioButton
+          [disabled]="formSubmit"
+          name="groupname"
+          value="secondValue"
+          [(ngModel)]="value.selected"
+          (onClick)="selectValue(patient)"></p-radioButton>
+      </td>
+      <td>{{ getValue(value?.secondValue, value?.fieldType) }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<div [ngClass]="{'flyout-open': shouldShowPatientMergeHistory}">
+  <div class="flyout">
+    <button class="close-icon" (click)="closeFlyout()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-heading">
+      {{ patient?.name }}
+      <span>{{ patient?.uniqueId }}</span>
+    </div>
+    <div class="flyout-contents">
+      <div class="content-heading">Merged Patients payload</div>
+      <div
+        *ngIf="!patientMergeHistory || !patientMergeHistory?.records?.length"
+        class="empty-records">
+        No Merged Patients found
+      </div>
+      <div
+        *ngIf="patientMergeHistory && patientMergeHistory?.records?.length"
+        class="merged-records table-responsive">
+        <p-table [value]="patientMergeHistory?.records">
+          <ng-template pTemplate="header">
+            <tr class="tbr-header-row">
+              <th class="tbr-header-cell">Duplicate Patient Uuid</th>
+              <th class="tbr-header-cell">First Name</th>
+              <th class="tbr-header-cell">Last Name</th>
+              <th class="tbr-header-cell">Date Of Birth</th>
+              <th class="tbr-header-cell">Patient Height (ft-inch)</th>
+              <th class="tbr-header-cell">Patient Weight (lbs)</th>
+              <th class="tbr-header-cell">Is Infectious</th>
+              <th class="tbr-header-cell">Diagnosis</th>
+              <th class="tbr-header-cell">Primary Phone Number</th>
+              <th class="tbr-header-cell">Secondary Phone Number</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-log>
+            <tr class="tbr-row">
+              <td class="tbr-cell">
+                {{ log.duplicatePatientUuid }}
+                <span class="merged-by">merged by: {{ log.mergedByUserName }}</span>
+              </td>
+              <td class="tbr-cell">{{ log.changeLog.firstName }}</td>
+              <td class="tbr-cell">{{ log.changeLog.lastName }}</td>
+              <td class="tbr-cell">{{ log.changeLog.dateOfBirth | date: 'mediumDate' }}</td>
+              <td class="tbr-cell">{{ getHeightInFeetInches(log.changeLog.patientHeight) }}</td>
+              <td class="tbr-cell">{{ log.changeLog.patientWeight }}</td>
+              <td class="tbr-cell">{{ log.changeLog.isInfectious ? 'Yes' : 'No' }}</td>
+              <td class="tbr-cell">{{ log.changeLog.diagnosis }}</td>
+              <td class="tbr-cell">{{ getPhoneNumber(log.changeLog.phoneNumbers, true) }}</td>
+              <td class="tbr-cell">{{ getPhoneNumber(log.changeLog.phoneNumbers) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

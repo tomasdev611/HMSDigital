@@ -1,0 +1,59 @@
+:host ::ng-deep {
+  .p-autocomplete {
+    border: 1px solid #5c6270 !important;
+    border-radius: 5px;
+    display: flex;
+    input.p-inputtext {
+      border: none;
+      box-shadow: none;
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .p-autocomplete-dropdown.p-button {
+      background-color: #ffffff !important;
+      border: none !important;
+      color: #5c6270 !important;
+      box-shadow: none;
+    }
+  }
+  .p-dropdown {
+    .status {
+      border-radius: 10px;
+      padding: 0 5px;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .active {
+      background: #149e14;
+      color: white;
+    }
+    .inactive {
+      background: #ff0000;
+      color: white;
+    }
+    .pending {
+      background: #ffff00;
+      color: black;
+    }
+    .blank {
+      background: #808080;
+      color: white;
+    }
+  }
+  .p-inputswitch,
+  .p-multiselect,
+  .p-calendar,
+  .p-inputtext,
+  .p-autocomplete {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 480px) {
+    .p-multiselect {
+      width: 60vw;
+    }
+  }
+}

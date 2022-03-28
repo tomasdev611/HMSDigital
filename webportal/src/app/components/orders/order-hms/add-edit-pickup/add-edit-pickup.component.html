@@ -1,0 +1,156 @@
+<div class="forms-wrapper">
+  <div class="order-details p-grid p-nogutter patient-wrapper" *ngIf="editmode && orderHeader">
+    <div class="p-grid p-nogutter">
+      <div class="p-col-1 form-label">Order #:</div>
+      <div class="p-col-4 form-data">{{ orderHeader?.orderNumber }}</div>
+    </div>
+  </div>
+  <app-patient-info
+    [patient]="patientInfo"
+    [showOrderHistory]="false"
+    [showInventory]="false"></app-patient-info>
+  <form
+    [formGroup]="pickupForm"
+    (ngSubmit)="onSubmit(pickupForm.value)"
+    autocomplete="none"
+    *ngIf="patientInfo">
+    <div class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1 p-mt-1">
+      <div class="p-col-3 p-pr-2">
+        <h5 class="p-grid p-nogutter p-mb-1">Pickup Reason *</h5>
+        <p-dropdown
+          [options]="pickupReasons"
+          filter="true"
+          [showClear]="true"
+          placeholder="Select a Pickup reason"
+          [panelStyle]="{width: '100%'}"
+          formControlName="pickupReason"></p-dropdown>
+      </div>
+      <div class="p-col-3 p-pr-2">
+        <h5 class="p-grid p-nogutter p-mb-1">Pickup Date *</h5>
+        <p-calendar
+          [monthNavigator]="true"
+          placeholder="Select a pickup date"
+          [yearNavigator]="true"
+          [autoZIndex]="false"
+          yearRange="2021:2040"
+          [panelStyle]="{'z-index': '11005'}"
+          formControlName="requestedDate"
+          inputStyleClass="inline-edit-calendar"
+          [minDate]="today">
+        </p-calendar>
+      </div>
+      <div class="p-col-3 p-pr-2">
+        <h5 class="p-grid p-nogutter p-mb-1">Pickup Time *</h5>
+        <p-dropdown
+          [options]="pickupTimeOptions"
+          filter="true"
+          [showClear]="true"
+          placeholder="Select a Pickup Time"
+          [panelStyle]="{width: '100%'}"
+          [(ngModel)]="pickupTime"
+          [ngModelOptions]="{standalone: true}">
+        </p-dropdown>
+      </div>
+    </div>
+    <div class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+      <h5 class="p-grid p-jc-between address-label p-nogutter p-mb-1">
+        Pickup Address *
+        <span class="p-ai-center p-d-flex cursor-pointer" (click)="navigateToAddAddress()">
+          <i class="pi pi-plus-circle"></i> &nbsp;Add Address
+        </span>
+      </h5>
+      <div class="p-p-2 p-mb-1 address-wrapper" *ngFor="let address of pickupAddresses">
+        <p-radioButton
+          name="pickupAddress"
+          inputId="address.address"
+          [value]="address.address"
+          (onClick)="addressChanged(address.address)"
+          formControlName="pickupAddress">
+        </p-radioButton>
+        <label [for]="address.address" class="p-mb-1 p-ml-2"
+          >{{ address.address ? getAddress(address.address) : '' }}
+        </label>
+        <a
+          (click)="navigateToAddAddress()"
+          style="float: right; font-size: 12px; text-align: center"
+          class="cursor-pointer"
+          >Edit
+        </a>
+      </div>
+    </div>
+    <div class="p-grid p-nogutter p-mb-3 p-ml-1">
+      <h5 class="p-grid p-nogutter p-mb-1">Select Items to Pickup*</h5>
+      <h5 class="p-grid p-nogutter p-mb-1" *ngIf="patientInventories.length === 0">
+        No patient inventory found
+      </h5>
+      <app-ordering-patient-inventory
+        *ngIf="
+          (editmode === false || (editmode == true && orderHeader)) && patientInventories.length > 0
+        "
+        [patientInventory]="patientInventories"
+        [orderHeader]="orderHeader"
+        [editmode]="editmode"
+        (itemsSelected)="inventorySelectionUpdated($event)">
+      </app-ordering-patient-inventory>
+    </div>
+    <div class="p-grid p-nogutter">
+      <div class="p-col-4 p-pr-3">
+        <div class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+          <h5 class="p-grid p-nogutter p-mb-1 p-jc-between">
+            Ordering Nurse *
+            <span class="p-ai-center p-d-flex cursor-pointer" (click)="navigateToAddNurse()">
+              <i class="pi pi-plus-circle"></i> &nbsp;Add Nurse
+            </span>
+          </h5>
+          <p-dropdown
+            [options]="nurses"
+            filter="true"
+            [showClear]="true"
+            class="dropdown-panel"
+            formControlName="hospiceMemberId"
+            placeholder="Select Ordering Nurse"
+            [panelStyle]="{width: '100%'}">
+          </p-dropdown>
+        </div>
+        <div *ngIf="shouldShowTpaOrderField()" class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+          <h5 class="p-grid p-nogutter p-mb-1">TPA Order #</h5>
+          <input
+            id="tpaOrder"
+            type="text"
+            size="40"
+            pInputText
+            autocomplete="none"
+            formControlName="externalOrderNumber" />
+        </div>
+      </div>
+      <div class="p-col-8 p-pl-3">
+        <app-order-notes
+          formControlName="newOrderNotes"
+          [orderHeaderNotes]="orderHeader?.orderNotes">
+        </app-order-notes>
+      </div>
+    </div>
+    <div class="p-grid p-nogutter p-jc-start p-mb-3">
+      <div class="p-col">
+        <span
+          class="btn-right"
+          [pTooltip]="checkFormValidity(pickupForm)"
+          tooltipPosition="top"
+          [escape]="false">
+          <button
+            pButton
+            class="btn-right"
+            type="submit"
+            [label]="editmode ? 'Update Order' : 'Place Order'"
+            icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+            [disabled]="
+              !pickupForm.valid ||
+              formSubmit ||
+              !pickupTime ||
+              selectedPatientInventory.length === 0
+            "></button>
+        </span>
+      </div>
+    </div>
+  </form>
+</div>

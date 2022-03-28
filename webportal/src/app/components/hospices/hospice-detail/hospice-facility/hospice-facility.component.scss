@@ -1,0 +1,48 @@
+:host ::ng-deep {
+  .p-sidebar {
+    padding: 0;
+    width: 350px;
+    font-size: 14px;
+    overflow: auto;
+    top: 68px;
+    button.close-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background-color: var(--text-color);
+      color: white;
+      border-radius: 50%;
+      padding: 0.5em;
+      border: none;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+      outline: none;
+      > i.pi {
+        align-self: center;
+      }
+    }
+    .flyout-label {
+      height: 50px;
+      text-align: left;
+      font-size: 22px;
+      font-weight: 400;
+      padding: 0.7em;
+    }
+    .p-datatable {
+      padding: 0.5em;
+      .patient-status {
+        border-radius: 15px;
+        color: #ffffff;
+        padding: 3px 10px 3px 10px;
+        background: #91959b;
+        &.active {
+          background: #57a339;
+        }
+      }
+      .p-datatable-scrollable-header-box {
+        padding-right: 0 !important;
+      }
+    }
+  }
+}

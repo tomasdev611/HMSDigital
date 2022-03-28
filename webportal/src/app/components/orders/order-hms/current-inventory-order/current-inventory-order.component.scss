@@ -1,0 +1,46 @@
+.item-equipments {
+  background-color: #efefef;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  width: 95%;
+}
+.fulfilled-items {
+  width: 100%;
+  margin-left: 1.5em;
+  position: relative;
+  .fulfilled-status {
+    position: absolute;
+    top: 0;
+    font-size: 1.2em;
+    background-color: #c1d82f;
+    border-radius: 1em;
+    width: 95%;
+    text-align: center;
+  }
+  .fulfilled-info {
+    font-size: 10px;
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #002049;
+    &:first-child {
+      margin-top: 2em;
+    }
+    .chip {
+      background-color: #c1d82f;
+      color: #002049;
+      padding-left: 1em;
+      padding-right: 1em;
+      border-radius: 1em;
+      margin-right: 1em;
+    }
+    > .time-info {
+      text-align: right;
+    }
+  }
+}
+.p-accordion-header-link {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}

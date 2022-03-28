@@ -1,0 +1,22 @@
+::ng-deep {
+  .p-table-wrapper {
+    width: 800px;
+    overflow: auto;
+  }
+  .patient-address-suggestion .p-datatable {
+    overflow: auto;
+  }
+}
+.content-container {
+  form {
+    min-height: 400px;
+    width: 800px;
+    margin-bottom: 5rem;
+
+    .invalid-address {
+      padding: 10px;
+      margin: 10px 0;
+      background: #eeeeee;
+    }
+  }
+}

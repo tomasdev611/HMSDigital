@@ -1,0 +1,85 @@
+<div class="patient-inventory-wrapper">
+  <p *ngIf="patientInventory.length === 0" colspan="4" class="p-pl-3">No inventory available</p>
+  <p-table
+    #invTable
+    [value]="patientInventory"
+    class="flyout-dispatch-table"
+    dataKey="id"
+    [rowHover]="true"
+    [responsive]="true"
+    [scrollable]="true"
+    [(selection)]="selectedPatientInventory"
+    editMode="row"
+    (selectionChange)="onItemsSelected()">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="selection-col">
+          <p-tableHeaderCheckbox #headerCheckBox></p-tableHeaderCheckbox>
+        </th>
+        <th>Item Name</th>
+        <th>Serial/Lot Number</th>
+        <th>Asset Tag</th>
+        <th>Original Order #</th>
+        <th class="width-per-7">Available Quantity</th>
+        <th class="width-per-9">Order Quantity</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-value let-editing="editing" let-index="rowIndex">
+      <tr
+        class="p-selectable-row"
+        [pSelectableRow]="value"
+        [pEditableRow]="value"
+        [ngClass]="{disabled: value.availableQuantity === 0}"
+        [pTooltip]="getRowTooltip(value, 'pickup')"
+        tooltipPosition="bottom">
+        <td class="selection-col">
+          <p-tableCheckbox
+            [ngClass]="{
+              disabled: value.availableQuantity === 0 || value.fulfilledQuantity
+            }"
+            [value]="value"
+            [disabled]="value.availableQuantity === 0"></p-tableCheckbox>
+        </td>
+        <td>
+          {{ value?.name }}
+          <div class="td-address" *ngIf="value.deliveryAddress">
+            {{ getAddress(value.deliveryAddress) }}
+          </div>
+        </td>
+        <td>
+          {{ value?.serialNumber }}
+          {{ value?.lotNumber ? '/' + value.lotNumber : '' }}
+        </td>
+        <td>{{ value?.assetTagNumber }}</td>
+        <td
+          class="overflow-ellipsis"
+          tooltipPosition="top"
+          [pTooltip]="getOrderNumberDomList(value)"
+          [escape]="false">
+          {{ getOrderNumber(value) }}
+        </td>
+        <td class="width-per-7">{{ value?.availableQuantity }}</td>
+        <td class="width-per-9">
+          <p-inputNumber
+            *ngIf="value.quantity !== 0"
+            name="itemCount"
+            mode="decimal"
+            autocomplete="off"
+            [(ngModel)]="value.orderQuantity"
+            [min]="value.fulfilledQuantity || 1"
+            [max]="value.quantity"
+            [style]="{width: '95%'}"
+            [disabled]="value.orderQuantity <= 1"
+            [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onItemsSelected()">
+          </p-inputNumber>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" class="p-pl-3">No inventory available</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

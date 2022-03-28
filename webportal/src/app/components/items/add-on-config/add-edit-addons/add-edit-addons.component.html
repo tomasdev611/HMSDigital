@@ -1,0 +1,97 @@
+<app-modal
+  *ngIf="showAddOnConfigDialog"
+  [header]="editMode ? 'Edit Add-on Group' : 'Add New Add-on Group'"
+  [visible]="showAddOnConfigDialog"
+  dialogStyleClass="addon-add-dialog"
+  (hide)="closeAddonConfigDialog()">
+  <form
+    [formGroup]="addonGroupForm"
+    (ngSubmit)="saveAddonGroup(addonGroupForm.value)"
+    autocomplete="off">
+    <div class="configuration-dialog-content">
+      <div class="primary-fields">
+        <div class="form-field-group">
+          <div class="form-field-label">Add-On Name*</div>
+          <div class="form-field">
+            <input pInputText placeholder="Add-on Group Name" formControlName="name" />
+          </div>
+        </div>
+        <div class="form-field-group">
+          <div class="form-field-label">Allow Multiple Selection*</div>
+          <div class="form-field">
+            <p-inputSwitch formControlName="allowMultipleSelection"></p-inputSwitch>
+          </div>
+        </div>
+      </div>
+      <div class="addon-settings-selector">
+        <div class="item-searchbar">
+          <p-autoComplete
+            [ngModelOptions]="{standalone: true}"
+            styleClass="hms-search-autocomplete"
+            [completeOnFocus]="true"
+            emptyMessage="No Items Found"
+            [(ngModel)]="selectedProduct"
+            [dropdown]="true"
+            dropdownIcon="pi pi-search"
+            placeholder="search Items"
+            [suggestions]="searchedItemsList"
+            (completeMethod)="searchItems($event)"
+            field="name"
+            dataKey="id"
+            [forceSelection]="false"
+            (onSelect)="addItemToList($event)">
+            <ng-template let-item pTemplate="item">
+              <div class="addon-suggestion">
+                {{ item.name }}
+              </div>
+            </ng-template>
+            <ng-template let-value pTemplate="selectedItem">
+              {{ value?.name }}
+            </ng-template>
+          </p-autoComplete>
+        </div>
+
+        <div class="products-list-container">
+          <span class="list-title">Group Items*:</span>
+          <ul class="products-list">
+            <li class="empty-list" *ngIf="!getProducts()?.length">
+              Select Items from search to add in group
+            </li>
+            <li *ngFor="let product of getProducts()">
+              {{ product.itemName }}
+              <button
+                pButton
+                icon="pi pi-times"
+                (click)="deleteListItem(product)"
+                class="delete-item-btn"></button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="addon-configuration-dialog-footer">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Cancel"
+        (click)="closeAddonConfigDialog()"
+        class="p-button-outlined p-button-secondary"></button>
+      <button
+        pButton
+        pRipple
+        type="submit"
+        [label]="editMode ? 'Update' : 'Save'"
+        [disabled]="!addonGroupForm.valid"></button>
+    </div>
+  </form>
+
+  <div class="addon-progress-spinner-container" *ngIf="loading">
+    <p-progressSpinner
+      [style]="{width: '50px', height: '50px'}"
+      styleClass="addon-progress-spinner"
+      strokeWidth="8"
+      animationDuration=".5s"></p-progressSpinner>
+  </div>
+</app-modal>

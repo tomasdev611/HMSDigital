@@ -1,0 +1,30 @@
+<div class="toggle-filter" *ngIf="showToggleFilter">
+  <strong><small>Equipment Settings Only</small></strong>
+  <p-inputSwitch
+    class="ml-10 mr-10"
+    [(ngModel)]="equipmentSettingsExist"
+    (onChange)="toggle($event, 'addOnsExist')">
+  </p-inputSwitch>
+  <strong><small>Add-ons Only</small></strong>
+  <p-inputSwitch
+    class="ml-10 mr-10"
+    [(ngModel)]="addOnsExist"
+    (onChange)="toggle($event, 'equipmentSettingsExist')">
+  </p-inputSwitch>
+</div>
+<app-table-virtual-scroll
+  #inventoryItemTable
+  [list]="itemsResponse?.records"
+  [pageSize]="itemsRequest?.pageSize"
+  [loading]="loading"
+  [pageLoadNextOffset]="10"
+  [totalRecords]="itemsResponse?.totalRecordCount"
+  filterFields="[]"
+  [headers]="itemHeaders"
+  [pageNumber]="itemsResponse?.pageNumber || 0"
+  [totalPage]="itemsResponse?.totalPageCount || 0"
+  [selection]="true"
+  (fetchNext)="fetchNext($event)"
+  (rowSelected)="itemSelected($event)"
+  (sort)="sortItems($event)">
+</app-table-virtual-scroll>

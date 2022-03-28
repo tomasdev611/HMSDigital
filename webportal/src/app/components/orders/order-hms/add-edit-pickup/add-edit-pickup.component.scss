@@ -1,0 +1,42 @@
+.address-wrapper {
+  background-color: #edf1f4;
+  width: 100%;
+}
+
+.dropdown-panel {
+  width: 100%;
+}
+
+.address-label {
+  padding: 10px 0;
+}
+
+:host ::ng-deep {
+  .p-datatable-scrollable-body {
+    min-height: 3.5rem;
+    max-height: 18rem;
+    height: auto;
+  }
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding-left: 1em;
+  }
+  .selection-col {
+    width: 2rem;
+  }
+  .width-per-9 {
+    width: 9%;
+  }
+  .width-per-7 {
+    width: 7%;
+  }
+}
+
+.form-data {
+  padding-left: 0.5em;
+  font-weight: bold;
+}
+
+.td-address {
+  position: absolute;
+  font-size: 11px;
+}

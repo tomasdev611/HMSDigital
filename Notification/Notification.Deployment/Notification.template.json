@@ -1,0 +1,298 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appServicePlanSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "appServicePlanSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "dbAdminLogin": {
+      "type": "string"
+    },
+    "dbAdminPassword": {
+      "type": "securestring"
+    },
+    "dbName": {
+      "type": "string"
+    },
+    "notificationAppAlwaysOn": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "notificationAppName": {
+      "type": "string"
+    },
+    "notificationHubNamespaceName": {
+      "type": "string"
+    },
+    "notificationHubApnsKeyId": {
+      "type": "securestring"
+    },
+    "notificationHubApnsEndPoint": {
+      "type": "string"
+    },
+    "notificationHubApnsToken": {
+      "type": "securestring"
+    },
+    "notificationHubFCMAPIKey":{
+      "type": "securestring"
+    },
+    "notificationQueueName": {
+      "type": "string"
+    },
+    "sendGridApiKey": {
+      "type": "securestring"
+    },
+    "serviceBusNamespaceName": {
+      "type": "string"
+    },
+    "serviceBusNotificationQueueName": {
+      "type": "string"
+    },
+    "serviceBusSku": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ]
+    },
+    "sqlserverName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "twilioKeySecret": {
+      "type": "securestring"
+    },
+    "twilioKeySid": {
+      "type": "securestring"
+    }
+  },
+  "variables": {
+    "serviceBusNotificationQueueListenerAccessKeyName": "[concat(parameters('serviceBusNotificationQueueName'),'-listener')]",
+    "serviceBusNotificationQueueSenderAccessKeyName": "[concat(parameters('serviceBusNotificationQueueName'),'-sender')]",
+    "notificationHubAccessKeyName": "DefaultFullSharedAccessSignature",
+    "notificationHubName": "digital-mobile",
+    "notificationHubApnsTeamId": "AGK5CLS3V8",
+    "notificationHubApnsBundleId": "net.hospicesource.digital"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]",
+        "capacity": "[parameters('appServicePlanSkuCapacity')]"
+      },
+      "properties": {
+        "name": "[parameters('appServicePlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('notificationAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('appServicePlanName'))]": "empty",
+        "displayName": "NotificationService"
+      },
+      "properties": {
+        "name": "[parameters('notificationAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": "[parameters('notificationAppAlwaysOn')]"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites/', parameters('notificationAppName'))]",
+            "[resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs', parameters('notificationHubNamespaceName'), variables('notificationHubName'))]"
+          ],
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('notificationAppName'))).InstrumentationKey]",
+            "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('notificationAppName'))).InstrumentationKey]",
+            "ASPNETCORE_ENVIRONMENT ": "[parameters('aspNetCoreEnvironment')]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "ConnectionStrings:HMSDigitalDbConnection": "[concat('Data Source=tcp:', parameters('sqlserverName'),'.database.windows.net,1433;Initial Catalog=', parameters('dbName'), ';User Id=', parameters('dbAdminLogin'), '@', parameters('sqlserverName'), ';Password=', parameters('dbAdminPassword'), ';')]",
+            "NotificationHub:ConnectionString": "[listkeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', parameters('notificationHubNamespaceName'), variables('notificationHubName'),variables('notificationHubAccessKeyName')), '2017-04-01').primaryConnectionString]",
+            "NotificationQueue:ListenerConnectionString": "[concat('Endpoint=sb://',parameters('serviceBusNamespaceName'),'.servicebus.windows.net/;SharedAccessKeyName=',variables('serviceBusNotificationQueueListenerAccessKeyName'),';SharedAccessKey=',listkeys(resourceId('Microsoft.ServiceBus/namespaces/queues/authorizationRules', parameters('serviceBusNamespaceName'), parameters('serviceBusNotificationQueueName'), variables('serviceBusNotificationQueueListenerAccessKeyName')), '2017-04-01').primaryKey)]",
+            "NotificationQueue:QueueName": "[parameters('notificationQueueName')]",
+            "NotificationQueue:SenderConnectionString": "[listkeys(resourceId('Microsoft.ServiceBus/namespaces/queues/authorizationRules', parameters('serviceBusNamespaceName'), parameters('serviceBusNotificationQueueName'), variables('serviceBusNotificationQueueSenderAccessKeyName')), '2017-04-01').primaryConnectionString]",
+            "SendGrid:APIKey": "[parameters('sendGridApiKey')]",
+            "Serilog:WriteTo:2:Args:connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "Twilio:KeySecret": "[parameters('twilioKeySecret')]",
+            "Twilio:KeySid": "[parameters('twilioKeySid')]"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('notificationAppName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', parameters('notificationAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('notificationAppName'))]": "Resource",
+        "displayName": "NotificationAppInsightsComponent"
+      },
+      "properties": {
+        "ApplicationId": "[parameters('notificationAppName')]"
+      }
+    },
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-04-01",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "kind": "StorageV2"
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('serviceBusNamespaceName')]",
+      "type": "Microsoft.ServiceBus/Namespaces",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('serviceBusSku')]"
+      },
+      "properties": {},
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[parameters('serviceBusNotificationQueueName')]",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT30S",
+            "requiresDuplicateDetection": false,
+            "requiresSession": false,
+            "defaultMessageTimeToLive": "P14D",
+            "deadLetteringOnMessageExpiration": true,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 5,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": true,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "name": "[variables('serviceBusNotificationQueueListenerAccessKeyName')]",
+              "apiVersion": "2017-04-01",
+              "type": "authorizationRules",
+              "dependsOn": [
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'), '/queues/', parameters('serviceBusNotificationQueueName'))]"
+              ],
+              "properties": {
+                "rights": [ "Listen" ]
+              }
+            },
+            {
+              "name": "[variables('serviceBusNotificationQueueSenderAccessKeyName')]",
+              "apiVersion": "2017-04-01",
+              "type": "authorizationRules",
+              "dependsOn": [
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'), '/queues/', parameters('serviceBusNotificationQueueName'))]"
+              ],
+              "properties": {
+                "rights": [ "Send" ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "kind": "NotificationHub",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('notificationHubNamespaceName')]",
+      "properties": {},
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "dependsOn": [
+            "[concat('Microsoft.NotificationHubs/namespaces/', parameters('notificationHubNamespaceName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "name": "[concat(parameters('notificationHubNamespaceName'), '/', variables('notificationHubName'))]",
+          "type": "Microsoft.NotificationHubs/namespaces/notificationHubs",
+          "properties": {
+            "apnsCredential": {
+              "properties": {
+                "keyId": "[parameters('notificationHubApnsKeyId')]",
+                "appName": "[variables('notificationHubApnsBundleId')]",
+                "appId": "[variables('notificationHubApnsTeamId')]",
+                "token": "[parameters('notificationHubApnsToken')]",
+                "endpoint": "[parameters('notificationHubApnsEndPoint')]"
+              }
+            },
+            "gcmCredential": {
+              "properties": {
+                "googleApiKey": "[parameters('notificationHubFCMAPIKey')]"
+              }
+            }
+          }
+        }
+      ],
+      "sku": {
+        "name": "Free"
+      },
+      "type": "Microsoft.NotificationHubs/namespaces"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.Screen.AddInventoryItem">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+            <ScrollView IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}">
+                <StackLayout Padding="15">
+                    <FlexLayout>
+                        <templates:HorizontalDivider DividerText="Product Information" />
+                    </FlexLayout>
+                    <FlexLayout Direction="Column"
+                                JustifyContent="SpaceBetween">
+                        <Label Text="Product/Item" />
+                        <Picker Title="Select Product/Item"
+                                FlexLayout.Grow="1"
+                                Margin="0,10"
+                                HeightRequest="50"
+                                ItemsSource="{Binding ProductsList}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding InventoryItem.Item}"
+                                FontSize="Medium">
+                            <Picker.Behaviors>
+                                <xct:EventToCommandBehavior EventName="SelectedIndexChanged"
+                                                            Command="{Binding ProductSelectionChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </FlexLayout>
+                    <StackLayout  IsVisible="{Binding InventoryItem.Item, Converter={StaticResource IsNotNullOrEmptyConverter}}">
+                        <FlexLayout>
+                            <templates:HorizontalDivider DividerText="Inventory Identification" />
+                        </FlexLayout>
+                        <FlexLayout Direction="Column">
+                            <StackLayout IsVisible="{Binding InventoryItem.Item.IsAssetTagged}"
+                                         Margin="0,10">
+                                <Label Text="Asset Tag" />
+                                <Entry Placeholder="Asset Tag Number"
+                                       Margin="0"
+                                       IsEnabled="{Binding IsEditForm, Converter={StaticResource InvertedBoolConverter}}"
+                                       Text="{Binding InventoryItem.AssetTagNumber}"
+                                       HeightRequest="50" />
+                            </StackLayout>
+                            <StackLayout IsVisible="{Binding InventoryItem.Item.IsSerialized}"
+                                        Margin="0,10">
+                                <Label Text="Serial Number" />
+                                <Entry Placeholder="Serial Number"
+                                       IsEnabled="{Binding IsEditForm, Converter={StaticResource InvertedBoolConverter}}"
+                                       Text="{Binding InventoryItem.SerialNumber}"
+                                       HeightRequest="50" />
+                            </StackLayout>
+                            <StackLayout IsVisible="{Binding InventoryItem.Item.IsLotNumbered}"
+                                        Margin="0,10">
+                                <Label Text="Lot Number" />
+                                <Entry Placeholder="Lot No."
+                                       Margin="0,10"
+                                       IsEnabled="{Binding IsEditForm, Converter={StaticResource InvertedBoolConverter}}"
+                                       Text="{Binding InventoryItem.LotNumber}"
+                                       HeightRequest="50" />
+                            </StackLayout>
+                            <StackLayout IsVisible="{Binding IsStandalone}">
+                                <Label Text="Quantity" />
+                                <FlexLayout FlexLayout.Grow="1"
+                                            Margin="0,10">
+                                    <Entry Keyboard="Numeric"
+                                           HeightRequest="50"
+                                           Text="{Binding InventoryItem.Count}"
+                                           Placeholder="Quantity" />
+                                    <Stepper FlexLayout.AlignSelf="Center"
+                                             Value="{Binding InventoryItem.Count}"
+                                             Increment="1" />
+                                </FlexLayout>
+                            </StackLayout>
+                        </FlexLayout>
+                    </StackLayout>
+                    <FlexLayout IsVisible="{Binding IsEditForm}">
+                        <templates:HorizontalDivider DividerText="Inventory Details" />
+                    </FlexLayout>
+                    <FlexLayout Direction="Column"
+                                IsVisible="{Binding IsEditForm}"
+                                JustifyContent="SpaceBetween">
+                        <Label Text="Item Status" />
+                        <Picker Title="Select Status"
+                                FlexLayout.Grow="1"
+                                Margin="0,10"
+                                HeightRequest="50"
+                                ItemsSource="{Binding StatusList}"                                
+                                ItemDisplayBinding="{Binding Name}"
+                                FontSize="Medium"
+                                SelectedItem="{Binding SelectedStatus}">
+                        </Picker>
+                        <Label Text="Item Location" />
+                        <Picker Title="Select Location"
+                                FlexLayout.Grow="1"
+                                Margin="0,10"
+                                HeightRequest="50"
+                                ItemsSource="{Binding LocationList}"                                
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedLocation}"
+                                FontSize="Medium">
+                        </Picker>
+                    </FlexLayout>
+                </StackLayout>
+            </ScrollView>
+            <FlexLayout Grid.Row="1"
+                        JustifyContent="End"
+                        Direction="Column"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}">
+                <Label Text="{Binding ErrorMessage}"
+                       HeightRequest="20"
+                       Margin="5"
+                       IsVisible="{Binding IsFormInValid}"
+                       Style="{StaticResource ErrorLabelStyle}" />
+                <Button HeightRequest="60"
+                        BackgroundColor="{StaticResource DarkBlueShade}"
+                        IsEnabled="{Binding InventoryItem.Item, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                        CornerRadius="0"
+                        Command="{Binding SaveInventoryCommand}"
+                        TextColor="White"
+                        Text="Save" />
+            </FlexLayout>
+            <ActivityIndicator IsVisible="{Binding IsLoading}"
+                               IsRunning="{Binding IsLoading}"
+                               Color="White"
+                               Grid.Row="1" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

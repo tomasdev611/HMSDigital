@@ -1,0 +1,385 @@
+.dispatch-header {
+  background: $sidebar-color;
+  margin: 0 0.5em 0.5em 0.5em;
+  padding: 0.1em 0.1em 0.1em 0.5em;
+  border-radius: $text-extra-small;
+}
+.p-inputgroup .p-inputgroup-addon {
+  padding: 0.25em !important;
+  font-size: $text-large;
+}
+.p-selectbutton .p-button {
+  background-color: $base-white !important;
+  color: $sidebar-color !important;
+  border: none;
+  border-radius: 22px !important;
+  text-transform: none !important;
+  font-size: $text-small;
+  font-weight: 600;
+}
+.p-selectbutton .p-button.p-highlight {
+  background-color: $sidebar-color-dark !important;
+  color: $base-white !important;
+}
+.switch-view {
+  .p-button {
+    .p-button-text {
+      font-size: $text-small;
+    }
+    background-color: #dae3e8 !important;
+    color: $base-black !important;
+    border-radius: 12px !important;
+  }
+}
+.header-label {
+  font-size: $text-extra-small;
+  color: $base-white;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+  font-weight: bold;
+}
+.show-only-section {
+  display: flex;
+  align-items: center;
+  .icon {
+    font-size: $text-extra-small;
+  }
+}
+
+.dispatch {
+  .chkbox {
+    height: 1em;
+    margin-top: 0.5em;
+  }
+  .dispatch-list-container {
+    .p-dataview.p-widget.p-dataview-list {
+      margin-top: 3em;
+    }
+  }
+  .p-dataview.p-dataview-list .p-dataview-content > .p-grid > div {
+    border: 0;
+  }
+  .p-dataview.p-widget.p-dataview-list {
+    margin-top: 3em;
+    .p-dataview-header.p-widget-header.p-corner-top {
+      display: none;
+    }
+    .p-dataview-content.p-widget-content {
+      height: 10%;
+      border: none;
+      background-color: transparent;
+
+      app-dispatch-list-item {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+
+        &.marked-order {
+          box-shadow: 0px 0px 3px 4px #0570af;
+          border-radius: 12px;
+        }
+      }
+
+      .dispatch-item-footer {
+        background-color: transparent;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+      }
+    }
+  }
+  .dispatch-item {
+    background-color: #f1f9ff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    &.order-view {
+      background-color: #ffffff;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      border: 1px solid #c8c8c8;
+      width: 97%;
+      margin-left: 0.5em;
+    }
+    .patient-info {
+      background-color: #ffffff;
+      border: 1px solid #c8c8c8;
+      border-top-left-radius: 12px;
+      border-bottom: 0;
+    }
+  }
+  .checkbox-time {
+    &.delivery {
+      background-color: #338aff;
+    }
+    &.respite {
+      background-color: #56ccf2;
+    }
+    &.move {
+      background-color: #6fcf97;
+    }
+    &.exchange {
+      background-color: #f2c94c;
+    }
+    &.pickup {
+      background-color: #f2994a;
+    }
+    &.stat- {
+      &delivery,
+      &pickup,
+      &move,
+      &exchange,
+      &respite {
+        background-color: #eb5757;
+      }
+    }
+    color: white;
+    padding: 0.5em;
+    padding-right: 0.2em;
+    border-bottom-left-radius: 12px;
+    flex-direction: row;
+    display: flex;
+    font-weight: bold;
+    font-size: 13px;
+    align-items: center;
+    .checkbox {
+      width: 40%;
+      padding-left: 0.2em;
+      .type {
+        padding-left: 0.4em;
+        text-transform: uppercase;
+      }
+    }
+    .time {
+      padding-left: 0.2em;
+      width: 60%;
+      font-size: 14px;
+    }
+  }
+  .user-info {
+    font-size: $text-extra-small;
+    padding: 1em;
+    flex-direction: column;
+    display: flex;
+    justify-content: space-between;
+    border-top-left-radius: 12px;
+    width: 39%;
+    font-weight: bold;
+    .name {
+      font-size: $text-large;
+    }
+  }
+  .instructions {
+    flex-direction: column;
+    display: flex;
+    justify-content: space-between;
+    font-size: $text-extra-small;
+    font-weight: bold;
+    .instruction-header {
+      margin-bottom: 0.8em;
+      .condition-info {
+        float: right;
+        color: #aa1e1e;
+      }
+    }
+    padding: 1em;
+    width: 59%;
+  }
+  .text-light {
+    color: #91959b;
+  }
+  .text-active {
+    color: #243d84;
+  }
+  .text-bold {
+    font-weight: bold;
+  }
+  .map {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #f1f9ff;
+    .last {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+  }
+  .assign {
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #828282;
+
+    padding: 0.4em;
+    border-bottom-right-radius: 12px;
+    text-align: center;
+    &.assigned {
+      background-color: #b6deda;
+      color: #3c455e;
+    }
+    &.orderview {
+      border-bottom-right-radius: 0px;
+      border-top-right-radius: 12px;
+    }
+  }
+  .dispatch-status {
+    font-weight: bold;
+    color: #3c455e;
+    padding: 0.7em;
+    border-top-right-radius: 12px;
+    text-align: center;
+  }
+  .status-label {
+    font-size: $text-extra-small;
+    opacity: 0.6;
+  }
+  .fulfill-order {
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #002049;
+    border-radius: 2em;
+    padding: 0.7em;
+    text-align: center;
+    align-content: center;
+    align-self: center;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 0.5em;
+  }
+  .processingTime-address {
+    background-color: #5c6270;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1em 0 1em;
+    color: white;
+    .checkbox {
+      padding-left: 0.3em;
+      .type {
+        padding-left: 0.5em;
+      }
+    }
+    .time {
+      padding-left: 0.5em;
+    }
+    i {
+      font-size: 1.7em;
+    }
+  }
+  .order-list-wrapper {
+    background-color: #f1f9ff;
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    .order-list {
+      padding-left: 1em;
+      justify-content: center;
+      .orders {
+        margin-left: -0.5em;
+        display: inline-flex;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+      .order-count {
+        font-weight: bold;
+        font-size: $text-large;
+      }
+      .order {
+        padding: 0.3em;
+        display: flex;
+        flex-direction: column;
+        .order-image {
+          border-radius: 12px;
+        }
+        .badge {
+          display: flex;
+          width: 96%;
+          color: #4b4c4d;
+          background-color: #ffffff;
+          padding: 0.1em;
+          align-items: center;
+          justify-content: center;
+          align-self: center;
+          font-size: 10px;
+          border-radius: 1.4em;
+          margin-top: 0.3em;
+        }
+        .label {
+          font-size: $text-extra-small;
+          width: 90px;
+          overflow: hidden;
+          padding-top: 0.5em;
+          text-align: center;
+        }
+      }
+    }
+    .status-address {
+      font-size: $text-large;
+      padding: 0.3em;
+      .status {
+        font-weight: bold;
+        &.delivery {
+          color: #338aff;
+        }
+        &.respite {
+          color: #56ccf2;
+        }
+        &.move {
+          color: #6fcf97;
+        }
+        &.exchange {
+          color: #f2c94c;
+        }
+        &.pickup {
+          color: #f2994a;
+        }
+        &.stat {
+          color: #eb5757 !important;
+        }
+      }
+      .address {
+        padding-top: 0.5em;
+      }
+    }
+  }
+  .p-paginator {
+    background-color: #5c6270;
+    color: #ffffff;
+    border-radius: 10px;
+    margin: 0.5em 0.3em 0 0.3em;
+  }
+  .label-wrapper {
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: -40px;
+    .site-label {
+      margin-top: -1em;
+      color: #f3824b;
+    }
+    .order-label {
+      margin-top: -1em;
+      color: #0570af;
+    }
+  }
+}
+
+.driver-optimize-selection-modal {
+  width: 40%;
+  .spinner-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .reschedule-available-time {
+    width: 30%;
+    border-right: 2px solid;
+  }
+  .reschedule-order-container {
+    width: 70%;
+  }
+  .select-header {
+    background-color: #002049;
+    color: white;
+    border-radius: 4px;
+  }
+}

@@ -1,0 +1,253 @@
+<p-checkbox
+  class="chkbox"
+  *ngIf="activeView === 'orderView'"
+  [(ngModel)]="order.selected"
+  [binary]="true"
+  (onChange)="selectOrder($event, order)"
+  [disabled]="order.disabled"></p-checkbox>
+<div
+  class="p-col-12 dispatch-item no-padding"
+  *ngIf="order"
+  [ngClass]="{'order-view': activeView === 'orderView'}">
+  <div class="p-grid no-margin">
+    <div
+      class="no-padding marked-order"
+      [ngClass]="{
+        'p-col-4': activeView === 'orderView',
+        'p-col-9 patient-info': activeView === 'mapView' || activeView === 'assignView',
+        'p-col-12 order-detail-item': activeView === 'orderDetailView'
+      }">
+      <div class="p-grid no-margin" style="height: 100%">
+        <div class="p-col-6 no-padding user-info" *ngIf="order?.patient">
+          <div>
+            <p class="text-light">#{{ order?.orderNumber }}</p>
+            <p class="name text-active">
+              {{ order?.patient?.firstName }} {{ order?.patient?.lastName }}
+            </p>
+            <p class="text-light">
+              {{ formatPhoneNumber(order?.patient?.phoneNumbers[0].number) }}
+            </p>
+          </div>
+          <div>
+            <p class="text-light" style="margin-top: 0.6em">{{ order?.hospice?.name }}</p>
+            <p class="text-light">{{ formatPhoneNumber(order?.hospice?.phoneNumber?.number) }}</p>
+            <p>{{ order?.orderDateTime | date: 'medium' }}</p>
+          </div>
+        </div>
+        <span class="vertical" style="width: 4px">
+          <span class="separator" style="height: 80%"></span>
+        </span>
+        <div class="p-col-6 no-padding instructions">
+          <div class="instruction-header text-light">
+            <span
+              class="condition-info"
+              *ngIf="order.patient?.isInfectious"
+              [pTooltip]="'Patient is Infectious'"
+              tooltipPosition="top"
+              ><i class="pi pi-info-circle"></i> Infection</span
+            >
+            <br />
+            <span>Order Notes</span>
+            <ng-container *ngIf="order?.orderNotes?.length">
+              <p class="text-active" *ngFor="let orderNote of order?.orderNotes">
+                {{ orderNote?.note }}
+              </p>
+            </ng-container>
+            <p><span>Patient Notes</span></p>
+            <span *ngIf="order?.patient?.patientNotes.length > 0">
+              <p *ngFor="let note of order.patient.patientNotes" class="text-active">
+                {{ note.note }}
+              </p>
+            </span>
+          </div>
+          <div class="text-bold text-active">
+            Processing Time : {{ order?.processingTime }} {{ order?.processingTime ? 'mins' : '' }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-7 p-dir-col no-padding order-list-wrapper" *ngIf="activeView === 'orderView'">
+      <div class="p-col-7 order-list">
+        <div class="p-col-12 no-margin no-padding order-count">
+          List of items - {{ order?.orderLineItems?.length }}
+        </div>
+        <div class="p-col-12 no-padding orders">
+          <div *ngFor="let lineItem of order.orderLineItems" class="order">
+            <img
+              src="{{
+                lineItem.image ? lineItem.image.url : '/assets/images/png/no-image-available.png'
+              }}"
+              class="order-image"
+              [style]="{height: '90px', width: '90px'}"
+              onError="this.onerror=null;this.src='/assets/images/png/no-image-available.png'" />
+            <span class="badge"> Quantity - {{ lineItem?.itemCount }} </span>
+            <div class="label" [pTooltip]="lineItem?.item?.name" tooltipPosition="top">
+              {{ lineItem?.item?.name }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-5" class="status-address">
+        <span
+          class="status"
+          class="{{ order?.orderType?.toLowerCase() }}{{ order.statOrder ? ' stat' : '' }}"
+          >{{ order.statOrder ? 'STAT-' : '' }}{{ order?.orderType }}
+        </span>
+        <div class="time">Deliver by {{ order?.requestedEndDateTime | date: 'h:mm a, MMM d' }}</div>
+        <div class="address">
+          <span class="text-light"> Address : </span>
+          <div
+            *ngIf="
+              (order?.orderTypeId === patientMoveId || order?.orderTypeId === pickupId) &&
+              order?.pickupAddress
+            ">
+            <p *ngIf="order?.pickupAddress?.addressLine1">{{ order.pickupAddress.addressLine1 }}</p>
+            <p *ngIf="order?.pickupAddress?.addressLine2">
+              {{ order.pickupAddress.addressLine2 }},
+            </p>
+            {{ order.pickupAddress.city }}, {{ order.pickupAddress.state }},
+            {{ order.pickupAddress.zipCode }}
+          </div>
+          <div
+            *ngIf="
+              order?.orderTypeId !== patientMoveId &&
+              order?.orderTypeId !== pickupId &&
+              order?.deliveryAddress
+            ">
+            <p *ngIf="order?.deliveryAddress?.addressLine1">
+              {{ order.deliveryAddress.addressLine1 }}
+            </p>
+            <p *ngIf="order?.deliveryAddress?.addressLine2">
+              {{ order.deliveryAddress.addressLine2 }},
+            </p>
+            {{ order.deliveryAddress.city }}, {{ order.deliveryAddress.state }},
+            {{ order.deliveryAddress.zipCode }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="no-padding"
+      [ngClass]="{
+        'p-col-1 map': activeView === 'orderView',
+        'p-col-3': activeView === 'mapView' || activeView === 'assignView'
+      }">
+      <div *ngIf="activeView === 'orderView'" class="last">
+        <div class="p-col-12 no-padding assign orderview">
+          <div>
+            <span class="status-label">Order Status:</span><br />
+            {{ order?.orderStatus ? getOrderStatus(order.orderStatus) : '- -' }}
+          </div>
+        </div>
+        <div
+          class="p-col-12 no-padding cursor-pointer fulfill-order"
+          [routerLink]="['fulfill-order/' + order.id]"
+          *ngIf="checkPermission('Orders', 'Fulfill') && order.statusId !== pendingApprovalId"
+          (click)="saveFulfillmentFrom('dispatch')">
+          Fulfill Order
+        </div>
+        <div
+          class="p-col-12 no-padding dispatch-status"
+          [ngClass]="{
+            'cursor-pointer': order.dispatchStatus === 'Scheduled'
+          }"
+          [routerLink]="order.dispatchStatus === 'Scheduled' ? ['order/' + order.id] : []">
+          <div>
+            <span class="status-label">Dispatch Status:</span><br />
+            {{
+              order.dispatchStatus === 'Scheduled'
+                ? 'Assigned'
+                : order.dispatchStatus === 'Planned'
+                ? 'Unassigned'
+                : order.dispatchStatus
+                ? order.dispatchStatus
+                : '- -'
+            }}
+            {{ getDriverName(order) }}
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="activeView === 'mapView' || activeView === 'assignView'"
+        style="padding-left: 10px">
+        <p class="text-bold text-active">
+          <span
+            style="text-decoration: underline; cursor: pointer; font-size: 10px"
+            [pTooltip]="getOrderList(order?.orderLineItems)"
+            tooltipPosition="top"
+            >List of items </span
+          ><span> {{ order?.orderLineItems?.length }}</span>
+        </p>
+        <p class="text-bold" style="font-size: 10px">
+          Processing Time {{ order?.processingTime }} {{ order?.processingTime ? 'mins' : '' }}
+          <i class="pi pi-info-circle"></i>
+        </p>
+        <div class="text-bold" style="font-size: 10px">
+          <span class="text-light"> Address </span>
+          <div
+            *ngIf="
+              (order?.orderTypeId === patientMoveId || order?.orderTypeId === pickupId) &&
+              order?.pickupAddress
+            ">
+            <p *ngIf="order?.pickupAddress?.addressLine1">{{ order.pickupAddress.addressLine1 }}</p>
+            <p *ngIf="order?.pickupAddress?.addressLine2">
+              {{ order.pickupAddress.addressLine2 }},
+            </p>
+            {{ order.pickupAddress.city }}, {{ order.pickupAddress.state }},
+            {{ order.pickupAddress.zipCode }}
+          </div>
+          <div
+            *ngIf="
+              order?.orderTypeId !== patientMoveId &&
+              order?.orderTypeId !== pickupId &&
+              order?.deliveryAddress
+            ">
+            <p *ngIf="order?.deliveryAddress?.addressLine1">
+              {{ order.deliveryAddress.addressLine1 }}
+            </p>
+            <p *ngIf="order?.deliveryAddress?.addressLine2">
+              {{ order.deliveryAddress.addressLine2 }},
+            </p>
+            {{ order.deliveryAddress.city }}, {{ order.deliveryAddress.state }},
+            {{ order.deliveryAddress.zipCode }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="p-col-12 dispatch-item-footer no-padding" *ngIf="order && activeView !== 'orderView'">
+  <div class="p-grid no-margin">
+    <div
+      class="no-padding checkbox-time"
+      [ngClass]="{
+        'p-col-9': activeView === 'mapView' || activeView === 'assignView',
+        'p-col-12 order-detail': activeView === 'orderDetailView'
+      }"
+      class="{{ order.statOrder ? 'stat-' : '' }}{{ order?.orderType?.toLowerCase() }}">
+      <div class="checkbox">
+        <span class="type">{{ order.statOrder ? 'STAT-' : '' }}{{ order?.orderType }} </span>
+      </div>
+      <div class="time">Deliver by {{ order?.requestedEndDateTime | date: 'h:mm a, MMM d' }}</div>
+    </div>
+    <div
+      class="no-padding assign"
+      *ngIf="activeView !== 'orderDetailView'"
+      [ngClass]="{
+        'p-col-3': activeView === 'mapView' || activeView === 'assignView',
+        'assigned cursor-pointer': order.dispatchStatus === 'Scheduled'
+      }"
+      [routerLink]="order.dispatchStatus === 'Scheduled' ? ['order/' + order.id] : []">
+      <div>
+        {{
+          order.dispatchStatus === 'Scheduled'
+            ? 'Assigned'
+            : order.dispatchStatus === 'Planned'
+            ? 'Unassigned'
+            : order.dispatchStatus
+        }}
+        {{ order.dispatchStatus === 'Scheduled' && order.driver ? ' - ' + order?.driver : '' }}
+      </div>
+    </div>
+  </div>
+</div>

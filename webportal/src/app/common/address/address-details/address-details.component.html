@@ -1,0 +1,30 @@
+<ng-container *ngIf="address">
+  <div class="p-grid">
+    <div class="p-col-2 form-label">Street Address:</div>
+    <div class="p-col-3 form-data">
+      {{ address.addressLine1 }}
+    </div>
+    <div class="p-col-2 form-label">Apt/Unit/Building:</div>
+    <div class="p-col-3 form-data">
+      {{ address.addressLine2 }}
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-2 form-label">City:</div>
+    <div class="p-col-3 form-data">
+      {{ address.city }}
+    </div>
+    <div class="p-col-2 form-label">State :</div>
+    <div class="p-col-3 form-data">
+      {{ address.state }}
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-2 form-label">County :</div>
+    <div class="p-col-3 form-data">
+      {{ address?.county }}
+    </div>
+    <div class="p-col-2 form-label">Zip Code :</div>
+    <div class="p-col-3 form-data">{{ address.zipCode }} - {{ address.plus4Code }}</div>
+  </div>
+</ng-container>

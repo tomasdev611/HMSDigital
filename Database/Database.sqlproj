@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{2c5cd038-bec6-49cb-b67e-4360f9f51f59}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Database</RootNamespace>
+    <AssemblyName>Database</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultSchema>core</DefaultSchema>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(NetCoreBuild)' != 'true' AND '$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(NetCoreBuild)' != 'true' AND '$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(NETCoreTargetsPath)'!=''" Project="$(NETCoreTargetsPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="PostDeploymentScripts" />
+    <Folder Include="PatientSchema" />
+    <Folder Include="CoreSchema" />
+    <Folder Include="PreDeploymentScripts" />
+    <Folder Include="NotificationSchema" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="PatientSchema\patient.sql" />
+    <Build Include="PatientSchema\Patients.sql" />
+    <Build Include="PatientSchema\PatientAddress.sql" />
+    <Build Include="CoreSchema\core.sql" />
+    <Build Include="CoreSchema\Users.sql" />
+    <Build Include="CoreSchema\UserVerify.sql" />
+    <Build Include="CoreSchema\UserRoles.sql" />
+    <Build Include="CoreSchema\Hospices.sql" />
+    <Build Include="CoreSchema\Facilities.sql" />
+    <Build Include="CoreSchema\CsvMappings.sql" />
+    <Build Include="CoreSchema\HospiceMember.sql" />
+    <Build Include="CoreSchema\HospiceLocations.sql" />
+    <Build Include="CoreSchema\Roles.sql" />
+    <Build Include="CoreSchema\RolePermissions.sql" />
+    <Build Include="CoreSchema\PermissionNouns.sql" />
+    <Build Include="CoreSchema\Addresses.sql" />
+    <Build Include="CoreSchema\Emails.sql" />
+    <Build Include="CoreSchema\PhoneNumbers.sql" />
+    <Build Include="CoreSchema\Sites.sql" />
+    <Build Include="CoreSchema\FacilityPhoneNumber.sql" />
+    <Build Include="CoreSchema\OrderHeaders.sql" />
+    <Build Include="CoreSchema\OrderLineItems.sql" />
+    <Build Include="PatientSchema\Addresses.sql" />
+    <Build Include="PatientSchema\AddressType.sql" />
+    <Build Include="CoreSchema\FacilityPatient.sql" />
+    <Build Include="CoreSchema\FacilityPatientHistory.sql" />
+    <Build Include="PatientSchema\PhoneNumbers.sql" />
+    <Build Include="PatientSchema\PhoneNumberTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedPhoneNumberTypes.sql" />
+    <Build Include="CoreSchema\Items.sql" />
+    <Build Include="CoreSchema\Inventory.sql" />
+    <Build Include="CoreSchema\InventoryStatusTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedInventoryStatusTypes.sql" />
+    <Build Include="CoreSchema\ItemCategories.sql" />
+    <Build Include="CoreSchema\Drivers.sql" />
+    <Build Include="CoreSchema\FilesMetadata.sql" />
+    <Build Include="CoreSchema\StorageTypes.sql" />
+    <Build Include="CoreSchema\ItemImageFiles.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedStorageTypes.sql" />
+    <Build Include="CoreSchema\PhoneNumberTypes.sql" />
+    <Build Include="CoreSchema\SitePhoneNumber.sql" />
+    <Build Include="CoreSchema\SiteMembers.sql" />
+    <Build Include="CoreSchema\ItemTransferRequests.sql" />
+    <Build Include="CoreSchema\TransferRequestStatusTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedTransferRequestStatusTypes.sql" />
+    <Build Include="CoreSchema\DispatchInstructions.sql" />
+    <Build Include="PatientSchema\PatientNotes.sql" />
+    <Build Include="CoreSchema\OrderHeaderStatusTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedOrderHeaderStatusTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.Users.sql" />
+    <Build Include="CoreSchema\ItemSubCategories.sql" />
+    <Build Include="CoreSchema\PatientInventory.sql" />
+    <Build Include="CoreSchema\OrderLineItemStatusTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedOrderLineItemStatusTypes.sql" />
+    <Build Include="CoreSchema\OrderTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedOrderTypes.sql" />
+    <Build Include="CoreSchema\HospiceLocationMembers.sql" />
+    <Build Include="CoreSchema\SiteServiceAreas.sql" />
+    <Build Include="CoreSchema\PermissionVerbs.sql" />
+    <Build Include="CoreSchema\ItemCategoryMapping.sql" />
+    <Build Include="CoreSchema\ItemSubCategoryMapping.sql" />
+    <Build Include="CoreSchema\OrderFulfillmentLineItems.sql" />
+    <None Include="PostDeploymentScripts\Script.OrderLineItems.sql" />
+    <None Include="PostDeploymentScripts\Script.PatientDetails.sql" />
+    <None Include="PostDeploymentScripts\Script.FacilityPatient.sql" />
+    <None Include="PostDeploymentScripts\Script.FacilityPatientHistory.sql" />
+    <None Include="PostDeploymentScripts\Script.PatientInventory.sql" />
+    <None Include="PostDeploymentScripts\Script.HospiceMember.sql" />
+    <Build Include="CoreSchema\OrderNotes.sql" />
+    <Build Include="CoreSchema\ItemImages.sql" />
+    <Build Include="CoreSchema\CustomerTypes.sql" />
+    <None Include="PostDeploymentScripts\Script.Inventory.sql" />
+    <Build Include="PatientSchema\PatientStatusTypes.sql" />
+    <Build Include="CoreSchema\PrePostDeploymentScriptRuns.sql" />
+    <Build Include="NotificationSchema\PushNotificationMetadata.sql" />
+    <Build Include="NotificationSchema\notification.sql" />
+    <None Include="PostDeploymentScripts\0203202115333012_UpdatePatientStatusAndReason.sql" />
+    <None Include="PostDeploymentScripts\Script.SiteServiceAreas.sql" />
+    <None Include="PostDeploymentScripts\1003202117422146_UpdateAuditIdValueAsNull.sql" />
+    <Build Include="CoreSchema\Subscriptions.sql" />
+    <Build Include="CoreSchema\SubscriptionItems.sql" />
+    <Build Include="CoreSchema\UserProfilePicture.sql" />
+    <Build Include="CoreSchema\Features.sql" />
+    <Build Include="CoreSchema\CreditHoldHistory.sql" />
+    <Build Include="CoreSchema\DispatchAuditLog.sql" />
+    <Build Include="CoreSchema\ContractRecords.sql" />
+    <Build Include="PatientSchema\PatientMergeHistory.sql" />
+    <None Include="PostDeploymentScripts\Script.OrderHeaders.sql" />
+    <None Include="PostDeploymentScripts\1808202111200085_UpdateMemberIdInOrderAndOrderNotes.sql" />
+    <None Include="PreDeploymentScripts\1808202115304871_UpdateInventoryStatus.sql" />
+    <None Include="PostDeploymentScripts\2508202111543117_FixAddressUUID.sql" />
+    <Build Include="CoreSchema\EquipmentSettingsConfig.sql" />
+    <Build Include="CoreSchema\EquipmentSettingTypes.sql" />
+    <Build Include="CoreSchema\AddOnGroups.sql" />
+    <Build Include="CoreSchema\AddOnGroupProducts.sql" />
+    <Build Include="CoreSchema\Hms2Contracts.sql" />
+    <Build Include="CoreSchema\Hms2ContractItems.sql" />
+    <Build Include="CoreSchema\Hms2HmsDigitalHospiceMappings.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedHms2HmsDigitalMapping.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PostDeploymentScripts\Script.SeedRolePermissions.sql" />
+    <PostDeploy Include="PostDeploymentScripts\Script.PostDeployment.sql" />
+    <None Include="migration.sh" />
+    <None Include="PostDeploymentScripts\Script.SeedAddressType.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedFeatures.sql" />
+    <None Include="PostDeploymentScripts\Script.SeedPatientStatusTypes.sql" />
+    <None Include="PostDeploymentScripts\08132021192614687_UpdatePatientStatusReason.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="PreDeploymentScripts\Script.PreDeployment.sql" />
+    <None Include="PreDeploymentScripts\Script.Inventory.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Condition="'$(NetCoreBuild)' == 'true'" Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  <Target Name="BeforeBuild">
+    <Delete Files="$(BaseIntermediateOutputPath)\project.assets.json" />
+  </Target>
+</Project>

@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"           
+             xmlns:converters="clr-namespace:MobileApp.Utils.Converter"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+             x:Name="orderDetailsCard"
+             x:Class="MobileApp.Pages.Templates.OrderDetailCard">
+    <Frame CornerRadius="12"
+           Padding="0">
+
+        <StackLayout           
+            HorizontalOptions="FillAndExpand">
+
+            <FlexLayout Margin="25,15,0,0"
+                        Direction="Row"
+                        AlignItems="Center"
+                        JustifyContent="Start">
+                <Label  
+                        Text="{Binding CurrentOrder.OrderNumber, StringFormat='#{0}'}"
+                        FontAttributes="Bold"
+                        FontSize="10" />
+                <templates:OrderTypeLabel OrderTypeId="{Binding CurrentOrder.OrderTypeId}"
+                                             Margin="10,0" />
+            </FlexLayout>
+
+            <FlexLayout Margin="25,0"
+                        Direction="Row"
+                        JustifyContent="SpaceBetween">
+                <Label Text="{Binding CurrentOrder.ContactPerson}"
+                       LineBreakMode="MiddleTruncation"
+                       VerticalOptions="End"
+                       FontAttributes="Bold"
+                       FontSize="20" />
+                <Label IsVisible="{Binding CurrentOrder.IsInfectious}"                      
+                       Text="* Infectious"
+                       TextColor="Red"
+                       FontSize="13"
+                       HorizontalTextAlignment="End"/>
+            </FlexLayout>
+
+            <FlexLayout Margin="25,0"
+                        Direction="Row"
+                        JustifyContent="SpaceBetween"
+                        Wrap="Wrap">
+                <Label Text="{Binding CurrentOrder.ShippingAddress, Converter={converters:AddressToStringConverter}}"
+                               FontSize="10"
+                               FlexLayout.AlignSelf="Center"
+                               FlexLayout.Shrink="2" />
+                <Label Text="{Binding CurrentOrder.ItemCount, StringFormat='{0} Item'}"
+                               FlexLayout.AlignSelf="Center"
+                               TextColor="{StaticResource LightShade}" />
+            </FlexLayout>
+
+            <Grid Padding="25,0" IsEnabled="{Binding CurrentOrder.OrderNotes,Converter={StaticResource ListIsNotNullOrEmptyConverter}}" BackgroundColor="{StaticResource LightBlueShade}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="15"/>
+                </Grid.RowDefinitions>
+                <Label Text="Order Notes:"
+                           FontAttributes="Bold"
+                           FontSize="13"
+                           Grid.Column="0"/>
+                <Label Grid.Column="1" Grid.Row="0" Text="{Binding CurrentOrder.OrderNotes[0].Note}" FontSize="12" MaxLines="2"/>
+                <Label Grid.Column="1" IsVisible="{Binding CurrentOrder.OrderNotes,Converter={StaticResource ListIsNotNullOrEmptyConverter}}" Grid.Row="1" Text="...more" VerticalOptions="End" HorizontalOptions="End" FontSize="10" Padding="0" TextColor="{StaticResource LightShade}"/>
+
+                <Label Grid.Column="1" Grid.Row="0" FontSize="12" Text="No order notes available" LineBreakMode="WordWrap" TextColor="{StaticResource C2D1D9}" IsVisible="{Binding CurrentOrder.OrderNotes,Converter={StaticResource ListIsNullOrEmptyConverter}}"/>
+                <Grid.GestureRecognizers >
+                    <TapGestureRecognizer Command="{Binding ShowMoreOrderNotesCommand}"/>
+                </Grid.GestureRecognizers>
+            </Grid>
+
+            <Grid Padding="25,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Text="{Binding CurrentOrder.ETA, StringFormat='ETA {0}'}"
+                       FontSize="13" />
+                <Label Grid.Column="1"
+                           HorizontalOptions="Start"
+                           FontSize="13"
+                           IsVisible="{Binding CurrentOrder.ExpectedDeliveryDate ,Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                           Text="{Binding CurrentOrder.ExpectedDeliveryDate, StringFormat=' ({0})'}"/>
+            </Grid>
+
+            <FlexLayout
+                    Margin="25,2"
+                    JustifyContent="SpaceBetween">
+                <Label Text="{Binding CurrentOrder.ContactNumber, Converter={converters:StringToPhoneNumberConverter}}"
+                           FontAttributes="Bold"
+                           FlexLayout.AlignSelf="Center"
+                           FontSize="13" />
+                <Button Text="CALL"
+                            TextColor="White"
+                            FontSize="13"
+                            Padding="0"
+                            CornerRadius="15"
+                            HeightRequest="30"
+                            WidthRequest="80"
+                            FontAttributes="Bold"
+                            BackgroundColor="{StaticResource GreenShade}"
+                            Command="{Binding CallContactCommand}"
+                            CommandParameter="{Binding CurrentOrder.ContactNumber}" />
+            </FlexLayout>
+
+            <Grid Grid.Row="2"
+                      ColumnSpacing="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <cornerView:PancakeView BackgroundColor="{StaticResource LightShade}"
+                                            IsVisible="{Binding IsDriverOnSite, Converter={StaticResource InvertedBoolConverter}}"
+                                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"
+                                            CornerRadius="0,0,10,0"
+                                            Grid.Column="0">
+                    <Button Command="{Binding StartOrderNavigationCommand}"
+                                Text="Start Navigation"
+                                BackgroundColor="{StaticResource LightShade}"
+                                x:Name="startNavigation"
+                                HorizontalOptions="Center"
+                                TextColor="White"
+                                FontSize="15"
+                                VerticalOptions="Center"
+                                FontAttributes="Bold" />
+                </cornerView:PancakeView>
+                <cornerView:PancakeView CornerRadius="0,0,0,10"
+                                            IsVisible="{Binding IsDriverOnSite, Converter={StaticResource InvertedBoolConverter}}"
+                                            BackgroundColor="{StaticResource DarkShade}"
+                                            Grid.Column="1">
+                    <Button HorizontalOptions="FillAndExpand"
+                                x:Name="beginDisptach"
+                                BackgroundColor="{StaticResource DarkShade}"
+                                Command="{Binding ConfirmArrivalCommand}"
+                                CornerRadius="0"
+                                Padding="10"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="Confirm Arrival" />
+                </cornerView:PancakeView>
+                <cornerView:PancakeView BackgroundColor="{StaticResource LightShade}"
+                                            IsVisible="{Binding IsDriverOnSite}"
+                                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"
+                                            CornerRadius="0,0,10,10"
+                                            Grid.ColumnSpan="2">
+                    <Button Command="{Binding BeginDispatchCommand}"
+                                Text="Start Scanning"
+                                BackgroundColor="{StaticResource LightShade}"
+                                TextColor="White"
+                                FontSize="15"
+                                VerticalOptions="Center"
+                                FontAttributes="Bold" />
+                </cornerView:PancakeView>
+            </Grid>
+        </StackLayout>
+    </Frame>
+</ContentView>

@@ -1,0 +1,339 @@
+<div class="sub">
+  <app-body-header displayTitle="User Edit" backText="Back"> </app-body-header>
+  <div class="forms-wrapper">
+    <p-tabView (onChange)="onTabChange($event)">
+      <p-tabPanel header="General" leftIcon="pi pi-user" [selected]="view === 'general'">
+        <p-panel header="User Information" [style]="{marginTop: '10px'}">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmitUser(userForm.value)">
+            <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+              <div class="p-grid">
+                <div class="p-col-2 form-label">Cognito User Id:</div>
+                <div class="p-col-8 form-data">
+                  {{ user?.userId }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-2 form-label">First Name :</div>
+                <div class="p-col-3">
+                  <input
+                    id="firstName"
+                    type="text"
+                    size="20"
+                    pInputText
+                    formControlName="firstName" />
+                </div>
+                <div class="p-col-2 form-label">Last Name :</div>
+                <div class="p-col-3">
+                  <input
+                    id="lastName"
+                    type="text"
+                    size="30"
+                    pInputText
+                    formControlName="lastName" />
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-2 form-label">Email :</div>
+                <div class="p-col-3">
+                  <input id="email" type="text" size="20" pInputText formControlName="email" />
+                </div>
+                <div class="p-col-1">
+                  <i
+                    class="pi pi-check-circle verified"
+                    *ngIf="user?.isEmailVerified"
+                    pTooltip="Verified"
+                    tooltipPosition="right"></i>
+                  <i
+                    class="pi pi-spin pi-spinner loading"
+                    *ngIf="verifyReqLoading && attributeToVerify === 'email_verify'"></i>
+                  <button
+                    *ngIf="
+                      !user?.isEmailVerified &&
+                      user?.email &&
+                      !(verifyReqLoading && attributeToVerify === 'email_verify')
+                    "
+                    pButton
+                    class="p-button p-button-secondary"
+                    type="button"
+                    label="Verify"
+                    (click)="verify('email_verify')"></button>
+                </div>
+                <div class="p-col-1 form-label">Mobile :</div>
+                <div class="p-col-3">
+                  <p-inputMask
+                    size="20"
+                    mask="(999) 999-9999"
+                    unmask="true"
+                    formControlName="phoneNumber"
+                    placeholder="(999) 999-9999"></p-inputMask>
+                </div>
+                <div class="p-col-1">
+                  <i
+                    class="pi pi-check-circle verified"
+                    *ngIf="user?.isPhoneNumberVerified"
+                    pTooltip="Verified"
+                    tooltipPosition="right"></i>
+                  <i
+                    class="pi pi-spin pi-spinner loading"
+                    *ngIf="verifyReqLoading && attributeToVerify === 'phone_number_verify'"></i>
+                  <button
+                    *ngIf="
+                      !user?.isPhoneNumberVerified &&
+                      user?.phoneNumber &&
+                      !(verifyReqLoading && attributeToVerify === 'phone_number_verify')
+                    "
+                    pButton
+                    label="Secondary"
+                    class="p-button p-button-secondary"
+                    type="button"
+                    label="Verify"
+                    (click)="verify('phone_number_verify')"></button>
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-2 form-label">Status :</div>
+                <div class="p-col-2 form-data">
+                  {{ user?.userStatus }}
+                </div>
+                <div class="p-col-3 form-label">Enabled :</div>
+                <div class="p-col-4 form-inputswitch">
+                  <p-inputSwitch
+                    *ngIf="user"
+                    (onChange)="toggleUserStatus($event)"
+                    [(ngModel)]="user.enabled"
+                    [readonly]="formSubmit"
+                    [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                </div>
+              </div>
+              <div class="p-grid"></div>
+              <div class="p-grid">
+                <div class="p-col-10 btn-right">
+                  <button
+                    pButton
+                    class="btn-right"
+                    type="submit"
+                    label="Update"
+                    icon="pi pi-save"
+                    [disabled]="!(userForm.dirty && userForm.valid && !formSubmit)"></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </p-panel>
+        <p-panel header="Change Password" [style]="{marginTop: '10px'}">
+          <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword(passwordForm.value)">
+            <div class="p-grid">
+              <div class="p-col-5">
+                <div class="p-grid">
+                  <div class="p-col-5 custom-col form-label">New Password :</div>
+                  <div class="p-col-7 custom-col">
+                    <input
+                      id="password"
+                      type="password"
+                      size="20"
+                      pInputText
+                      formControlName="password" />
+                  </div>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-5 custom-col form-label">Confirm Password :</div>
+                  <div class="p-col-7 custom-col">
+                    <input
+                      id="confirmPassword"
+                      type="password"
+                      size="20"
+                      pInputText
+                      formControlName="confirmPassword" />
+                  </div>
+                </div>
+                <div
+                  class="p-grid"
+                  *ngIf="
+                    passwordForm.controls['password'].value &&
+                    passwordForm.controls['password'].valid
+                  ">
+                  <div class="p-col-5 custom-col form-label">
+                    <span>Send :</span>
+                  </div>
+                  <div class="p-col-7 custom-col form-checkbox">
+                    <span>
+                      <p-checkbox
+                        [formControl]="passwordForm.controls['channels']"
+                        value="Email"
+                        label="via Email">
+                      </p-checkbox>
+                      <p-checkbox
+                        [style]="{marginLeft: '10px'}"
+                        [formControl]="passwordForm.controls['channels']"
+                        value="Sms"
+                        label="via SMS"></p-checkbox>
+                    </span>
+                  </div>
+                </div>
+                <div class="p-grid" [style]="{marginBottom: '10px'}">
+                  <div class="p-col-12 custom-col btn-right">
+                    <button
+                      pButton
+                      type="submit"
+                      class="btn-right"
+                      label="Set Password"
+                      icon="pi pi-save"
+                      [disabled]="!passwordForm.valid || passwordSubmit"></button>
+                  </div>
+                </div>
+                <div class="p-grid" *ngIf="passwordForm.controls['password'].value">
+                  <p-message
+                    class="custom-message"
+                    severity="{{
+                      passwordForm.controls['password'].value
+                        ? passwordForm.controls['password'].hasError('hasLowerCase')
+                          ? 'error'
+                          : 'success'
+                        : ''
+                    }}"
+                    text="Password must contain a lower case letter"></p-message>
+                </div>
+                <div class="p-grid" *ngIf="passwordForm.controls['password'].value">
+                  <p-message
+                    class="custom-message"
+                    severity="{{
+                      passwordForm.controls['password'].value
+                        ? passwordForm.controls['password'].hasError('hasUpperCase')
+                          ? 'error'
+                          : 'success'
+                        : ''
+                    }}"
+                    text="Password must contain a upper case letter"></p-message>
+                </div>
+                <div class="p-grid" *ngIf="passwordForm.controls['password'].value">
+                  <p-message
+                    class="custom-message"
+                    severity="{{
+                      passwordForm.controls['password'].value
+                        ? passwordForm.controls['password'].hasError('hasSpecialCharacters')
+                          ? 'error'
+                          : 'success'
+                        : ''
+                    }}"
+                    text="Password must contain a special character"></p-message>
+                </div>
+                <div class="p-grid" *ngIf="passwordForm.controls['password'].value">
+                  <p-message
+                    class="custom-message"
+                    severity="{{
+                      passwordForm.controls['password'].value
+                        ? passwordForm.controls['password'].hasError('hasNumber')
+                          ? 'error'
+                          : 'success'
+                        : ''
+                    }}"
+                    text="Password must contain a number"></p-message>
+                </div>
+                <div class="p-grid" *ngIf="passwordForm.controls['password'].value">
+                  <p-message
+                    class="custom-message"
+                    severity="{{
+                      passwordForm.controls['password'].value
+                        ? passwordForm.controls['password'].hasError('minlength')
+                          ? 'error'
+                          : 'success'
+                        : ''
+                    }}"
+                    text="Password must contain at least 8 characters"></p-message>
+                </div>
+                <div class="p-grid" *ngIf="passwordForm.controls['confirmPassword'].value">
+                  <p-message
+                    class="custom-message"
+                    severity="{{
+                      passwordForm.controls['confirmPassword'].value ||
+                      passwordForm.controls['password'].value
+                        ? passwordForm.controls['confirmPassword'].hasError('NoPassswordMatch')
+                          ? 'error'
+                          : 'success'
+                        : ''
+                    }}"
+                    text="New Password and Confirm Password must match"></p-message>
+                </div>
+              </div>
+              <div class="vertical">
+                <div class="separator"></div>
+                <div class="separator-text">OR</div>
+                <div class="separator"></div>
+              </div>
+              <div class="p-col-4">
+                <div class="p-grid">
+                  <h4>Send Reset Pasword Link</h4>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-4 custom-col form-label">Send :</div>
+                  <div class="p-col-8 custom-col form-checkbox">
+                    <p-checkbox
+                      [(ngModel)]="resetLinkChannels"
+                      value="Email"
+                      label="via Email"
+                      [ngModelOptions]="{standalone: true}"></p-checkbox>
+                    <p-checkbox
+                      [style]="{marginLeft: '10px'}"
+                      [(ngModel)]="resetLinkChannels"
+                      value="Sms"
+                      label="via SMS"
+                      [ngModelOptions]="{standalone: true}"></p-checkbox>
+                  </div>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-12 custom-col btn-right">
+                    <button
+                      class="btn-right"
+                      pButton
+                      type="button"
+                      (click)="onSendResetLink()"
+                      label="Send Reset Link"
+                      icon="pi pi-replay"
+                      [disabled]="resetLinkChannels.length == 0 || resetLinkSubmit"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </p-panel>
+      </p-tabPanel>
+      <p-tabPanel
+        header="Access Control"
+        leftIcon="pi pi-key"
+        [selected]="view === 'accessControl'">
+        <app-user-role-list
+          [assignedUserRoles]="assignedUserRoles"
+          [loading]="userRolesLoading"
+          [editmode]="true"
+          (addUserRole)="addUserRole($event)"
+          (deleteUserRole)="removeUserRole($event)"
+          roleType="*">
+        </app-user-role-list>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+<app-modal
+  header="{{ attributeToVerify == 'email_verify' ? 'Email' : 'Mobile' }} Verification"
+  [visible]="displayCodeConfirmation"
+  (hide)="closeVerificationDialog($event)"
+  footer="true"
+  footerBtnLabel="Verify"
+  [footerBtnIcon]="verificationLoading ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+  [footerBtnDisabled]="!verificationCode || verificationLoading"
+  (footerBtnAction)="verifyConfirmation()">
+  <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 15px 0px">
+    <div class="p-grid">
+      <div class="p-col-3 form-label">Code :</div>
+      <div class="p-col-9">
+        <input
+          id="firstName"
+          type="text"
+          size="40"
+          pInputText
+          placeholder="Please enter the Code"
+          [(ngModel)]="verificationCode" />
+      </div>
+    </div>
+  </div>
+</app-modal>

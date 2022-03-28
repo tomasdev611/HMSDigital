@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<pages:PopupPage x:Class="MobileApp.Pages.PopUpMenu.UndoPopUp"
+                 xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup">
+    <Frame Margin="20"
+           VerticalOptions="Center"
+           HeightRequest="300"
+           CornerRadius="10"
+           BackgroundColor="{StaticResource LightBlueShade}"
+           Padding="0">
+        <RelativeLayout>
+            <ActivityIndicator x:Name="loader" />
+            <Frame BackgroundColor="White"
+                   RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.8}"
+                   CornerRadius="10"
+                   HasShadow="False"
+                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                   RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.2}" />
+            <Grid Padding="20"
+                  BackgroundColor="White"
+                  RowSpacing="10"
+                  RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.2}"
+                  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="2*" />
+                </Grid.RowDefinitions>
+                <Label FontSize="15"
+                       Margin="5"
+                       Text="If you have scanned a product by mistake please select UNDO SCAN, else close this pop up."
+                       Grid.Row="0" />
+                <Button Margin="40,0"
+                        Text="Undo Scan"
+                        IsEnabled="True"
+                        x:Name="undoScan"
+                        BackgroundColor="{StaticResource LightShade}"
+                        CornerRadius="15"
+                        TextColor="White"
+                        Grid.Row="1"
+                        Command="{Binding UndoCommand}" />
+                <Button Margin="40,0"
+                        Text="Close"
+                        BackgroundColor="#EB5757"
+                        x:Name="cancel"
+                        IsEnabled="True"
+                        CornerRadius="15"
+                        TextColor="White"
+                        Grid.Row="2"
+                        Command="{Binding CancelCommand}" />
+            </Grid>
+            <Label Margin="0,15"
+                   HorizontalTextAlignment="Center"
+                   Text="Undo Scan"
+                   VerticalOptions="Center"
+                   VerticalTextAlignment="Center"
+                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                   RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.2}"
+                   FontAttributes="Bold"
+                   FontSize="15"
+                   HorizontalOptions="Center" />
+        </RelativeLayout>
+    </Frame>
+</pages:PopupPage>
+
+ 

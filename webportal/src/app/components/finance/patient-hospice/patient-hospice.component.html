@@ -1,0 +1,62 @@
+<p-panel header="Fix Patient Hospice" [style]="{marginTop: '10px'}">
+  <form
+    [formGroup]="patientHospiceForm"
+    (ngSubmit)="onSubmit()"
+    autocomplete="nope"
+    *ngIf="patient">
+    <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+      <h4 class="form-section-header">Patient Info</h4>
+      <div class="p-grid p-nogutter">
+        <div class="p-col-2 form-label">Patient Name :</div>
+        <div class="p-col-3 form-data p-mb-1">{{ patient?.firstName }} {{ patient?.lastName }}</div>
+      </div>
+      <div class="p-grid p-nogutter">
+        <div class="p-col-2 form-label">DOB :</div>
+        <div class="p-col-3 form-data p-mb-1">
+          {{ patient?.dateOfBirth | date: 'LL/dd/yyyy' }}
+        </div>
+      </div>
+      <h4 class="form-section-header">Hospice Info</h4>
+      <div class="p-grid">
+        <div class="p-col-2 form-label">Hospice :</div>
+        <div class="p-col-4">
+          <p-dropdown
+            [options]="hospices"
+            filter="true"
+            name="hospiceId"
+            formControlName="hospiceId"
+            placeholder="Choose Hospice"
+            class="dropdown-panel"
+            (onChange)="onHospiceChange($event)">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-2 form-label">Hospice Location :</div>
+        <div class="p-col-4">
+          <p-dropdown
+            [options]="hospiceLocations"
+            filter="true"
+            name="hospiceLocationId"
+            formControlName="hospiceLocationId"
+            placeholder="Choose Hospice Location"
+            class="dropdown-panel">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-6 btn-right">
+          <button
+            pButton
+            type="submit"
+            label="Apply Fix"
+            icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+            [disabled]="
+              patient.hospiceId === patientHospiceForm.value.hospiceId &&
+              patient.hospiceLocationId === patientHospiceForm.value.hospiceLocationId
+            "></button>
+        </div>
+      </div>
+    </div>
+  </form>
+</p-panel>

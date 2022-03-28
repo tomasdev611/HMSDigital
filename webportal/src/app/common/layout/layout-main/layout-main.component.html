@@ -1,0 +1,17 @@
+<div class="p-grid main-layout">
+  <div class="p-col-12">
+    <div class="p-col-12 p-col-nogutter navbar">
+      <div class="header-wrapper">
+        <app-navbar></app-navbar>
+      </div>
+    </div>
+  </div>
+  <div [ngClass]="{'p-col-12 area-wrapper': true, 'full-view': dispatchView}">
+    <div class="sidenav-wrapper">
+      <app-sidenav></app-sidenav>
+    </div>
+    <div class="main-content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

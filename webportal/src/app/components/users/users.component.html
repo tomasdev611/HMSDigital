@@ -1,0 +1,96 @@
+<div [ngClass]="{'page-container': true, 'flyout-open': roleDetailsViewOpen}">
+  <div class="sub" style="flex: 1">
+    <app-body-header
+      displayTitle="Users"
+      [showSearchBar]="false"
+      [listCount]="userResponse?.totalRecordCount">
+      <app-filters
+        #filter
+        *ngIf="view === 'users'"
+        [filterConfiguration]="filterConfiguration"
+        class="user-filters"
+        (filter)="filterChanged($event)"></app-filters>
+      <div class="action-btn" [ngClass]="{btns: view === 'audit'}">
+        <button
+          *ngIf="view === 'audit'"
+          type="button"
+          pButton
+          icon="pi pi-download"
+          iconPos="left"
+          label="Export"
+          class="p-button"
+          style="order: -1"
+          (click)="exportUserAuditLogs()"
+          [disabled]="csvLoading"></button>
+        <button
+          *ngIf="checkPermission('User', 'Create')"
+          type="button"
+          pButton
+          label="Add User"
+          class="p-button-secondary ml-5"
+          style="order: -1"
+          [routerLink]="['./add']"></button>
+      </div>
+    </app-body-header>
+    <p-tabView #tabs (onChange)="tabChanged($event)">
+      <p-tabPanel header="Users" leftIcon="pi pi-user" [selected]="view === 'users'">
+        <app-user-list
+          #userList
+          (getUsers)="getUsers($event)"
+          [searchQuery]="searchQuery"
+          [userResponse]="userResponse"
+          [users]="users"
+          [filter]="filterString"
+          [headers]="headers">
+        </app-user-list>
+      </p-tabPanel>
+      <p-tabPanel
+        *ngIf="shouldShowTab('System') && shouldShowTab('User')"
+        [selected]="view === 'roles'"
+        header="Roles"
+        leftIcon="pi pi-sliders-h">
+        <app-roles-permission
+          #rolesPermission
+          (openFlyout)="showRoleFlyout($event)"
+          *ngIf="view === 'roles'">
+        </app-roles-permission>
+      </p-tabPanel>
+      <p-tabPanel
+        *ngIf="shouldShowTab('Audit')"
+        [selected]="view === 'audit'"
+        header="Audit Logs"
+        leftIcon="pi pi-info">
+        <app-audit-logs
+          #auditLog
+          *ngIf="view === 'audit'"
+          (toggleCsvLoading)="toggleCsvLoading($event)">
+        </app-audit-logs>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+  <div class="flyout" style="position: fixed">
+    <button class="close-icon" (click)="closeRoleDeatils()">
+      <i class="pi pi-times"></i>
+    </button>
+
+    <div *ngIf="roleDetailsViewOpen">
+      <div class="role-label">
+        <span>{{ roleDetails?.name }}</span>
+      </div>
+
+      <div class="permissions-list">
+        <div *ngFor="let permission of permissionGroups" class="permission-group">
+          <div class="group-name">
+            {{ permission?.label }}
+          </div>
+          <div
+            *ngFor="let item of permission.items; let i = index"
+            class="permission-item"
+            [ngClass]="{'w-100': item.label == 'OverrideCreditHold'}">
+            <i class="pi pi-circle-on"></i>{{ item.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

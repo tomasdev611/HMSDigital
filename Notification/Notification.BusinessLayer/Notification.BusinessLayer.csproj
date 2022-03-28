@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>HMSDigital.Notification.BusinessLayer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+  </ItemGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\..\Common\Common.BusinessLayer\Common.BusinessLayer.csproj" />
+     <ProjectReference Include="..\Notification.Data\Notification.Data.csproj" />
+    <ProjectReference Include="..\Notification.ViewModels\Notification.ViewModels.csproj" />
+  </ItemGroup>
+</Project>

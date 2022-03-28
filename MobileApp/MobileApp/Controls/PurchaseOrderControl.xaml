@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+    x:Class="MobileApp.Controls.PurchaseOrderControl"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:cake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+    xmlns:converters="clr-namespace:MobileApp.Utils.Converter"
+    xmlns:resources="clr-namespace:MobileApp.Resources">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:PurchaseOrderStatusToColorConverter x:Key="ColorConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <cake:PancakeView
+            Margin="16,0"
+            Background="White"
+            CornerRadius="4">
+            <cake:PancakeView.Triggers>
+                <DataTrigger
+                    Binding="{Binding IsPartialReceipt}"
+                    TargetType="cake:PancakeView"
+                    Value="True">
+                    <Setter Property="BackgroundColor" Value="#FBF8ED" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding IsPartialReceipt}"
+                    TargetType="cake:PancakeView"
+                    Value="False">
+                    <Setter Property="BackgroundColor" Value="White" />
+                </DataTrigger>
+            </cake:PancakeView.Triggers>
+            <cake:PancakeView.Border>
+                <cake:Border Thickness="1" Color="{StaticResource PurchaseOrderElementBorder}" />
+            </cake:PancakeView.Border>
+            <StackLayout Margin="16,20,5,20">
+                <Grid ColumnDefinitions="35*, 65*" HorizontalOptions="FillAndExpand">
+                    <Label
+                        FontSize="14"
+                        Text="PO #"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="{Binding PurchaseOrderNumber}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <Grid ColumnDefinitions="35*, 65*" HorizontalOptions="FillAndExpand">
+                    <Label
+                        FontSize="14"
+                        Text="Vendor"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="{Binding FullVendor}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <Grid ColumnDefinitions="35*, 65*">
+                    <Label
+                        FontSize="14"
+                        Text="Date Created"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="{Binding DateCreated, StringFormat='{0:d}'}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <Grid ColumnDefinitions="5*, 5*">
+                    <Grid ColumnDefinitions="80*, 30*">
+                        <Label
+                            FontSize="14"
+                            Text="Total Qty"
+                            TextColor="{StaticResource LightBlack}" />
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="{Binding TotalQuantity}"
+                            TextColor="{StaticResource DarkBlack}" />
+                    </Grid>
+                    <Grid Grid.Column="1" IsVisible="{Binding IsPartialReceipt}" ColumnDefinitions="80*, 30*">
+                        <Label
+                            FontSize="14"
+                            Text="Qty Pending"
+                            TextColor="{StaticResource LightBlack}" />
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="{Binding TotalQuantity}"
+                            TextColor="{StaticResource DarkBlack}" />
+                    </Grid>
+                </Grid>
+
+                <StackLayout Padding="0,6,12,6">
+                    <Frame
+                        Padding="10,5"
+                        BackgroundColor="{Binding Status, Converter={StaticResource ColorConverter}}"
+                        BorderColor="{Binding Status, Converter={StaticResource ColorConverter}}"
+                        CornerRadius="12"
+                        HasShadow="False"
+                        HeightRequest="13"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center">
+                        <Grid>
+                            <Label
+                                FontSize="10"
+                                Text="{Binding StatusDescription}"
+                                TextColor="{StaticResource LightGrayColor}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
+        </cake:PancakeView>
+    </ContentView.Content>
+</ContentView>

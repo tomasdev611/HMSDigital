@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileApp.Pages.Templates.HorizontalDivider">
+  <ContentView.Content>
+        <FlexLayout FlexLayout.Grow="1">
+            <BoxView FlexLayout.AlignSelf="Center"
+                     FlexLayout.Grow="1"
+                     Margin="0"
+                     HeightRequest="1"
+                     VerticalOptions="Center"
+                     Color="{StaticResource 424B5A}">
+            </BoxView>
+            <Frame HasShadow="False"
+                   IsVisible="{Binding DividerText, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                   Padding="10">
+                <Label FontSize="10"
+                       Text="{Binding DividerText}" />
+            </Frame>
+            <BoxView FlexLayout.AlignSelf="Center"
+                     FlexLayout.Grow="1"
+                     Margin="0"
+                     HeightRequest="1"
+                     VerticalOptions="Center"
+                     Color="{StaticResource 424B5A}">
+            </BoxView>
+        </FlexLayout>
+    </ContentView.Content>
+</ContentView>

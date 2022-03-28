@@ -1,0 +1,30 @@
+{
+    "clickables": {
+
+        "uniques": {
+            "Place Order": {
+                "findBy": "class name",
+                "class name": "order-wizard-step-button-continue"
+            }
+        }
+    },
+
+    "waitables": {
+
+        "mapped": [
+            {
+                "xpath": "//div[@class=\"order-details-DIV-CLASS\"]/SUB-HTML-ELEMENT",
+
+                "map": {
+                    "Ordering Nurse": { "DIV-CLASS": "nurse-info", "SUB-HTML-ELEMENT": "p" },
+                    "Patient Name": { "DIV-CLASS": "patient-info", "SUB-HTML-ELEMENT": "h2" },
+                    "Delivery Timing": { "DIV-CLASS": "delivery-info-priority-options", "SUB-HTML-ELEMENT": "label" },
+                    "Order Notes": { "DIV-CLASS": "order-instructions", "SUB-HTML-ELEMENT": "div/p[2]" },
+
+                    "Items Table - Headers": { "DIV-CLASS": "order-items", "SUB-HTML-ELEMENT": "table/tbody//th" },
+                    "Items Table - Rows": { "DIV-CLASS": "order-items", "SUB-HTML-ELEMENT": "table/tbody/tr/td/parent::tr" }
+                }
+            }
+        ]
+    }
+}

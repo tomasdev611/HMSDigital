@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": { "value": "HMSDigitalAppPlanProd" },
+    "appServicePlanSkuName": { "value": "P1v3" },
+    "aspNetCoreEnvironment": { "value": "Production" },
+    "dbAdminLogin": { "value": "##SECRET##" },
+    "dbAdminPassword": { "value": "##SECRET##" },
+    "dbName": { "value": "HMSDigital" },
+    "fhirFunctionAppName":{"value":"hmsd-fhir-prod"},
+    "patientAppAlwaysOn": { "value": true },
+    "patientAppName": { "value": "hmsd-patient-prod" },
+    "serviceBusNamespaceName":{"value":"hsmdigitalsbprod"},
+    "serviceBusSku": { "value": "Standard" },  
+    "smartyAuthId": { "value": "##SECRET##" },
+    "smartyAuthToken": { "value": "##SECRET##" },
+    "smartyRefer": { "value": "##SECRET##" },
+    "smartySecretKey": { "value": "##SECRET##" },
+    "sqlserverName": { "value": "hmsdsqlserverprod" },
+    "storageAccountName": { "value": "hmsdstorageprod" },
+    "storageAccountType": { "value": "Standard_RAGRS" }  
+  }
+}

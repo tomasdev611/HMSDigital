@@ -1,0 +1,127 @@
+<div [formGroup]="address" class="address">
+  <div class="p-grid p-d-flex p-mt-3" *ngIf="!hide?.addressLine1 || !hide?.addressLine2">
+    <div class="p-col-12 p-sm-6" *ngIf="!hide?.addressLine1">
+      <div class="p-grid p-align-center">
+        <div class="top-label p-col-3">
+          Street Address{{ isRequiredFileds('addressLine1') ? '*' : '' }}
+        </div>
+        <div class="p-col-9">
+          <input
+            id="addressLine1"
+            type="text"
+            size="40"
+            pInputText
+            formControlName="addressLine1"
+            autocomplete="off" />
+        </div>
+      </div>
+    </div>
+    <div class="p-col-12 p-sm-6 unit" *ngIf="!hide?.addressLine2">
+      <div class="p-grid p-align-center">
+        <div class="top-label p-col-3">
+          Apt / Unit / Building{{ isRequiredFileds('addressLine2') ? '*' : '' }}
+        </div>
+        <div class="p-col-9">
+          <input
+            id="addressLine2"
+            type="text"
+            size="40"
+            pInputText
+            formControlName="addressLine2"
+            autocomplete="off" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid p-d-flex p-mt-3" *ngIf="!hide?.state || !hide?.county">
+    <div class="p-col-12 p-sm-6 p-lg-4" *ngIf="!hide?.city">
+      <div class="p-grid p-align-center">
+        <div class="top-label p-col-3">City{{ isRequiredFileds('city') ? '*' : '' }}</div>
+        <div class="p-col-9">
+          <p-autoComplete
+            autoHighlight="true"
+            name="city"
+            formControlName="city"
+            [suggestions]="cities"
+            [style]="{width: '100%'}"
+            (completeMethod)="search($event, 'city', 'cities')"
+            autocomplete="1"
+            class="dropdown-panel"
+            [panelStyle]="{width: '100%'}">
+          </p-autoComplete>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-12 p-sm-6 p-lg-4" *ngIf="!hide?.state">
+      <div class="p-grid p-align-center">
+        <div class="top-label p-col-3">State{{ isRequiredFileds('state') ? '*' : '' }}</div>
+        <div class="p-col-9">
+          <p-dropdown
+            [options]="states"
+            filter="true"
+            name="state"
+            filterBy="label,value"
+            formControlName="state"
+            placeholder="Select a State"
+            class="dropdown-panel"
+            [panelStyle]="{width: '100%'}">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-12 p-sm-6 p-lg-4" *ngIf="!hide?.zipCode">
+      <div class="p-grid p-align-center">
+        <div class="top-label p-col-3">Zip Code{{ isRequiredFileds('zipCode') ? '*' : '' }}</div>
+        <div class="p-col-9">
+          <div class="zip-info">
+            <input
+              pInputText
+              placeholder="Zip Code"
+              id="zipCode"
+              type="number"
+              size="40"
+              formControlName="zipCode"
+              autocomplete="off" />
+            <input
+              pInputText
+              placeholder="Plus4"
+              id="plus4code"
+              type="number"
+              size="4"
+              formControlName="plus4Code"
+              autocomplete="off"
+              *ngIf="!hide?.plus4Code" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid p-mt-3" *ngIf="!hide?.city || !hide?.zipCode">
+    <div class="p-col-3 p-d-flex p-align-center" *ngIf="!hide?.county">
+      <div class="top-label p-mr-2">County{{ isRequiredFileds('county') ? '*' : '' }}</div>
+      <input type="text" pInputText formControlName="county" name="county" autocomplete="off" />
+    </div>
+  </div>
+  <div class="p-grid" *ngIf="!hide?.latitude || !hide?.longitude">
+    <div class="p-col-3 p-d-flex p-align-center" *ngIf="!hide?.latitude">
+      <div class="top-label p-mr-2">Latitude{{ isRequiredFileds('latitude') ? '*' : '' }}</div>
+      <input
+        id="latitude"
+        type="number"
+        size="40"
+        pInputText
+        formControlName="latitude"
+        autocomplete="off" />
+    </div>
+    <div class="p-col-3 p-d-flex p-align-center" *ngIf="!hide?.longitude">
+      <div class="top-label p-mr-2">Longitude{{ isRequiredFileds('longitude') ? '*' : '' }}</div>
+      <input
+        id="longitude"
+        type="number"
+        size="40"
+        pInputText
+        formControlName="longitude"
+        autocomplete="off" />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:MobileApp.Utils.Converter"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit">
+
+    <xct:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+
+    <xct:ListIsNotNullOrEmptyConverter x:Key="ListIsNotNullOrEmptyConverter" />
+    <xct:ListIsNullOrEmptyConverter x:Key="ListIsNullOrEmptyConverter" />
+
+    <xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    <xct:IsNullOrEmptyConverter x:Key="IsNullOrEmptyConverter"/>
+    <xct:BoolToObjectConverter
+        x:Key="BoolToColorConverter"
+        FalseObject="Color.Red"
+        TrueObject="Color.Green" />
+
+    <xct:VariableMultiValueConverter x:Key="VariableMultiValueAndConverter" ConditionType="All" />
+    <xct:VariableMultiValueConverter x:Key="VariableMultiValueOrConverter" ConditionType="Any" />
+
+</ResourceDictionary>

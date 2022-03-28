@@ -1,0 +1,130 @@
+:host ::ng-deep {
+  .dispatch-scheduler {
+    height: calc(100vh - 168px);
+    display: flex;
+    flex-flow: column;
+    overflow-y: hidden;
+    overflow-x: scroll;
+  }
+  .cal-week-view {
+    &.trucks {
+      height: auto;
+    }
+    &.scheduler {
+      overflow-y: scroll;
+      width: fit-content;
+      min-width: 100%;
+    }
+    .cal-day-column {
+      min-width: 18vw;
+    }
+    .cal-day-headers {
+      width: fit-content;
+      min-width: 99%;
+      color: #676262;
+      font-weight: bold;
+      align-content: center;
+      .label {
+        -webkit-transform: rotate(270deg);
+        -moz-transform: rotate(270deg);
+        -o-transform: rotate(270deg);
+        -ms-transform: rotate(270deg);
+        transform: rotate(270deg);
+        margin-left: -70px;
+        width: 70px;
+        height: 4.5em;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 0.5em;
+        align-self: center;
+      }
+      .cal-header {
+        min-width: 18vw;
+        background: #f1f1f1;
+        text-align: left;
+        font-size: 20px;
+        justify-content: space-between;
+        display: flex;
+        align-content: center;
+        padding-left: 0.8em;
+        flex-wrap: wrap;
+        .truck-assigned-to {
+          font-size: 12px;
+          font-weight: 400;
+        }
+        .actions {
+          display: flex;
+          flex-direction: column;
+          button {
+            margin: 0.1em;
+            font-size: 12px;
+            text-transform: capitalize;
+            span {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+    @media screen and (max-width: 1400px) {
+      .cal-day-column {
+        min-width: 23vw;
+      }
+      .cal-day-headers .cal-header {
+        min-width: 23vw;
+      }
+    }
+    .cal-time {
+      font-weight: 400;
+      font-size: 12px;
+    }
+    .cal-time-events {
+      .cal-event {
+        line-height: 14px;
+        color: #000000;
+      }
+    }
+  }
+  .truck-driver-info {
+    max-width: 60%;
+    .truck-assigned-to {
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
+  }
+  .flyout-open .flyout {
+    width: 700px;
+  }
+  .p-sidebar {
+    padding: 0;
+    width: 70vw;
+    padding: 0;
+    font-size: 14px;
+    top: 68px;
+    button.close-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background-color: var(--text-color);
+      color: white;
+      border-radius: 50%;
+      padding: 0.5em;
+      border: none;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+      outline: none;
+      > i.pi {
+        align-self: center;
+      }
+    }
+    .flyout-label {
+      height: 50px;
+      text-align: left;
+      font-size: 22px;
+      font-weight: 400;
+      padding: 0.7em;
+    }
+  }
+}

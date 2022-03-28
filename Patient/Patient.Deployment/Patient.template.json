@@ -1,0 +1,340 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appServicePlanSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "appServicePlanSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "dbAdminLogin": {
+      "type": "string"
+    },
+    "dbAdminPassword": {
+      "type": "securestring"
+    },
+    "dbName": {
+      "type": "string"
+    },
+    "patientAppAlwaysOn": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "patientAppName": {
+      "type": "string"
+    },
+    "smartyAuthId": {
+      "type": "securestring"
+    },
+    "smartyAuthToken": {
+      "type": "securestring"
+    },
+    "smartyRefer": {
+      "type": "string"
+    },
+    "smartySecretKey": {
+      "type": "securestring"
+    },
+    "sqlserverName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus namespace"
+      }
+    },
+    "fhirFunctionAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the fhir function app that you wish to create."
+      }
+    },
+    "serviceBusSku": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ]
+    }
+  },
+  "variables": {
+    "serviceBusFHIRQueueListenerAccessKeyName":"FHIRqueue-listener",
+    "serviceBusFHIRQueueSenderAccessKeyName":"FHIRqueue-sender",
+    "serviceBusFHIRQueueName":"fhirqueue",
+    "functionWorkerRuntime":"dotnet"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]",
+        "capacity": "[parameters('appServicePlanSkuCapacity')]"
+      },
+      "properties": {
+        "name": "[parameters('appServicePlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('patientAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('appServicePlanName'))]": "empty",
+        "displayName": "PatientService"
+      },
+      "properties": {
+        "name": "[parameters('patientAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": "[parameters('patientAppAlwaysOn')]"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites/', parameters('patientAppName'))]"
+          ],
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('patientAppName'))).InstrumentationKey]",
+            "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('patientAppName'))).InstrumentationKey]",
+            "ASPNETCORE_ENVIRONMENT ": "[parameters('aspNetCoreEnvironment')]",
+            "BlobStorage:ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "ConnectionStrings:HMSDigitalDbConnection": "[concat('Data Source=tcp:', parameters('sqlserverName'),'.database.windows.net,1433;Initial Catalog=', parameters('dbName'), ';User Id=', parameters('dbAdminLogin'), '@', parameters('sqlserverName'), ';Password=', parameters('dbAdminPassword'), ';')]",
+            "Serilog:WriteTo:2:Args:connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "SmartyStreets:SmartyAuthId": "[parameters('smartyAuthId')]",
+            "SmartyStreets:SmartyAuthToken": "[parameters('smartyAuthToken')]",
+            "SmartyStreets:SmartyRefer": "[parameters('smartyRefer')]",
+            "SmartyStreets:SmartySecretKey": "[parameters('smartySecretKey')]",
+            "FHIR:QueueConnectionString": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules',parameters('serviceBusNamespaceName'),'RootManageSharedAccessKey'),'2017-04-01').primaryConnectionString]"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('patientAppName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', parameters('patientAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('patientAppName'))]": "Resource",
+        "displayName": "PatientAppInsightsComponent"
+      },
+      "properties": {
+        "ApplicationId": "[parameters('patientAppName')]"
+      }
+    },
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-04-01",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "kind": "StorageV2"
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('serviceBusNamespaceName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('serviceBusSku')]"
+      },
+      "properties": {},
+      "resources": [
+        {
+          "type": "Queues",
+          "apiVersion": "2017-04-01",
+          "name": "[variables('serviceBusFHIRQueueName')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT30S",
+            "requiresDuplicateDetection": false,
+            "requiresSession": false,
+            "defaultMessageTimeToLive": "P14D",
+            "deadLetteringOnMessageExpiration": true,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 5,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": true,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "name": "[variables('serviceBusFHIRQueueListenerAccessKeyName')]",
+              "apiVersion": "2017-04-01",
+              "type": "authorizationRules",
+              "dependsOn": [
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'), '/queues/', variables('serviceBusFHIRQueueName'))]"
+              ],
+              "properties": {
+                "rights": [ "Listen" ]
+              }
+            },
+            {
+              "name": "[variables('serviceBusFHIRQueueSenderAccessKeyName')]",
+              "apiVersion": "2017-04-01",
+              "type": "authorizationRules",
+              "dependsOn": [
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'), '/queues/', variables('serviceBusFHIRQueueName'))]"
+              ],
+              "properties": {
+                "rights": [ "Send" ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('fhirFunctionAppName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "APPINSIGHTS_CONNECTIONSTRING",
+              "value": "[reference(resourceId('microsoft.insights/components', parameters('fhirFunctionAppName')), '2020-02-02-preview').ConnectionString]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('microsoft.insights/components', parameters('fhirFunctionAppName')), '2020-02-02-preview').InstrumentationKey]"
+            },
+            {
+              "name": "APPINSIGHTS_PROFILERFEATURE_VERSION",
+              "value": "1.0.0"
+            },
+            {
+              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+              "value": "[reference(resourceId('microsoft.insights/components', parameters('fhirFunctionAppName')), '2020-02-02-preview').ConnectionString]"
+            },
+            {
+              "name": "ApplicationInsightsAgent_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('aspNetCoreEnvironment')]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value)]"
+            },
+            {
+              "name": "DiagnosticServices_EXTENSION_VERSION",
+              "value": "~3"
+            },
+            {
+              "name": "FHIRQueueName",
+              "value": "[variables('serviceBusFHIRQueueName')]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~3"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "[variables('functionWorkerRuntime')]"
+            },
+            {
+              "name": "QueueConnectionString",
+              "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules',parameters('serviceBusNamespaceName'),'RootManageSharedAccessKey'),'2017-04-01').primaryConnectionString]"
+            },
+            {
+            "name":"Restart",
+            "value":"1"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(parameters('fhirFunctionAppName'))]"
+            },
+            {
+            "name":"WEBSITE_RUN_FROM_PACKAGE",
+            "value":"1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2020-02-02-preview",
+      "name": "[parameters('fhirFunctionAppName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('fhirFunctionAppName')))]": "Resource",
+        "displayName": "functionAppAatientAppInsightsComponent"
+      },
+      "properties": {
+        "ApplicationId": "[parameters('fhirFunctionAppName')]"
+      }
+    }
+  ]
+}

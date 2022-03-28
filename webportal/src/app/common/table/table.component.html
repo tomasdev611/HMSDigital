@@ -1,0 +1,171 @@
+<p-table
+  #dt
+  [value]="list"
+  dataKey="id"
+  styleClass="p-table"
+  [rowHover]="true"
+  [rows]="rows ? rows : 60"
+  [showCurrentPageReport]="true"
+  [loading]="loading"
+  [paginator]="showPaginator"
+  [responsive]="true"
+  currentPageReportTemplate="{{
+    totalPage === 0 ? '' : 'Page ' + (pageNumber || 0) + ' of ' + (totalPage || 0)
+  }}"
+  [selectionMode]="multiSelection ? 'multiple' : 'single'"
+  [globalFilterFields]="filterFields"
+  [scrollable]="true"
+  (onRowUnselect)="onRowSelection($event, false)"
+  (onRowSelect)="onRowSelection($event, true)"
+  [(selection)]="selectedRows"
+  [scrollHeight]="tableScrollHeight">
+  <ng-template pTemplate="header">
+    <tr>
+      <th [ngClass]="{sm: true}" *ngIf="checkboxSelection"></th>
+      <th *ngFor="let header of headers" [ngClass]="header?.class ? header.class : ''">
+        {{ header?.label | uppercase }}
+        <app-sort-icon
+          *ngIf="header?.sortable"
+          [field]="header?.field"
+          [orderIndex]="getOrderIndex(header)"
+          (sort)="sortField($event, header?.sortField)">
+        </app-sort-icon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-obj let-index="rowIndex">
+    <tr
+      class="p-selectable-row"
+      [pSelectableRow]="obj"
+      [ngClass]="getRowClassType && getRowClass(obj, getRowClassType, index)">
+      <td [ngClass]="{sm: true}" *ngIf="checkboxSelection">
+        <p-tableCheckbox [value]="obj"></p-tableCheckbox>
+      </td>
+      <td
+        *ngFor="let header of headers"
+        [class]="header?.class"
+        (click)="navigateOnClick(header, obj)"
+        [ngClass]="{
+          'cursor-pointer': header.bodyRouteParams,
+          'mobile-action-col': header?.actionBtn || header?.editBtn
+        }">
+        <div class="table-body-col">
+          <span class="table-mobile-header">
+            {{ header?.label | uppercase }}
+          </span>
+          <span
+            class="table-value"
+            [ngClass]="getBodyClassByFieldValue(obj, header.field, header.bodyClassType)"
+            >{{ getValueByField(obj, header.field, header.fieldType) }}</span
+          >
+          <i
+            *ngIf="showTooltip(obj, header?.showTooltip)"
+            class="p-ml-2"
+            [ngClass]="header?.tooltipIcon"
+            [pTooltip]="showTooltipContent(obj, header?.showTooltipContent)"
+            [escape]="false"></i>
+        </div>
+        <div class="table-body-col">
+          <a
+            pButton
+            *ngIf="header?.field === 'name'"
+            type="button"
+            class="p-button-secondary mobile-action-btn"
+            icon="pi pi-plus"
+            (click)="action(obj, index)">
+          </a>
+          <a
+            pButton
+            *ngIf="header?.field === 'name'"
+            type="button"
+            style="margin-left: 12px"
+            class="p-button-secondary mobile-action-btn"
+            icon="pi pi-pencil"
+            [routerLink]="getRouterLink(obj, headers)"
+            [queryParams]="getQueryParams(obj, headers)"></a>
+        </div>
+
+        <div *ngIf="header?.bodyIcon" [ngClass]="header.bodyIcon"></div>
+        <p-inputSwitch
+          *ngIf="header?.inputSwitch"
+          [disabled]="submit || header?.readOnly"
+          (onChange)="toggleAction($event, obj)"
+          [(ngModel)]="obj[header.inputSwitchValue]"></p-inputSwitch>
+        <a
+          pButton
+          *ngIf="header?.infoBtn"
+          type="button"
+          class="p-button-secondary"
+          [icon]="header?.infoBtnIcon"
+          [routerLink]="[]"
+          [queryParams]="header?.queryParams"
+          [pTooltip]="header?.infoBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"></a>
+        <a
+          pButton
+          *ngIf="header?.editBtn"
+          type="button"
+          [ngStyle]="{'margin-left': header?.infoBtn ? '12px' : '0'}"
+          class="p-button-secondary"
+          [icon]="header?.editBtnIcon"
+          [routerLink]="[header?.editBtnLink, obj[header?.linkParams]]"
+          [queryParams]="obj[header?.queryParams]"
+          [pTooltip]="header?.editBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"></a>
+        <button
+          pButton
+          *ngIf="header?.deleteBtn"
+          [ngStyle]="{'margin-left': header?.editBtn ? '12px' : '0'}"
+          type="button"
+          class="p-button-secondary"
+          [icon]="header?.deleteBtnIcon"
+          (click)="delete(obj, index)"
+          [pTooltip]="header?.deleteBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"></button>
+        <a
+          pButton
+          *ngIf="header?.actionBtn"
+          [ngStyle]="{'margin-left': header?.editBtn || header?.deleteBtn ? '12px' : '0'}"
+          type="button"
+          class="p-button-secondary"
+          [icon]="header?.actionBtnIcon"
+          (click)="action(obj, index)"
+          [pTooltip]="header?.actionBtn"
+          [tooltipZIndex]="tooltipZIndex"
+          tooltipPosition="top"
+          [label]="header?.actionBtnLabel"></a>
+        <button
+          pButton
+          *ngIf="header.conditionalBtn && getValueByField(obj, header.conditionalField)"
+          class="p-button-secondary"
+          type="button"
+          [label]="header?.conditionalBtn"
+          (click)="conditionalBtnClicked(obj, index)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td>No records found</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="paginatorright" let-state>
+    <div
+      *ngIf="paginate && totalPage > 0"
+      [class.disabled]="pageNumber <= 1"
+      (click)="pageNumber > 1 ? getPrev() : ''">
+      <span class="pi pi-caret-left"></span>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="paginatorleft" let-state>
+    <div
+      *ngIf="paginate && totalPage > 0"
+      [class.disabled]="pageNumber === totalPage"
+      (click)="pageNumber < totalPage ? getNext() : ''">
+      <span class="pi pi-caret-right"></span>
+    </div>
+  </ng-template>
+</p-table>

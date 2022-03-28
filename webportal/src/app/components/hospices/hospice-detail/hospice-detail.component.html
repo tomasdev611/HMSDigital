@@ -1,0 +1,83 @@
+<div [ngClass]="{'body-container': true, 'flyout-open': detailsViewOpen}">
+  <div class="sub">
+    <app-body-header displayTitle="Hospice Info" backText="Back"> </app-body-header>
+    <div class="forms-wrapper">
+      <p-tabView (onChange)="onTabChange($event)">
+        <p-tabPanel
+          *ngIf="hasPermission('HospiceLocation')"
+          header="Locations"
+          [selected]="hospiceView === 'locations'"
+          leftIcon="pi pi-map-marker">
+          <app-hospice-location
+            *ngIf="isCurrentView('locations')"
+            (showDetailsView)="showLocationDetails($event)">
+          </app-hospice-location>
+        </p-tabPanel>
+        <p-tabPanel
+          *ngIf="hasPermission('Facility')"
+          header="Facilities"
+          leftIcon="pi pi-home"
+          [selected]="hospiceView === 'facilities'">
+          <app-hospice-facility *ngIf="isCurrentView('facilities')"></app-hospice-facility>
+        </p-tabPanel>
+        <p-tabPanel
+          *ngIf="hasPermission('Hospice')"
+          header="Members"
+          leftIcon="pi pi-users"
+          [selected]="hospiceView === 'members'">
+          <app-hospice-member
+            [netSuiteCustomerId]="hospice?.netSuiteCustomerId"
+            *ngIf="isCurrentView('members')"></app-hospice-member>
+        </p-tabPanel>
+        <p-tabPanel
+          *ngIf="hasPermission('Hospice', 'Update')"
+          header="Settings"
+          leftIcon="pi pi-cog"
+          [selected]="hospiceView === 'settings'">
+          <app-hospice-settings
+            *ngIf="isCurrentView('settings')"
+            [hospice]="hospice"
+            (updateHospice)="recieveHospice($event)"></app-hospice-settings>
+        </p-tabPanel>
+        <p-tabPanel
+          *ngIf="hasPermission('CustomerContract', 'Read')"
+          header="Contracts"
+          leftIcon="pi pi-file"
+          [selected]="hospiceView === 'contracts'">
+          <app-hospice-contracts *ngIf="isCurrentView('contracts')"></app-hospice-contracts>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+
+  <div class="flyout">
+    <button class="close-icon" (click)="closeDetailsView()">
+      <i class="pi pi-times"></i>
+    </button>
+
+    <div class="details-label">
+      <span>{{ selectedLocation?.location?.name }}</span>
+    </div>
+
+    <div class="location-details">
+      <div>
+        <span class="label">Address</span>
+        <span>
+          {{ getFormattedAddress(selectedLocation?.location.address) }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Phone Number</span>
+        <span>
+          {{ selectedLocation?.location?.phoneNumber || '' }}
+        </span>
+      </div>
+      <div>
+        <span class="label">Site</span>
+        <span>
+          {{ selectedLocation?.location?.site?.name || '' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

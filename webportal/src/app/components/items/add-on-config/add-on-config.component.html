@@ -1,0 +1,78 @@
+<div class="sub">
+  <app-body-header displayTitle="Item Add-on Configurations" backText="Back"> </app-body-header>
+  <div class="description-container" *ngIf="itemDetails">
+    <div class="info-details info-details-block p-grid p-mb-3">
+      <div class="p-col-2 info-block">
+        <p class="title">Item Name</p>
+        <p class="info-text">{{ itemDetails.name }}</p>
+      </div>
+
+      <div class="p-col-2 info-block">
+        <p class="title">Item Number</p>
+        <p class="info-text">{{ itemDetails.itemNumber }}</p>
+      </div>
+
+      <div class="p-col-4 info-block">
+        <p class="title">Categories</p>
+        <p class="info-text">{{ getItemCategories() }}</p>
+      </div>
+
+      <div class="p-col-4 info-block">
+        <p class="title">Sub-Categories</p>
+        <p class="info-text">{{ getItemSubCategories() }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="content-container">
+    <p-card *ngFor="let group of itemDetails?.addOnGroups">
+      <span class="group-name" [pTooltip]="group.name" tooltipPosition="top">{{ group.name }}</span>
+      <span class="group-item-count">{{ group.addOnGroupProducts.length }}</span>
+      <span class="group-selection-type">
+        {{ group.allowMultipleSelection ? 'Multiple Selection' : 'Single Selection' }}
+      </span>
+      <p-footer>
+        <div class="footer-container">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Delete"
+            icon="pi pi-trash"
+            (click)="deleteAddOnGroup(group)"
+            class="p-button-outlined p-button-secondary p-button-danger"></button>
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Edit"
+            icon="pi pi-pencil"
+            (click)="editAddOnGroup(group)"
+            class="edit-item-btn"></button>
+        </div>
+      </p-footer>
+    </p-card>
+    <p-card [styleClass]="'new-group-card'">
+      <div class="add-group-card" (click)="openConfigureGroupDialog()">
+        <i class="pi pi-plus-circle"></i>
+        <span class="add-group-label">Add New Add-on Group</span>
+      </div>
+    </p-card>
+  </div>
+  <div class="loading-container" *ngIf="loading">
+    <p-progressSpinner
+      [style]="{width: '50px', height: '50px'}"
+      styleClass="loading-spinner"
+      strokeWidth="8"
+      animationDuration=".5s"></p-progressSpinner>
+  </div>
+</div>
+
+<app-add-edit-addons
+  *ngIf="showAddEditDialog"
+  [addOnGroup]="selectedAddOnGroup"
+  showAddOnConfigDialog="showAddEditDialog"
+  (addOrUpdateAddonGroup)="addOrUpdateAddonGroup($event)"
+  (closeConfigDialog)="closeAddonConfigDialog()">
+</app-add-edit-addons>
+
+<app-confirm-dialog (accepted)="confirmAccepted($event)" #confirmDialog> </app-confirm-dialog>

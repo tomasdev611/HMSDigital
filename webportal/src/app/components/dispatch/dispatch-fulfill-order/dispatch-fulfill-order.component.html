@@ -1,0 +1,303 @@
+<div>
+  <div class="sub">
+    <form
+      [formGroup]="orderForm"
+      (ngSubmit)="onSubmitOrder(orderForm.getRawValue())"
+      autocomplete="nope"
+      *ngIf="order && orderForm">
+      <app-body-header displayTitle="Fulfill Order" backText="Back">
+        <div class="p-d-flex p-justify-end" style="flex: 1">
+          <button
+            (click)="goBack()"
+            pButton
+            label="Secondary"
+            class="p-col-1 ml-10 p-button p-button-secondary"
+            type="button"
+            label="Cancel"
+            [disabled]="formSubmit"></button>
+          <button
+            pButton
+            class="p-col-1 ml-10"
+            type="button"
+            (click)="orderForm.valid && onSubmitOrder(orderForm.getRawValue())"
+            label="Fulfill"
+            icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+            tooltipPosition="top"
+            [pTooltip]="checkFormValidity(orderForm)"
+            [escape]="false"
+            [disabled]="
+              formSubmit ||
+              order.statusId === pendingApprovalId ||
+              orderForm.invalid ||
+              !hasValidLineItems(orderForm.getRawValue())
+            "></button>
+        </div>
+      </app-body-header>
+      <div class="p-grid p-nogutter">
+        <div class="p-grid dispatch p-justify-center p-nogutter p-mx-3">
+          <div class="p-md-12 p-lg-12 p-pt-0 p-mx-3 p-px-3">
+            <app-dispatch-fulfill-order-item [order]="order"></app-dispatch-fulfill-order-item>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid p-nogutter p-px-2">
+        <div class="p-grid p-grid-responsive p-grid-pad p-fluid patient p-m-3">
+          <div class="p-grid p-nogutter p-mb-1" *ngIf="order?.orderTypeId === pickupId">
+            <div class="p-col-2 form-label p-mr-2">Is Exception Fulfillment :</div>
+            <div class="p-col form-data p-mr-2">
+              <p-inputSwitch formControlName="isExceptionFulfillment"> </p-inputSwitch>
+            </div>
+          </div>
+          <div class="p-grid p-nogutter p-mb-3">
+            <div class="p-col-2 form-label p-mr-2">Vehicle * :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                autoHighlight="true"
+                name="vehicle"
+                dataKey="id"
+                field="name"
+                [(ngModel)]="vehicle"
+                [suggestions]="vehicles"
+                (completeMethod)="searchVehicles($event)"
+                autocomplete="off"
+                (onSelect)="vehicleSelected($event)"
+                (onClear)="vehicleSelected($event)"
+                class="vehicle-driver-info"
+                [ngModelOptions]="{standalone: true}">
+                <ng-template let-vehicle pTemplate="item">
+                  <div>
+                    {{ vehicle?.name }}
+                    <span style="float: right">{{ vehicle?.licensePlate }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+            <div class="p-col-2 form-label p-mr-2">Driver * :</div>
+            <div class="p-col-3">
+              <p-autoComplete
+                autoHighlight="true"
+                name="driver"
+                dataKey="id"
+                field="displayName"
+                [(ngModel)]="driver"
+                [suggestions]="drivers"
+                (completeMethod)="searchDrivers($event)"
+                autocomplete="off"
+                (onSelect)="driverSelected($event)"
+                (onClear)="driverSelected($event)"
+                class="vehicle-driver-info"
+                [ngModelOptions]="{standalone: true}">
+              </p-autoComplete>
+            </div>
+          </div>
+          <div class="p-grid p-nogutter p-mb-3">
+            <div class="p-col-2 form-label p-mr-2">Start Date * :</div>
+            <div class="p-col-3">
+              <p-calendar
+                formControlName="fulfillmentStartDateTime"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                placeholder="MM/DD/YYYY"
+                yearRange="1940:2040"
+                class="vehicle-driver-info"
+                [maxDate]="orderForm.controls.fulfillmentEndDateTime.value || maxDate"
+                showTime="true"
+                hourFormat="12">
+              </p-calendar>
+            </div>
+            <div class="p-col-2 form-label p-mr-2">End Date * :</div>
+            <div class="p-col-3">
+              <p-calendar
+                formControlName="fulfillmentEndDateTime"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                placeholder="MM/DD/YYYY"
+                yearRange="1940:2040"
+                showTime="true"
+                hourFormat="12"
+                [maxDate]="maxDate"
+                [minDate]="orderForm.controls.fulfillmentStartDateTime.value"
+                class="vehicle-driver-info">
+              </p-calendar>
+            </div>
+          </div>
+          <div
+            class="p-grid"
+            *ngFor="let item of orderForm.get('fulfillmentItems')['controls']; index as idx"
+            formArrayName="fulfillmentItems">
+            <div class="p-col-2 form-label">
+              {{ orderLineItems[idx].item.name }}
+              <div>
+                <span
+                  class="p-tag p-tag-rounded line-item-action {{
+                    orderLineItems[idx].action.toLowerCase()
+                  }}"
+                  >{{ orderLineItems[idx].action }}</span
+                >
+              </div>
+            </div>
+            <div class="p-col-3" [formGroupName]="idx">
+              <div
+                *ngIf="
+                  orderLineItems[idx].statusId !== completedId &&
+                  orderLineItems[idx].statusId !== cancelledId
+                ">
+                <div *ngIf="orderLineItems[idx].item.isSerialized">
+                  <p-autoComplete
+                    autoHighlight="true"
+                    name="serialNumber"
+                    dataKey="serialNumber"
+                    formControlName="assetTagNumber"
+                    [suggestions]="serials"
+                    placeholder="Enter Asset Tag or Serial Number"
+                    (completeMethod)="searchSerialNumber($event, idx)"
+                    autocomplete="off"
+                    (onSelect)="serialSelected($event, idx)"
+                    (onClear)="serialCleared(idx)"
+                    minLength="2">
+                    <ng-template let-serials pTemplate="item">
+                      <div>
+                        {{ serials?.serialNumber }}
+                        <span style="float: right">{{ serials?.assetTagNumber }}</span>
+                      </div>
+                    </ng-template>
+                  </p-autoComplete>
+                  <div
+                    *ngIf="orderLineItems[idx].serialNumber || orderLineItems[idx].assetTagNumber"
+                    class="serial-tags">
+                    <small class="label-over requested"> Expected Serial/Asset Tag: </small>
+                    <small class="label-over chip requested">
+                      {{ orderLineItems[idx].serialNumber }}
+                    </small>
+                    <small class="label-over chip requested">
+                      {{ orderLineItems[idx].assetTagNumber }}
+                    </small>
+                  </div>
+                </div>
+                <div
+                  [ngClass]="{'ml-10': orderLineItems[idx].item.isSerialized}"
+                  *ngIf="orderLineItems[idx].item.isLotNumbered">
+                  <input
+                    id="lotNumber"
+                    type="text"
+                    pInputText
+                    formControlName="lotNumber"
+                    placeholder="Enter Lot Number"
+                    autocomplete="off" />
+                </div>
+                <div
+                  *ngIf="
+                    !orderLineItems[idx].item.isLotNumbered &&
+                    !orderLineItems[idx].item.isSerialized
+                  "
+                  [class.no-standalone-input]="!showStandaloneFulfillment(orderLineItems[idx])">
+                  <p-inputNumber
+                    formControlName="count"
+                    placeholder="Enter Quantity to fulfill"
+                    *ngIf="showStandaloneFulfillment(orderLineItems[idx])"
+                    mode="decimal"
+                    [min]="0"
+                    (onBlur)="checkFulfilledQuantity($event, idx)">
+                  </p-inputNumber>
+                  <div class="ordered-fulfilled-box">
+                    <small class="label-over chip requested">
+                      Ordered:
+                      {{ orderLineItems[idx].itemCount - orderLineItems[idx].fulfilledCount }}
+                    </small>
+                    <small
+                      class="label-over chip fulfilled"
+                      *ngIf="orderLineItems[idx]?.fulfilledCount">
+                      Previously Fulfilled: {{ orderLineItems[idx].fulfilledCount }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid row" *ngIf="orderLineItems[idx].statusId === completedId">
+                Completed
+              </div>
+              <div class="p-grid row" *ngIf="orderLineItems[idx].statusId === cancelledId">
+                Cancelled
+              </div>
+            </div>
+            <div class="p-col-3 invalid-input" *ngIf="hasSerialError(idx)">
+              <i class="pi pi-times-circle"></i>
+              <span>Invalid Serial or Asset Tag</span>
+            </div>
+          </div>
+          <br />
+
+          <div class="p-grid p-grid-responsive p-grid-pad p-fluid p-nogutter p-mt-3">
+            <div class="fulfilled-item p-col-12" *ngFor="let itemFulfill of orderFulfillmentList">
+              <div class="fulfilled-header p-col-3">
+                <h4 class="no-margin">{{ itemFulfill.itemName }}</h4>
+                <span class="fulfilled-info">
+                  <span class="fullfill-status">
+                    <span class="chip" [class]="getChipClass(itemFulfill.statusId)">
+                      {{ itemFulfill.statusName }}</span
+                    >
+                  </span>
+                </span>
+              </div>
+              <div class="fulfilled-body p-col-9">
+                <span
+                  class="p-col fulfilled-info"
+                  *ngIf="itemFulfill.serialNumber && !itemFulfill.fulfilledCount">
+                  <span class="title-field fulfilled-field">Serial Number:</span>
+                  <span class="fulfilled-field"> {{ itemFulfill.serialNumber }}</span>
+                </span>
+                <span
+                  class="p-col fulfilled-info"
+                  *ngIf="itemFulfill.serialNumber && !itemFulfill.fulfilledCount">
+                  <span class="title-field fulfilled-field">Asset Tag:</span>
+                  <span class="fulfilled-field"> {{ itemFulfill.assetTag }}</span>
+                </span>
+                <span
+                  class="p-col fulfilled-info"
+                  *ngIf="itemFulfill.fulfilledByVehicleCvn && !itemFulfill.fulfilledCount">
+                  <span class="title-field fulfilled-field">Vehicle: </span>
+                  <span class="fulfilled-field">{{ itemFulfill.fulfilledByVehicleCvn }}</span>
+                </span>
+                <span
+                  class="p-col fulfilled-info"
+                  *ngIf="itemFulfill.fulfilledByDriverName && !itemFulfill.fulfilledCount">
+                  <span class="title-field fulfilled-field">Driver: </span>
+                  <span class="fulfilled-field">{{
+                    itemFulfill.fulfilledByDriverName | titlecase
+                  }}</span>
+                </span>
+                <span class="p-col fulfilled-info" *ngIf="!itemFulfill.fulfilledCount">
+                  <span class="title-field fulfilled-field">Delivery Start Date: </span>
+                  <span class="fulfilled-field">{{
+                    itemFulfill.fulfillmentStartDateTime
+                      | date: 'LLL dd, yyyy, hh:mm
+                    a'
+                  }}</span>
+                </span>
+                <span class="p-col fulfilled-info" *ngIf="!itemFulfill.fulfilledCount">
+                  <span class="title-field fulfilled-field">Delivery End Date: </span>
+                  <span class="fulfilled-field">{{
+                    itemFulfill.fulfillmentStartDateTime
+                      | date: 'LLL dd, yyyy, hh:mm
+                    a'
+                  }}</span>
+                </span>
+                <div class="ordered-fulfilled-box" *ngIf="itemFulfill.fulfilledCount">
+                  <small class="label-over chip requested">
+                    Ordered: {{ itemFulfill.requestedCount }}
+                  </small>
+                  <small class="label-over chip fulfilled" *ngIf="itemFulfill.fulfilledCount">
+                    Previously Fulfilled: {{ itemFulfill.fulfilledCount }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="loader" *ngIf="loading">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </div>
+</div>

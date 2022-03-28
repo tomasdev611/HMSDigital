@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+                x:Class="MobileApp.Pages.PopUpMenu.DetailedOrderNotes">
+    <Frame Margin="30,0"
+           VerticalOptions="Center"
+           CornerRadius="15"
+           BackgroundColor="White"
+           HeightRequest="250"
+           Padding="0">
+        <StackLayout>
+            <cornerView:PancakeView CornerRadius="10,10,0,0"
+                                    BackgroundColor="{StaticResource LightBlueShade}">
+                <Label Text="Detailed Notes"
+                       Padding="15"
+                       FontAttributes="Bold"
+                       FontSize="15"
+                       HorizontalOptions="CenterAndExpand" />
+            </cornerView:PancakeView>
+            <ListView Margin="20" HasUnevenRows="True" ItemsSource="{Binding Notes}"
+                      SeparatorVisibility="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding Note, StringFormat='&#x2022; {0}'}"
+                                   FontSize="13"/>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Text="Proceed for order fullfillment"
+                    CornerRadius="15"
+                    Command="{Binding ProceedOrderFullfillCommand}"
+                    HorizontalOptions="Center"
+                    BackgroundColor="{StaticResource GreenShade}"
+                    TextColor="White"
+                    Padding="20,0"
+                    Margin="10"/>
+        </StackLayout>
+    </Frame>
+</pages:PopupPage> 

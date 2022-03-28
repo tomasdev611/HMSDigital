@@ -1,0 +1,489 @@
+<div
+  [ngClass]="{
+    sub: true,
+    'flyout-open': auditDetailsViewOpen || orderDetailViewOpen || netsuiteDetailsViewOpen
+  }">
+  <app-body-header displayTitle="System">
+    <app-system-filters
+      *ngIf="
+        activeTabView === 'apiLogs' ||
+        activeTabView === 'netsuiteLogs' ||
+        activeTabView === 'dispatchOrders'
+      "
+      [activeTabView]="activeTabView"
+      class="system-filters"
+      (filter)="filterSystem($event)"></app-system-filters>
+  </app-body-header>
+  <p-tabView (onChange)="onTabChange($event)">
+    <p-tabPanel
+      header="Fix It"
+      leftIcon="pi pi-folder"
+      leftIcon="pi pi-filter"
+      [selected]="isCurrentView('fix')">
+      <div class="p-grid p-nogutter p-grid-responsive p-grid-pad p-fluid">
+        <div class="p-grid p-nogutter card-wrapper">
+          <div class="p-col-3" style="padding-left: 0">
+            <app-system-card
+              groupTitle="Users"
+              [toolList]="userTools"
+              (triggeredAction)="receiveAction($event)"
+              [loading]="userToolLoading">
+            </app-system-card>
+          </div>
+          <div class="p-col-3">
+            <app-system-card
+              groupTitle="Orders"
+              [toolList]="orderTools"
+              (triggeredAction)="receiveAction($event)"
+              [loading]="orderToolLoading">
+            </app-system-card>
+          </div>
+          <div class="p-col-3">
+            <app-system-card
+              groupTitle="Patients"
+              [toolList]="patientTools"
+              (triggeredAction)="receiveAction($event)"
+              [loading]="patientToolLoading">
+            </app-system-card>
+          </div>
+          <div class="p-col-3">
+            <app-system-card
+              header="Get Patient Inventory With Issues"
+              [patientInventoryWithIssues]="true"
+              (getCount)="fetchPatientInventoryWithIssues($event)"
+              [cardCount]="patientInventoryCount"
+              listCard="true"
+              [showFix]="false"
+              [loading]="patientInventoryLoading"></app-system-card>
+          </div>
+          <div class="p-col-3 p-mt-3">
+            <app-system-card
+              groupTitle="Hospices"
+              [toolList]="hospiceTools"
+              (triggeredAction)="receiveAction($event)"
+              [loading]="hospiceToolLoading"></app-system-card>
+          </div>
+        </div>
+        <div style="flex: 1; margin: 0 7px">
+          <app-body-header
+            *ngIf="tableHeaderLabel"
+            [displayTitle]="tableHeaderLabel"
+            [listCount]="paginationResponse?.totalRecordCount">
+            <div
+              *ngIf="
+                tableHeaderLabel === 'Unconfirmed Orders In Netsuite' &&
+                paginationResponse?.totalRecordCount
+              "
+              class="patient-inputs"
+              style="display: flex; justify-content: center; align-items: center">
+              <input
+                type="number"
+                size="15"
+                pInputText
+                [(ngModel)]="unconfirmedInNetsuiteFixConfig.batchSize"
+                style="width: 20%"
+                placeholder="Batch Size"
+                [pTooltip]="'Batch Size'"
+                tooltipPosition="bottom" />
+              <p-checkbox
+                [ngStyle]="{'margin-left': '10px'}"
+                [(ngModel)]="unconfirmedInNetsuiteFixConfig.dispatchOnly"
+                [binary]="true"
+                class="system-checkbox"
+                [label]="'Fix Dispatch Only'"
+                name="dispatchOnly"
+                ngDefaultControl>
+              </p-checkbox>
+              <p-checkbox
+                [ngStyle]="{'margin-left': '10px'}"
+                [(ngModel)]="unconfirmedInNetsuiteFixConfig.stopOnFirstError"
+                [binary]="true"
+                class="system-checkbox"
+                [label]="'Stop On First Error'"
+                name="stopOnFirstError"
+                ngDefaultControl>
+              </p-checkbox>
+            </div>
+            <button
+              type="button"
+              pButton
+              *ngIf="headerBtnAction"
+              [label]="'Fix All'"
+              (click)="headerActionTrigger()"
+              [disabled]="!paginationResponse?.totalRecordCount || !canUpdateSystem()"></button>
+          </app-body-header>
+        </div>
+        <div class="p-grid p-nogutter" *ngIf="tableHeaderLabel">
+          <app-table-virtual-scroll
+            #tableList
+            [list]="paginationResponse?.records"
+            [pageSize]="sieveRequest?.pageSize"
+            [pageLoadNextOffset]="10"
+            [totalRecords]="paginationResponse?.totalRecordCount"
+            filterFields="[]"
+            [headers]="tableHeaders"
+            [pageNumber]="paginationResponse?.pageNumber || 0"
+            [totalPage]="paginationResponse?.totalPageCount || 0"
+            [selection]="true"
+            (fetchNext)="getNext($event, 'paginationResponse', 'sieveRequest', selectedToolAction)"
+            (actionBtnHandler)="receiveActionBtnTrigger($event)">
+          </app-table-virtual-scroll>
+        </div>
+        <app-modal
+          header="Fix Patient Inventory"
+          [visible]="shouldShowFixPatientInventoryModal()"
+          class="no-footer">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              width: 80vw;
+              height: 500px;
+              padding-bottom: 20px;
+            ">
+            <h4>
+              {{
+                patientInventoryIssue === 'invalid-inventory' ? 'Current Inventory' : 'Current Item'
+              }}
+            </h4>
+            <app-table-virtual-scroll
+              *ngIf="shouldShowFixPatientInventoryModal()"
+              [list]="
+                patientInventoryIssue === 'invalid-inventory'
+                  ? patientInventoryResponse?.currentInventory
+                  : patientInventoryResponse?.currentItem
+              "
+              [pageSize]="1"
+              [loading]="patientInventoryLoading"
+              [pageLoadNextOffset]="10"
+              [totalRecords]="1"
+              filterFields="[]"
+              [headers]="
+                patientInventoryIssue === 'invalid-inventory'
+                  ? currentPatientInventoryHeaders
+                  : currentPatientItemHeaders
+              "
+              [pageNumber]="1"
+              [totalPage]="1"
+              scrollHeightCustom="300px">
+            </app-table-virtual-scroll>
+            <h4>
+              {{ patientInventoryIssue === 'invalid-inventory' ? 'New Inventory' : 'New Item' }}
+            </h4>
+            <app-table-virtual-scroll
+              *ngIf="shouldShowFixPatientInventoryModal()"
+              [list]="
+                patientInventoryIssue === 'invalid-inventory'
+                  ? patientInventoryResponse?.newInventory
+                  : patientInventoryResponse?.newItem
+              "
+              [pageSize]="1"
+              [loading]="patientInventoryLoading"
+              [pageLoadNextOffset]="10"
+              [totalRecords]="1"
+              filterFields="[]"
+              [headers]="
+                patientInventoryIssue === 'invalid-inventory'
+                  ? newPatientInventoryHeaders
+                  : newPatientItemHeaders
+              "
+              [pageNumber]="1"
+              [totalPage]="1"
+              (actionBtnHandler)="fixPatientInventoryIssues($event)"
+              scrollHeightCustom="300px">
+            </app-table-virtual-scroll>
+          </div>
+        </app-modal>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel
+      header="API Logs"
+      leftIcon="pi pi-info-circle"
+      [selected]="isCurrentView('apiLogs')">
+      <div class="p-grid">
+        <app-table-virtual-scroll
+          #apiLogsTable
+          *ngIf="activeTabView === 'apiLogs'"
+          [list]="coreApiLogsResponse?.records"
+          [pageSize]="20"
+          [loading]="logsLoading"
+          [pageLoadNextOffset]="10"
+          [headers]="apiLogHeaders"
+          scrollHeightCustom="calc(100vh - 266px)"
+          [selection]="true"
+          [continuationTokenLazyLoading]="true"
+          (fetchNext)="fetchApiLogs()"
+          [moreCompareField]="'timestamp'">
+        </app-table-virtual-scroll>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel
+      header="Audit Logs"
+      leftIcon="pi pi-info-circle"
+      [selected]="isCurrentView('auditLogs')">
+      <div class="p-grid p-nogutter p-jc-between audit-log-header">
+        <p-dropdown
+          [options]="auditTypes"
+          [(ngModel)]="selectedAuditType"
+          (onChange)="changeAuditType($event)"
+          optionLabel="name"
+          placeholder="Select Audit Type"></p-dropdown>
+        <app-filters
+          #filter
+          [filterConfiguration]="auditLogsFilterConfiguration"
+          class="user-filters"
+          (autocompleteSearch)="searchField($event)"
+          (filter)="filterChanged($event)"
+          [disabled]="selectedAuditType?.name ? false : true">
+        </app-filters>
+      </div>
+      <div class="p-grid p-nogutter">
+        <app-table-virtual-scroll
+          #auditLogsTable
+          *ngIf="activeTabView === 'auditLogs'"
+          [list]="auditLogResponse.records"
+          [pageSize]="20"
+          [loading]="logsLoading"
+          [pageLoadNextOffset]="10"
+          filterFields="[]"
+          [headers]="auditLogHeaders"
+          scrollHeightCustom="calc(100vh - 320px)"
+          [selection]="true"
+          [continuationTokenLazyLoading]="true"
+          (fetchNext)="fetchNextAuditLogPage()"
+          (rowSelected)="showAuditLogDetails($event)">
+        </app-table-virtual-scroll>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel
+      header="Netsuite Logs"
+      leftIcon="pi pi-check-circle"
+      [selected]="isCurrentView('netsuiteLogs')">
+      <div class="p-grid">
+        <app-table-virtual-scroll
+          #netsuiteLogsTable
+          *ngIf="activeTabView === 'netsuiteLogs'"
+          [list]="netsuiteLogResponse?.results"
+          [pageSize]="netsuiteLogResponse?.pageSize"
+          [loading]="logsLoading"
+          [pageLoadNextOffset]="5"
+          [totalRecords]="netsuiteLogResponse?.count"
+          filterFields="[]"
+          [headers]="netsuiteLogHeaders"
+          [pageNumber]="netsuiteLogResponse?.currentPage || 0"
+          [totalPage]="netsuiteLogResponse?.totalPages || 0"
+          [showHideOption]="false"
+          [selection]="true"
+          (fetchNext)="getNext($event, 'netsuiteLogResponse', 'netsuiteRequest', 'getNetsuiteLogs')"
+          (rowSelected)="netsuiteLogSelected($event)"
+          scrollHeightCustom="calc(100vh - 266px)">
+        </app-table-virtual-scroll>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel
+      header="Health Check"
+      leftIcon="pi pi-check-circle"
+      [selected]="isCurrentView('healthCheck')">
+      <app-health-check-tab *ngIf="activeTabView === 'healthCheck'"></app-health-check-tab>
+    </p-tabPanel>
+    <p-tabPanel
+      header="Dispatch Records"
+      leftIcon="pi pi-info-circle"
+      [selected]="isCurrentView('dispatchOrders')">
+      <div class="p-grid">
+        <app-table-virtual-scroll
+          #dispatchOrdersTable
+          *ngIf="activeTabView === 'dispatchOrders'"
+          [list]="dispatchOrderResponse?.records"
+          [pageSize]="dispatchOrderResponse?.pageSize"
+          [loading]="logsLoading"
+          [pageLoadNextOffset]="5"
+          [totalRecords]="dispatchOrderResponse?.totalRecordCount"
+          filterFields="[]"
+          [headers]="dispatchOrderHeaders"
+          [pageNumber]="dispatchOrderResponse?.pageNumber || 0"
+          [totalPage]="dispatchOrderResponse?.totalPageCount || 0"
+          scrollHeightCustom="calc(100vh - 280px)"
+          (fetchNext)="
+            getNext($event, 'dispatchOrderResponse', 'dispatchOrderRequest', 'getDispatchOrders')
+          ">
+        </app-table-virtual-scroll>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel
+      header="Feature Flags"
+      leftIcon="pi pi-cog"
+      [selected]="isCurrentView('featureFlags')">
+      <app-feature-flags-tab *ngIf="activeTabView === 'featureFlags'"></app-feature-flags-tab>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="flyout" *ngIf="activeTabView === 'auditLogs'">
+    <button class="close-icon" (click)="closeAuditLogDetails()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div>
+      <div class="audit-detail-label">
+        <span>Audit Logs Details</span>
+      </div>
+      <div class="audit-general">
+        <div class="p-grid">
+          <span>General</span>
+        </div>
+        <div *ngIf="selectedAuditType?.name === 'User'" class="p-grid">
+          <div class="p-col-4">Target User :</div>
+          <div class="p-col-8">{{ selectedAuditLog?.targetUser.name }}</div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-4">Action Type :</div>
+          <div class="p-col-8">{{ selectedAuditLog?.auditAction }}</div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-4">Modified By :</div>
+          <div class="p-col-8">{{ selectedAuditLog?.user?.name }}</div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-4">Modified On :</div>
+          <div class="p-col-8">{{ selectedAuditLog?.auditDate | date: 'medium' }}</div>
+        </div>
+      </div>
+      <div class="audit-update">
+        <div class="p-grid p-justiy-between">
+          <span class="p-mb-3 p-mr-3">Updates</span>
+          <span class="details-link" *ngIf="getEntityDetailsUrl()">
+            <i class="pi pi-external-link p-mr-2"></i>
+            <a [routerLink]="[getEntityDetailsUrl(), selectedAuditLog?.entityId]" target="blank"
+              >Go to entity details</a
+            >
+          </span>
+          <span class="details-link" *ngIf="selectedAuditType?.name === 'OrderHeader'">
+            <i class="pi pi-external-link"></i>
+            <a (click)="ShowOrderDetails()">View Order Details</a>
+          </span>
+        </div>
+        <div class="p-grid auditlogs-container">
+          <p-table
+            #dt
+            [value]="selectedAuditLog?.auditData"
+            class="flyout-audit-table"
+            dataKey="auditId"
+            [rowHover]="true"
+            [responsive]="true"
+            [scrollable]="true"
+            *ngIf="selectedAuditLog && selectedAuditLog.auditData">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="columnName" style="width: 30%">
+                  Field Name <p-sortIcon field="columnName"></p-sortIcon>
+                </th>
+                <th style="width: 40%">Original Value</th>
+                <th style="width: 40%">New Value</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-auditedChange>
+              <tr class="p-selectable-row">
+                <td style="width: 30%">
+                  <span class="p-column-title">Field Name</span>
+                  <div class="cursor-pointer">
+                    {{ auditedChange.columnName }}
+                  </div>
+                </td>
+                <td style="width: 40%">
+                  <span class="p-column-title">Original Value</span>
+                  {{ auditedChange.originalValue }}
+                </td>
+                <td style="width: 40%">
+                  <span class="p-column-title">New Value </span>
+                  <div>
+                    {{ auditedChange.newValue }}
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flyout" *ngIf="activeTabView === 'netsuiteLogs'">
+    <button class="close-icon" (click)="closeNetsuiteLogDeatils()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div>
+      <div class="netsuite-detail-label p-p-3">
+        <span>Netsuite Logs Details</span>
+      </div>
+      <div class="p-d-flex p-flex-column p-p-3 net-suite-detail">
+        <div>
+          <span class="title">ID: </span>
+          <span class="p-ml-1">{{ selectedNetsuiteLog?.ns_id }}</span>
+        </div>
+        <div class="p-mt-1">
+          <span class="title">Created On: </span>
+          <span class="p-ml-1">{{ selectedNetsuiteLog?.createdOn }}</span>
+        </div>
+        <div class="p-mt-1">
+          <span class="title">API: </span>
+          <span class="p-ml-1">{{ selectedNetsuiteLog?.api }}</span>
+        </div>
+        <div class="p-mt-1">
+          <span class="title">Log Type: </span>
+          <span class="p-ml-1">{{ selectedNetsuiteLog?.logType }}</span>
+        </div>
+        <div class="p-mt-1">
+          <span class="title">Method: </span>
+          <span class="p-ml-1">{{ selectedNetsuiteLog?.method }}</span>
+        </div>
+        <div class="p-mt-1">
+          <span class="title">Request: </span>
+          <span class="p-ml-1 long-text">{{ selectedNetsuiteLog?.request }}</span>
+        </div>
+        <div class="p-mt-1">
+          <span class="title">Response: </span>
+          <span class="p-ml-1 long-text">{{ selectedNetsuiteLog?.response }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-order-flyout
+    #orderDetailFlyout
+    class="flyout-container"
+    [currentOrder]="currentOrder"
+    *ngIf="orderDetailViewOpen"
+    [fulfilledItems]="fulfilledItems"
+    (closeFlyout)="closeOrderDetails($event)">
+  </app-order-flyout>
+</div>
+<app-confirm-dialog (accepted)="fixOrderStatusConfirmed()" #confirmDialogOrder></app-confirm-dialog>
+<app-modal
+  header="Consumable Inventory Remove Preview"
+  [visible]="showModalPatientInventoryConsumable"
+  (hide)="showModalPatientInventoryConsumable = false"
+  class="no-footer">
+  <span class="modal-consumable-inventory">
+    <div class="patient-information">
+      <h4>Patient: {{ selectedPatient?.name }}</h4>
+    </div>
+
+    <div class="inventory-information">
+      <h5>Consumable items to remove:</h5>
+      <ul>
+        <li *ngFor="let item of selectedPatientInventory">
+          <p>{{ item.itemName }} - Number: {{ item.itemNumber }}</p>
+        </li>
+      </ul>
+    </div>
+
+    <div class="p-grid p-justify-end confirm-modal">
+      <button
+        pButton
+        label="Remove"
+        (click)="fixPatientConsumableConfirmed()"
+        icon="pi pi-check"></button>
+      <button
+        pButton
+        label="Cancel"
+        (click)="showModalPatientInventoryConsumable = false"
+        icon="pi pi-times"></button>
+    </div>
+  </span>
+</app-modal>

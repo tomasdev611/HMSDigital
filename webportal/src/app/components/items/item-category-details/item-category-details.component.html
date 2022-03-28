@@ -1,0 +1,30 @@
+<div class="sub">
+  <app-body-header displayTitle="Item Category details" backText="Back"> </app-body-header>
+  <p-panel header="Item Category Information" [style]="{marginTop: '10px'}">
+    <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+      <h4 class="form-section-header">General Info</h4>
+      <div class="p-grid">
+        <div class="p-col-2 form-label">Name :</div>
+        <div class="p-col-3 form-data">
+          {{ categoryDetails?.name }}
+        </div>
+      </div>
+      <div class="p-grid p-nogutter ml-5">
+        <div class="form-label">Sub Categories</div>
+      </div>
+      <div class="p-grid p-nogutter ml-5">
+        <app-table-virtual-scroll
+          [list]="subCategories"
+          [pageSize]="subCategories.length"
+          [loading]="loading"
+          [pageLoadNextOffset]="10"
+          [totalRecords]="subCategories.length"
+          filterFields="[]"
+          [headers]="subCategoryHeader"
+          [pageNumber]="!subCategories.length || 1"
+          [totalPage]="!subCategories.length || 1">
+        </app-table-virtual-scroll>
+      </div>
+    </div>
+  </p-panel>
+</div>

@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  .p-state-disabled,
+  body .p-widget:disabled {
+    opacity: 0.2;
+  }
+  p {
+    margin: 0;
+  }
+}

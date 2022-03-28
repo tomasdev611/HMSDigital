@@ -1,0 +1,11 @@
+{
+    "waitables": {
+        
+        "uniques": {
+            "Patient ID": {
+                "findBy": "xpath",
+                "xpath": "//span[normalize-space(text())=\"Patient ID\"]/following-sibling::span"
+            }
+        }
+    }
+}

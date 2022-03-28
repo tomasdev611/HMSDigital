@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FlyoutPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            x:Class="MobileApp.Pages.Screen.HamburgerMenu"
+            xmlns:pages="clr-namespace:MobileApp.Pages.Screen"
+            NavigationPage.BackButtonTitle="">
+    <FlyoutPage.Flyout>
+        <pages:HamburgerMenuMaster x:Name="MasterPage" />
+    </FlyoutPage.Flyout>
+    <FlyoutPage.Detail>
+        <ContentPage></ContentPage>
+    </FlyoutPage.Detail>
+</FlyoutPage>

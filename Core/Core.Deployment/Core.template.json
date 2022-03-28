@@ -1,0 +1,457 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiAppAlwaysOn": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "apiAppName": {
+      "type": "string"
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appServicePlanSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "appServicePlanSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "awsSecretKey": {
+      "type": "securestring"
+    },
+    "dbAdminLogin": {
+      "type": "string"
+    },
+    "dbAdminPassword": {
+      "type": "securestring"
+    },
+    "dbCollation": {
+      "type": "string",
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "dbEdition": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "dbMaxSizeBytes": {
+      "type": "string",
+      "defaultValue": "107374182400"
+    },
+    "dbName": {
+      "type": "string"
+    },
+    "dbRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "S0",
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    },
+    "devOpsKeyVaultManagersObjectId": {
+      "type": "string"
+    },
+    "devOpsServicePrincipalObjectId": {
+      "type": "string"
+    },
+    "fhirQueueConnectionString": {
+      "type": "securestring"
+    },
+    "hms2BillingDbConnection": {
+      "type": "securestring"
+    },
+    "hmsInternalClientSecret": {
+      "type": "securestring"
+    },
+    "keyVaultName": {
+      "type": "string"
+    },
+    "keyVaultSkuName": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ]
+    },
+    "melissaLicenseKey": {
+      "type": "securestring"
+    },
+    "netSuiteAccessToken": {
+      "type": "securestring"
+    },
+    "netSuiteConsumerKey": {
+      "type": "securestring"
+    },
+    "netSuiteConsumerSecret": {
+      "type": "securestring"
+    },
+    "netSuiteTokenSecret": {
+      "type": "securestring"
+    },
+    "notificationApiUrl": {
+      "type": "string"
+    },
+    "patientApiUrl": {
+      "type": "string"
+    },
+    "smartyAuthId": {
+      "type": "securestring"
+    },
+    "smartyAuthToken": {
+      "type": "securestring"
+    },
+    "smartyRefer": {
+      "type": "string"
+    },
+    "smartySecretKey": {
+      "type": "securestring"
+    },
+    "sqlserverName": {
+      "type": "string"
+    },
+    "storageAccountCorsAllowedOrigins": {
+      "type": "array"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "webportalAppAlwaysOn": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "webportalAppName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('sqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "SqlServer"
+      },
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+        "administratorLogin": "[parameters('dbAdminLogin')]",
+        "administratorLoginPassword": "[parameters('dbAdminPassword')]"
+      },
+      "resources": [
+        {
+          "name": "[parameters('dbName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Database"
+          },
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+          ],
+          "properties": {
+            "edition": "[parameters('dbEdition')]",
+            "collation": "[parameters('dbCollation')]",
+            "maxSizeBytes": "[parameters('dbMaxSizeBytes')]",
+            "requestedServiceObjectiveName": "[parameters('dbRequestedServiceObjectiveName')]"
+          },
+          "resources": [
+            {
+              "comments": "Transparent Data Encryption",
+              "name": "current",
+              "type": "transparentDataEncryption",
+              "apiVersion": "2014-04-01-preview",
+              "properties": {
+                "status": "Enabled"
+              },
+              "dependsOn": [
+                "[parameters('dbName')]"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "firewallrules",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]",
+        "capacity": "[parameters('appServicePlanSkuCapacity')]"
+      },
+      "properties": {
+        "name": "[parameters('appServicePlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('apiAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('appServicePlanName'))]": "empty",
+        "displayName": "API"
+      },
+      "properties": {
+        "name": "[parameters('apiAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": "[parameters('apiAppAlwaysOn')]"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites/', parameters('apiAppName'))]"
+          ],
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('apiAppName'))).InstrumentationKey]",
+            "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('apiAppName'))).InstrumentationKey]",
+            "ASPNETCORE_ENVIRONMENT ": "[parameters('aspNetCoreEnvironment')]",
+            "AWS:SecretKey": "[parameters('awsSecretKey')]",
+            "BlobStorage:ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "ConnectionStrings:HMSDigitalDbConnection": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers/', parameters('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('dbName'), ';User Id=', parameters('dbAdminLogin'), '@', parameters('sqlserverName'), ';Password=', parameters('dbAdminPassword'), ';')]",
+            "ConnectionStrings:HMS2BillingDbConnection": "[parameters('hms2BillingDbConnection')]",
+            "Core:IdentityClient:ClientSecret": "[parameters('hmsInternalClientSecret')]",
+            "Melissa:LicenseKey": "[parameters('melissaLicenseKey')]",
+            "SmartyStreets:SmartyAuthId": "[parameters('smartyAuthId')]",
+            "SmartyStreets:SmartyAuthToken": "[parameters('smartyAuthToken')]",
+            "SmartyStreets:SmartyRefer": "[parameters('smartyRefer')]",
+            "SmartyStreets:SmartySecretKey": "[parameters('smartySecretKey')]",
+            "NetSuite:Restlets:AccessToken": "[parameters('netSuiteAccessToken')]",
+            "NetSuite:Restlets:ConsumerKey": "[parameters('netSuiteConsumerKey')]",
+            "NetSuite:Restlets:ConsumerSecret": "[parameters('netSuiteConsumerSecret')]",
+            "NetSuite:Restlets:TokenSecret": "[parameters('netSuiteTokenSecret')]",
+            "Notification:ApiUrl": "[parameters('notificationApiUrl')]",
+            "Notification:IdentityClient:ClientSecret": "[parameters('hmsInternalClientSecret')]",
+            "Patient:ApiUrl": "[parameters('patientApiUrl')]",
+            "Patient:IdentityClient:ClientSecret": "[parameters('hmsInternalClientSecret')]",
+            "Serilog:WriteTo:2:Args:connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "SystemLog:ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),  '2019-04-01').keys[0].value,';')]",
+            "FHIR:QueueConnectionString": "[parameters('fhirQueueConnectionString')]"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('apiAppName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', parameters('apiAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('apiAppName'))]": "Resource",
+        "displayName": "ApiAppInsightsComponent"
+      },
+      "properties": {
+        "ApplicationId": "[parameters('apiAppName')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('webportalAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('appServicePlanName'))]": "empty",
+        "displayName": "Webportal"
+      },
+      "properties": {
+        "name": "[parameters('webportalAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": "[parameters('webportalAppAlwaysOn')]"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites/', parameters('webportalAppName'))]"
+          ],
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('webportalAppName'))).InstrumentationKey]",
+            "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('webportalAppName'))).InstrumentationKey]"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('webportalAppName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', parameters('webportalAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('webportalAppName'))]": "Resource",
+        "displayName": "WebportalAppInsightsComponent"
+      },
+      "properties": {
+        "ApplicationId": "[parameters('webportalAppName')]"
+      }
+    },
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-04-01",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "kind": "StorageV2",
+      "resources": [
+        {
+          "name": "default",
+          "type": "blobServices",
+          "apiVersion": "2019-04-01",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "cors": {
+              "corsRules": [
+                {
+                  "allowedOrigins": "[parameters('storageAccountCorsAllowedOrigins')]",
+                  "allowedMethods": [
+                    "PUT"
+                  ],
+                  "maxAgeInSeconds": 300,
+                  "exposedHeaders": [
+                    "*"
+                  ],
+                  "allowedHeaders": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          },
+          "resources": []
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[parameters('keyVaultName')]",
+      "apiVersion": "2019-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[parameters('devOpsServicePrincipalObjectId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": [
+                "get",
+                "list"
+              ],
+              "certificates": [],
+              "storage": []
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[parameters('devOpsKeyVaultManagersObjectId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": [
+                "get",
+                "list",
+                "set",
+                "delete",
+                "recover"
+              ],
+              "certificates": [],
+              "storage": []
+            }
+          }
+        ],
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false,
+        "enablePurgeProtection": true,
+        "enableSoftDelete": true,
+        "networkAcls": {
+          "defaultAction": "Allow",
+          "bypass": "AzureServices"
+        },
+        "sku": {
+          "name": "[parameters('keyVaultSkuName')]",
+          "family": "A"
+        },
+        "softDeleteRetentionInDays": 90,
+        "tenantId": "[subscription().tenantId]"
+      }
+    }
+  ]
+}

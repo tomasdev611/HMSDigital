@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.CommonPages.OrdersListView">
+    <ListView Margin="0"
+              SelectionMode="None"
+              HasUnevenRows="True"
+              SeparatorVisibility="None"
+              ItemsSource="{Binding LoadList}">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <Grid ColumnSpacing="0" Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <cornerView:PancakeView BackgroundColor="{StaticResource DarkShade}"
+                                            CornerRadius="10,0,10,0"
+                                            Grid.Column="0" />
+                        <Grid RowSpacing="0"
+                          BackgroundColor="{StaticResource BackgroundShade}"
+                          Padding="0,5,0,5"
+                          Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid  Grid.Row="0"
+                                   Grid.Column="0"
+                                   VerticalOptions="End">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Margin="20,0,0,0"
+                                       Text="Pickup in ."
+                                       Grid.Column="0"
+                                       FontSize="12"
+                                       VerticalOptions="Center" />
+                                    <Label  Text="{Binding PickupTime}"
+                                        Grid.Column="1"
+                                        VerticalOptions="Center"
+                                        TextColor="Gray"
+                                        FontSize="12"
+                                        HorizontalTextAlignment="Start" />
+                                </Grid>
+                                <Label Margin="20,0,0,0"
+                                   Text="{Binding Vehicle.Cvn}"
+                                   FontAttributes="Bold"
+                                   Grid.Row="1"
+                                   Grid.Column="0"
+                                   HorizontalTextAlignment="Start" />
+                                <Label Margin="20,0,0,0"
+                                   Text="{Binding DriverName}"
+                                   TextColor="Gray"
+                                   Grid.Row="2"
+                                   Grid.Column="0"
+                                   VerticalOptions="Start"
+                                   FontSize="12"
+                                   HorizontalTextAlignment="Start" />
+                            </Grid>
+                        </Grid>
+                        <cornerView:PancakeView BackgroundColor="{StaticResource LightBlueShade}"
+                                            CornerRadius="0,10,0,10"
+                                            Grid.Column="2">
+                            <StackLayout Margin="25,0,5,0"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Center">
+                                <Label Text="{Binding TotalItemCount, StringFormat ='{0} items'}"
+                                   TextColor="Black"
+                                   FontSize="10"
+                                   FontAttributes="Bold" />
+                                <Label Text="STAGE PRODUCT"
+                                   FontAttributes="Bold"
+                                   FontSize="10" />
+                            </StackLayout>
+                        </cornerView:PancakeView>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.Behaviors>
+            <xct:EventToCommandBehavior EventName="ItemTapped"
+                                              Command="{Binding LoadTruckCommand}"/>
+
+
+        </ListView.Behaviors>
+    </ListView>
+</ContentView>

@@ -1,0 +1,23 @@
+<p-dialog
+  [styleClass]="dialogStyleClass"
+  [style]="{width: '100vw'}"
+  [contentStyle]="!!contentStyle ? contentStyle : {overflow: 'visible'}"
+  contentStyleClass="hms-dialog"
+  [header]="header"
+  [(visible)]="visible"
+  [modal]="true"
+  [resizable]="false"
+  [baseZIndex]="10000"
+  (onHide)="hideDialog()"
+  appendTo="body">
+  <ng-content></ng-content>
+  <p-footer *ngIf="footer">
+    <button
+      type="button"
+      pButton
+      [disabled]="footerBtnDisabled"
+      [icon]="footerBtnIcon"
+      (click)="footerBtnHandler()"
+      [label]="footerBtnLabel"></button>
+  </p-footer>
+</p-dialog>

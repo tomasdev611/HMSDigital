@@ -1,0 +1,19 @@
+<div class="spinner-container" *ngIf="isLoading">
+  <p-progressSpinner
+    styleClass="custom-spinner"
+    strokeWidth="8"
+    fill="#EEEEEE"
+    animationDuration=".5s">
+  </p-progressSpinner>
+</div>
+<div class="feature-flag-container" *ngIf="featureFlags">
+  <div class="p-grid mt-5 ml-5">
+    <div *ngFor="let feature of featureFlags; let i = index" class="p-col-12 feature-item">
+      <span>{{ feature.name }}</span>
+      <p-inputSwitch
+        (onChange)="toggleFeature(feature)"
+        [(ngModel)]="featureFlags[i].isEnabled"
+        [disabled]="disableUpdates"></p-inputSwitch>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.selected-item-row {
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+}
+.clear-item {
+  font-size: 1.3em;
+  color: #f8b7bd;
+  cursor: pointer;
+  float: right;
+}
+
+:host ::ng-deep {
+  .p-autocomplete-token {
+    display: none;
+  }
+  .p-inplace-display:not(.p-state-disabled):hover {
+    background-color: transparent !important;
+  }
+
+  .p-dropdown-label-container {
+    width: 100%;
+  }
+
+  .p-listbox {
+    .p-listbox-header-w-checkbox {
+      display: none;
+    }
+  }
+}

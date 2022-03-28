@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.Dashboard"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:MobileApp.Utils.Converter"
+    xmlns:local="clr-namespace:MobileApp.Pages.CommonPages"
+    xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    x:Name="dashboardPage"
+    Title="Dashboard"
+    NavigationPage.BackButtonTitle=""
+    NavigationPage.HasBackButton="False">
+    <StackLayout xct:StateLayout.CurrentState="{Binding CurrentState}">
+        <xct:StateLayout.StateViews>
+            <xct:StateView
+                BackgroundColor="White"
+                StateKey="Loading"
+                VerticalOptions="FillAndExpand">
+                <ActivityIndicator
+                    IsRunning="True"
+                    Scale="0.8"
+                    VerticalOptions="Center" />
+            </xct:StateView>
+            <!--<xct:StateView
+                BackgroundColor="White"
+                StateKey="Empty"
+                VerticalOptions="FillAndExpand">
+                <RefreshView
+                    Command="{Binding GetDataCommand}"
+                    IsRefreshing="{Binding IsRefreshing}"
+                    VerticalOptions="FillAndExpand">
+                    <Label
+                        HorizontalOptions="Center"
+                        Text="No Orders or Load List available"
+                        VerticalOptions="Center" />
+                </RefreshView>
+            </xct:StateView>-->
+        </xct:StateLayout.StateViews>
+        <RefreshView
+            x:Name="dashboardRefreshView"
+            Command="{Binding GetDataCommand}"
+            IsRefreshing="{Binding IsRefreshing}"
+            VerticalOptions="FillAndExpand">
+            <Grid>
+                <ScrollView VerticalOptions="FillAndExpand">
+                    <Grid>
+                        <StackLayout IsVisible="{Binding IsEmptyView, Converter={StaticResource InvertedBoolConverter}}">
+                            <StackLayout Padding="0" IsVisible="{Binding MobileFulfillAllowed}">
+                                <templates:FlashMessage
+                                    x:Name="flashMessage"
+                                    FlashMessageText="{Binding BindingContext.VehicleCvn, Source={x:Reference dashboardPage}, StringFormat='Assigned Vehicle is {0}'}"
+                                    FlashMessageVisible="{Binding BindingContext.ShouldShowFlashMessage, Source={x:Reference dashboardPage}}" />
+                                <StackLayout
+                                    x:Name="loadListView"
+                                    Margin="20,10,20,10"
+                                    IsVisible="{Binding IsLoadList}"
+                                    Spacing="20">
+                                    <templates:LoadListCard />
+                                    <templates:OrdersCountCard />
+                                    <templates:CheckRouteCard />
+                                </StackLayout>
+                                <StackLayout
+                                    x:Name="ordersView"
+                                    Grid.Row="0"
+                                    Margin="15,20"
+                                    IsVisible="{Binding IsLoadList, Converter={StaticResource InvertedBoolConverter}}"
+                                    Spacing="15">
+
+                                    <StackLayout IsVisible="{Binding CurrentOrder, Converter={converters:NullToBoolConverter}}">
+                                        <Label
+                                            Grid.Column="0"
+                                            Margin="10,0"
+                                            FontAttributes="Bold"
+                                            FontSize="15"
+                                            HorizontalOptions="Start"
+                                            Text="Next Order" />
+                                        <templates:OrderDetailCard />
+                                    </StackLayout>
+
+                                    <Label
+                                        Margin="10,0,0,0"
+                                        FontAttributes="Bold"
+                                        FontSize="15"
+                                        Text="Progress" />
+                                    <templates:OrdersProgressCard />
+                                </StackLayout>
+
+                            </StackLayout>
+
+                            <StackLayout IsVisible="{Binding MultipleLoadAllowed}">
+                                <templates:LoadListCount />
+                                <Grid Margin="10,0,10,0" VerticalOptions="End">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="60" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label
+                                        Grid.Row="0"
+                                        Margin="15,15,15,25"
+                                        FontAttributes="Bold"
+                                        Text="Loadlists for Trucks" />
+                                    <local:OrdersListView Grid.Row="1" BackgroundColor="{StaticResource BackgroundColor}" />
+                                </Grid>
+                            </StackLayout>
+                        </StackLayout>
+                        <Label
+                            HorizontalOptions="Center"
+                            IsVisible="{Binding IsEmptyView}"
+                            Text="No Orders or Load List available"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </ScrollView>
+            </Grid>
+        </RefreshView>
+    </StackLayout>
+</ContentPage>

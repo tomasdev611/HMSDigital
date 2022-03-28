@@ -1,0 +1,39 @@
+{
+    "clickables": {
+
+        "parameterized": {
+            "Menu sections": {
+                "xpath": "//span[normalize-space(text())=\"PLACEHOLDER-SECTION\"]/parent::a/parent::li",
+                "placeholder": "PLACEHOLDER-SECTION"
+            }
+        },
+
+        "uniques": {
+
+            "Contact Us": {
+                "findBy": "xpath",
+                "xpath": "//span[normalize-space(text())=\"Contact Us\"]"
+            },
+
+            "Profile": {
+                "findBy": "xpath",
+                "xpath": "//div[@class=\"user-info\"]/a[@class=\"username\"]/span/span"
+            }
+        }
+    },
+
+    "waitables": {
+
+        "uniques": {
+            "Blue Left Menu": {
+                "findBy": "class name",
+                "class name": "sidebar-scroll-content"
+            },
+
+            "White Up Menu Bar": {
+                "findBy": "class name",
+                "class name": "menu"
+            }
+        }
+    }
+}

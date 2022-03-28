@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage Title="Checklist"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             NavigationPage.BackButtonTitle=""
+             xmlns:cornerView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:templates="clr-namespace:MobileApp.Pages.Templates"
+             xmlns:converters="clr-namespace:MobileApp.Utils.Converter" xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MobileApp.Pages.Screen.CompleteOrderScreen">
+    <Grid>
+        <StackLayout BackgroundColor="#F0F0F0"
+                     Spacing="10">
+            <Grid BackgroundColor="White"
+                  Padding="15"
+                  VerticalOptions="Start">
+                <StackLayout>
+                    <FlexLayout
+                        Direction="Row"
+                        JustifyContent="Start"
+                        AlignItems="Center">
+                        <Label Text="{Binding OrderData.OrderNumber, StringFormat='#{0}'}"
+                               FontAttributes="Bold"
+                               FontSize="10" />
+                        <templates:OrderTypeLabel OrderTypeId="{Binding OrderData.OrderTypeId}"
+                                                     Margin="10,0" />
+                    </FlexLayout>
+                    <FlexLayout Grid.Row="1"
+                                Direction="Row"
+                                JustifyContent="SpaceBetween">
+                        <Label Text="{Binding OrderData.ContactPerson}"
+                               FontAttributes="Bold"
+                               FontSize="23" />
+                        <Button VerticalOptions="Center"
+                                Command="{Binding CallContactPersonCommand}"
+                                HorizontalOptions="Center"
+                                WidthRequest="65"
+                                HeightRequest="25"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                Padding="0"
+                                FontSize="10"
+                                Text="CALL"
+                                CornerRadius="12"
+                                BackgroundColor="{StaticResource GreenShade}" />
+                    </FlexLayout>
+                    <Label Text="{Binding OrderData.ShippingAddress, Converter={converters:AddressToStringConverter}}"
+                           FontSize="12" />
+                </StackLayout>
+            </Grid>
+            <Frame CornerRadius="10"
+                   HasShadow="False"
+                   Margin="20,10">
+                <StackLayout Spacing="20">
+                    <Label Text="Checklist"
+                           Grid.Row="0"
+                           FontSize="20"
+                           VerticalOptions="Start"
+                           FontAttributes="Bold" />
+                    <StackLayout Grid.Row="1">
+                        <FlexLayout IsVisible="{Binding IsItemDrop}"
+                                    JustifyContent="SpaceBetween"
+                              x:Name="dropItemFrame">
+                            <Label Text="{Binding DropCount, StringFormat='{0} item dropped'}"
+                                   FontSize="13"
+                                   VerticalOptions="Center"
+                                   Grid.Column="0" />
+                            <Label Style="{StaticResource CheckCircle}"
+                                   TextColor="{StaticResource GreenShade}"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="Center"
+                                   FontSize="13"
+                                   Grid.Column="1" />
+                        </FlexLayout>
+                        <FlexLayout IsVisible="{Binding IsItemPick}"
+                                    JustifyContent="SpaceBetween">
+                            <Label Text="{Binding PickupCount, StringFormat='{0} item picked'}"
+                                   FontSize="13"
+                                   Grid.Column="0" />
+                            <Label Style="{StaticResource CheckCircle}"
+                                   TextColor="{StaticResource GreenShade}"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="Center"
+                                   FontSize="13"
+                                   Grid.Column="1" />
+                        </FlexLayout>
+                    </StackLayout>
+                    <StackLayout IsVisible="{Binding IsPartialFullfillment}"
+                                 Grid.Row="2">
+                        <FlexLayout AlignItems="Center"
+                                    IsVisible="{Binding IsPickupOrder}">
+                            <CheckBox IsChecked="{Binding IsExceptionFulfillment}" />
+                            <Label Text="Exception Fulfillment"/>
+                        </FlexLayout>
+                        <Entry Placeholder="Please enter reason for partial fulfillment"
+                               Text="{Binding PartialFulfillmentReason}"
+                               HeightRequest="50"></Entry>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+            <Frame HasShadow="False"
+                   Margin="20,0">
+                <StackLayout>
+                    <Label Text="Feedback Request"
+                           FontSize="23"
+                           FontAttributes="Bold" />
+                    <Label Text="Recievers number/email"
+                           TextColor="LightGray" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Column="0"
+                                  Scale="1"
+                                  Color="Green" />
+                        <Label Grid.Column="1"
+                               Text="By checking this box you are confirming that the reciever has agreed to recieve a feedback SMS/Email on the above number/email."
+                               FontSize="15"
+                               Margin="5" />
+                    </Grid>
+                </StackLayout>
+            </Frame>
+            <cornerView:PancakeView BackgroundColor="{StaticResource DarkShade}"
+                                    CornerRadius="0,0,10,10"
+                                    Margin="20,-10, 20, 0">
+                <Button Text="Ask for feedback"
+                        BackgroundColor="{StaticResource DarkShade}"
+                        HorizontalOptions="Center"
+                        TextColor="White"
+                        FontSize="18"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold" />
+            </cornerView:PancakeView>
+
+            <Button CornerRadius="10"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                    Text="Complete Order"
+                    Command="{Binding CompleteOrderCommand}"
+                    Margin="20"
+                    BackgroundColor="{StaticResource C2D1D9}"
+                    VerticalOptions="EndAndExpand"
+                    TextColor="Black"
+                    FontSize="20"
+                    FontAttributes="Bold" />
+        </StackLayout>
+        <ActivityIndicator x:Name="loader"
+                           IsRunning="{Binding IsLoading}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

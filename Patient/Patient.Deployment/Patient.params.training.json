@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": { "value": "HMSDigitalAppPlanTraining" },
+    "appServicePlanSkuName": { "value": "B2" },
+    "aspNetCoreEnvironment": { "value": "Training" },
+    "dbAdminLogin": { "value": "##SECRET##" },
+    "dbAdminPassword": { "value": "##SECRET##" },
+    "dbName": { "value": "HMSDigital" },
+    "fhirFunctionAppName":{"value":"hmsd-fhir-training"},
+    "patientAppAlwaysOn": { "value": true },
+    "patientAppName": { "value": "hmsd-patient-training" },
+    "serviceBusNamespaceName":{"value":"hsmdigitalstraining"},
+    "serviceBusSku": { "value": "Standard" },
+    "smartyAuthId": { "value": "##SECRET##" },
+    "smartyAuthToken": { "value": "##SECRET##" },
+    "smartyRefer": { "value": "##SECRET##" },
+    "smartySecretKey": { "value": "##SECRET##" },
+    "sqlserverName": { "value": "hmsdsqlservertraining" },
+    "storageAccountName": { "value": "hmsdstoragetraining" },
+    "storageAccountType": { "value": "Standard_RAGRS" }   
+  }
+}

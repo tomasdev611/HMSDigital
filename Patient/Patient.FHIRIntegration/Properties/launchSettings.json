@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Patient.FHIRIntegration": {
+      "commandName": "Executable",
+      "executablePath": "func",
+      "commandLineArgs": "host start --verbose"
+    }
+  }
+}

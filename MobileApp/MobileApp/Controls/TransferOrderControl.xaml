@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+    x:Class="MobileApp.Controls.TransferOrderControl"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:cake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+    xmlns:converters="clr-namespace:MobileApp.Utils.Converter"
+    xmlns:resources="clr-namespace:MobileApp.Resources">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:PurchaseOrderStatusToColorConverter x:Key="ColorConverter"/>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <cake:PancakeView
+            Margin="16,0"
+            Background="White"
+            CornerRadius="4">
+            <cake:PancakeView.Triggers>
+                <DataTrigger
+                    Binding="{Binding IsPending}"
+                    TargetType="cake:PancakeView"
+                    Value="True">
+                    <Setter Property="BackgroundColor" Value="#FBF8ED" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding IsPending}"
+                    TargetType="cake:PancakeView"
+                    Value="False">
+                    <Setter Property="BackgroundColor" Value="White" />
+                </DataTrigger>
+            </cake:PancakeView.Triggers>
+            <cake:PancakeView.Border>
+                <cake:Border Thickness="1" Color="{StaticResource PurchaseOrderElementBorder}" />
+            </cake:PancakeView.Border>
+            <StackLayout Margin="16,20">
+                <Grid ColumnDefinitions="35*, 65*">
+                    <Label
+                        FontSize="16"
+                        Text="Transfer ID"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="1"
+                        FontSize="16"
+                        Text="{Binding TransferOrderId}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <Grid ColumnDefinitions="35*, 65*">
+                    <Label
+                        FontSize="16"
+                        Text="Location To"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="1"
+                        FontSize="16"
+                        Text="{Binding LocationName}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <Grid ColumnDefinitions="35*, 65*">
+                    <Label
+                        FontSize="16"
+                        Text="Date Created"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="1"
+                        FontSize="16"
+                        Text="{Binding DateCreated, StringFormat='{0:d}'}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <Grid ColumnDefinitions="35*, 65*">
+                    <Label
+                        FontSize="16"
+                        Text="Total Qty"
+                        TextColor="{StaticResource LightBlack}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="1"
+                        FontSize="16"
+                        Text="{Binding TotalQuantity}"
+                        TextColor="{StaticResource DarkBlack}" />
+                </Grid>
+                <StackLayout Padding="0,6,12,6">
+                    <Frame
+                        Margin="30,0,0,0"
+                        Padding="10,5"
+                        BackgroundColor="{Binding TransferOrderStatus, Converter={StaticResource ColorConverter}}"
+                        BorderColor="{Binding TransferOrderStatus, Converter={StaticResource ColorConverter}}"
+                        CornerRadius="12"
+                        HasShadow="False"
+                        HeightRequest="10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center">
+                        <Grid>
+                            <Label
+                                FontSize="10"
+                                Text="{Binding StatusDescription}"
+                                TextColor="{StaticResource LightGrayColor}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
+        </cake:PancakeView>
+    </ContentView.Content>
+</ContentView>

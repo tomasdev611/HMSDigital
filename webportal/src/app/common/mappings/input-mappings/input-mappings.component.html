@@ -1,0 +1,32 @@
+<app-editable-table
+  [columns]="inputColumnSchema"
+  [data]="mappingList"
+  [reorderable]="true"
+  (rowReorder)="changeColumnOrder($event)"
+  (rowChanged)="validateData($event)"></app-editable-table>
+
+<div class="mappings-grid p-grid">
+  <div class="p-col-1">
+    <button pButton class="btn p-button-secondary" (click)="onCancel()" label="Cancel"></button>
+  </div>
+  <div class="p-col-2 p-offset-8">
+    <p-multiSelect
+      [options]="fields"
+      [(ngModel)]="mappingList"
+      dataKey="key"
+      [displaySelectedLabel]="false"
+      [style]="{width: '100%'}"
+      defaultLabel="Select fields for mappings"
+      (onChange)="addInputField($event)">
+    </p-multiSelect>
+  </div>
+  <div class="p-col-1">
+    <button
+      class="btn"
+      icon="pi pi-save "
+      pButton
+      (click)="onSave()"
+      label="Save"
+      [disabled]="!isValid"></button>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+:host ::ng-deep {
+  .p-progress-spinner {
+    position: absolute;
+    top: 30%;
+    left: 52%;
+    transform: translate(-50%, -50%);
+  }
+  .dispatch-item-wrapper {
+    width: 100%;
+    margin-bottom: 1em;
+  }
+
+  .dispatch-list-container {
+    .p-dataview {
+      max-height: calc(100vh - 210px);
+      margin-top: 3em;
+      overflow-y: scroll;
+    }
+  }
+}

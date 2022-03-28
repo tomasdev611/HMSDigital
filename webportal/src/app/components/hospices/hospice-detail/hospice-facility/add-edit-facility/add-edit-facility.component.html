@@ -1,0 +1,77 @@
+<div class="sub">
+  <app-body-header
+    displayTitle="Hospice Facility {{ editmode ? 'Edit' : 'Add' }}"
+    backText="Back"></app-body-header>
+  <div class="forms-wrapper">
+    <p-panel header="Facility Information" [style]="{marginTop: '10px'}">
+      <form
+        [formGroup]="facilityForm"
+        (ngSubmit)="onSubmitFacility(facilityForm.value)"
+        autocomplete="nope">
+        <div class="p-grid p-grid-responsive p-grid-pad p-fluid" style="margin: 10px 0px">
+          <h4 class="form-section-header">General Info</h4>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Name * :</div>
+            <div class="p-col-3">
+              <input
+                id="name"
+                type="text"
+                size="20"
+                pInputText
+                formControlName="name"
+                autocomplete="off" />
+            </div>
+            <div class="p-col-2 form-label">Phone * :</div>
+            <div class="p-col-3">
+              <p-inputMask
+                size="20"
+                mask="(999) 999-9999"
+                unmask="true"
+                formControlName="phoneNumber"
+                placeholder="(555) 010-0100"
+                autocomplete="off"></p-inputMask>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Hospice Location * :</div>
+            <div class="p-col-3">
+              <p-dropdown
+                [options]="hospiceLocations"
+                filter="true"
+                optionLabel="name"
+                datakey="id"
+                name="id"
+                formControlName="hospiceLocation"
+                placeholder="Select a Hospice Location"></p-dropdown>
+            </div>
+            <div class="p-col-2 form-label" *ngIf="editmode">Active :</div>
+            <div class="p-col-3 form-inputswitch" *ngIf="editmode">
+              <p-inputSwitch formControlName="isActive"></p-inputSwitch>
+            </div>
+          </div>
+          <div class="p-grid mt-5" style="margin-left: 14.5em">
+            <h4>Address</h4>
+          </div>
+          <app-address
+            [address]="facilityForm.get('address')"
+            [hiddenFields]="['latitude', 'longitude', 'county']"
+            style="flex: 1; margin-left: 14em">
+          </app-address>
+          <div class="p-grid">
+            <div class="p-col-10 btn-right">
+              <button
+                pButton
+                class="btn-right"
+                type="submit"
+                label="{{ editmode ? 'Update' : 'Save' }}"
+                icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+                [disabled]="
+                  !facilityForm.valid || formSubmit || !(facilityForm.touched || facilityForm.dirty)
+                "></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+</div>

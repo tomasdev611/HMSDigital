@@ -1,0 +1,60 @@
+<p-card header="{{ !groupTitle ? header : null }}">
+  <p-header>
+    <div class="hero-content">
+      <p-progressSpinner
+        *ngIf="loading"
+        strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="groupTitle">{{ groupTitle }}</span>
+      <span *ngIf="!loading && !groupTitle">{{ cardCount >= 0 ? cardCount : '--' }}</span>
+    </div>
+  </p-header>
+  <div *ngIf="patientInventoryWithIssues">
+    <div class="patient-inputs">
+      <input
+        type="number"
+        size="15"
+        pInputText
+        [(ngModel)]="patientInventory.orderNumber"
+        placeholder="Enter Order Number" />
+      <input
+        type="text"
+        size="15"
+        pInputText
+        [(ngModel)]="patientInventory.assetTagNumber"
+        placeholder="Enter AssetTag Number" />
+    </div>
+    <div>
+      <div class="p-align-center p-d-flex p-justify-between p-mt-3">
+        <span>With Invalid Inventory</span>
+        <button pButton (click)="getAction('invalid-inventory')" label="Get"></button>
+      </div>
+      <div class="p-align-center p-d-flex p-justify-between p-mt-3">
+        <span>With Invalid Item</span>
+        <button pButton (click)="getAction('invalid-item')" label="Get"></button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="groupTitle">
+    <div *ngFor="let tool of toolList">
+      <div class="p-grid p-nogutter p-justify-between p-align-center">
+        <div class="p-col-10">
+          {{ tool?.title }}<br *ngIf="tool?.checkbox" />
+          <p-checkbox
+            *ngIf="tool?.checkbox"
+            [(ngModel)]="checkboxValue"
+            [binary]="true"
+            class="system-checkbox"
+            [label]="tool?.checkbox"
+            name="checkboxValue"
+            ngDefaultControl
+            [ngStyle]="{margin: '0'}">
+          </p-checkbox>
+        </div>
+        <div class="p-col-2" style="display: flex; justify-content: center">
+          <button pButton (click)="triggerAction(tool)" [label]="'Get'"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-card>

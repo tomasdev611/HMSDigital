@@ -1,0 +1,47 @@
+{
+    "clickables": {
+
+        "uniques": {
+            "Create Order To Patient": {
+                "shouldBeRelative": true,
+
+                "findBy": "xpath",
+                "xpath": "td[7]/a/span[normalize-space(text())=\"Create Order\"]"
+            }
+        }
+    },
+
+    "iterables": {
+
+        "uniques": {
+            "Patient Table": {
+                "findBy": "tag name",
+                "tag name": "cdk-virtual-scroll-viewport",
+
+                "relatives":{
+                    "findBy": "xpath",
+                    "xpath": "div[1]/table/tbody/tr"
+                }
+            }
+        }
+    },
+
+    "waitables": {
+
+        "mapped": [
+            {
+                "xpath": "td[COLUMN]/div[1]/span[2]/span",
+
+                "shouldBeRelative": true,
+                "map": {
+                    "Patient Table Status": { "COLUMN": "1" },
+                    "Patient Table Name": { "COLUMN": "2" },
+                    "Patient Table DOB": { "COLUMN": "3" },
+                    "Patient Table Created On": { "COLUMN": "4" },
+                    "Patient Table Last Order": { "COLUMN": "5" },
+                    "Patient Table Hospice Location": { "COLUMN": "6" }
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,98 @@
+<div class="sub">
+  <app-body-header displayTitle="Site Info" backText="Back"></app-body-header>
+  <p-tabView (onChange)="tabChanged($event)">
+    <p-tabPanel header="Site" leftIcon="pi pi-pencil" [selected]="isCurrentView('site')">
+      <div
+        *ngIf="isCurrentView('site')"
+        class="p-grid p-grid-responsive p-grid-pad p-fluid"
+        style="margin: 10px 0px">
+        <h4 class="form-section-header">General Info</h4>
+        <div class="p-grid">
+          <div class="p-col-2 form-label">Name * :</div>
+          <div class="p-col-3 form-data">
+            {{ siteResponse?.name }}
+          </div>
+          <div class="p-col-2 form-label">Parent Site :</div>
+          <div class="p-col-3 form-data">
+            {{ siteResponse?.parent?.name }}
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-2 form-label">SiteCode * :</div>
+          <div class="p-col-3 form-data">
+            {{ siteResponse?.siteCode }}
+          </div>
+          <div class="p-col-2 form-label">Site Type :</div>
+          <div class="p-col-3 form-data">
+            {{ siteResponse?.locationType }}
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-2 form-label">Active :</div>
+          <div class="p-col-3 form-inputswitch">
+            <p-inputSwitch
+              [ngModel]="siteResponse?.isActive"
+              disabled="true"
+              [ngModelOptions]="{standalone: true}">
+            </p-inputSwitch>
+          </div>
+        </div>
+        <p-fieldset legend="Contact Infromation">
+          <div class="p-grid">
+            <div class="p-col-2 form-label">Phone * :</div>
+            <div class="p-col-3 form-data">
+              {{ siteResponse?.phoneNumber }}
+            </div>
+            <div class="p-col-2 form-label">Fax :</div>
+            <div class="p-col-3 form-data">
+              {{ siteResponse?.fax }}
+            </div>
+          </div>
+        </p-fieldset>
+        <p-fieldset legend="Address">
+          <app-address-details [address]="siteResponse?.address"></app-address-details>
+        </p-fieldset>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel
+      *ngIf="canView('Site')"
+      header="Members"
+      leftIcon="pi pi-users"
+      [selected]="isCurrentView('members')">
+      <app-site-members *ngIf="isCurrentView('members')"></app-site-members>
+    </p-tabPanel>
+
+    <p-tabPanel
+      *ngIf="canView('Site')"
+      header="Service Areas"
+      leftIcon="pi pi-map-marker"
+      [selected]="isCurrentView('serviceareas')">
+      <app-site-service-areas *ngIf="isCurrentView('serviceareas')"></app-site-service-areas>
+    </p-tabPanel>
+
+    <p-tabPanel
+      *ngIf="canView('Inventory')"
+      [selected]="isCurrentView('inventory')"
+      header="Inventory"
+      leftIcon="pi pi-folder">
+      <div class="p-grid p-nogutter p-responsive mb-10" *ngIf="isCurrentView('inventory')">
+        <div class="p-grid p-nogutter p-justify-end">
+          <button
+            pButton
+            label="Transfer"
+            [routerLink]="['./inventory-transfer']"
+            [queryParams]="getTransferRequestParams()"
+            [disabled]="!itemIds.length"></button>
+        </div>
+      </div>
+      <app-location-inventory
+        *ngIf="isCurrentView('inventory')"
+        [selectInventory]="true"
+        locationType="Site"
+        [locationId]="siteId"
+        (inventorySelected)="inventorySelected($event)">
+      </app-location-inventory>
+    </p-tabPanel>
+  </p-tabView>
+</div>

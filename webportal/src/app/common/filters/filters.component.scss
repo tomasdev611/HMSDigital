@@ -1,0 +1,51 @@
+.filter-label {
+  margin: 10px;
+}
+.clear-filter {
+  border: none !important;
+  font-size: 1em;
+  margin: auto 5px;
+}
+
+.filter-bar > button {
+  margin-top: 16px;
+}
+@media screen and (max-width: 768px) {
+  .p-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 14px;
+    order: -1;
+  }
+  .clear-filter {
+    order: -1;
+  }
+  .p-grid > div,
+  .custom-col {
+    flex: 100%;
+    padding-bottom: 0.3em;
+    padding-top: 0;
+  }
+  .p-multiselect.p-state-disabled .p-multiselect-label {
+    max-width: 480px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .p-multiselect.p-state-disabled .p-multiselect-label {
+    max-width: 220px;
+  }
+  .filter-bar {
+    padding: 0 0 5px 0;
+    justify-content: flex-start;
+  }
+  .filter-configure {
+    padding: 0;
+    justify-content: flex-start;
+    align-items: center;
+    .filter-label {
+      margin: 5px;
+    }
+  }
+}

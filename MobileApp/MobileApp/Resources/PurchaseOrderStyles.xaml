@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileApp.Resources.PurchaseOrderStyles">
+    <Color x:Key="PurchaseOrderBackground">#F9FAFD</Color>
+    <Color x:Key="PrimaryBlueColor">#1E265D</Color>
+    <Color x:Key="PurchaseOrderElementBorder">#EEEFF1</Color>
+    <Color x:Key="LightGrayColor">#596167</Color>
+    <Color x:Key="Yellow800">#FBF8ED</Color>
+    <Color x:Key="Yellow800Strong">#F7E1B5</Color>
+    <Color x:Key="YellowStrong">#F5DEAC</Color>
+    <Color x:Key="Green800">#B1DCC7</Color>
+    <Color x:Key="Blue800">#ACD1FE</Color>
+    <Color x:Key="BlueLight">#DCEAFF</Color>
+</ResourceDictionary>

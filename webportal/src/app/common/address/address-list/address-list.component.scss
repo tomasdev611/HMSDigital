@@ -1,0 +1,83 @@
+:host ::ng-deep {
+  .custom-col.form-data {
+    margin-bottom: 0 !important;
+  }
+  .p-grid.p-grid-pad > .p-grid > div,
+  .p-grid,
+  .p-col-2,
+  .p-col-3 {
+    padding: 0.6em 0em !important;
+  }
+  .p-grid {
+    margin-left: 0.5em;
+  }
+}
+@media screen and (max-width: 480px) {
+  .address-form-row {
+    .address-header {
+      font-size: 13px;
+      display: flex;
+      flex-wrap: wrap;
+      &.facility {
+        margin-top: 0px;
+      }
+      color: #000;
+      width: 70%;
+      .delete {
+        cursor: pointer;
+        float: right;
+        .label {
+          float: right;
+          font-size: 13px;
+          font-weight: 500;
+        }
+      }
+    }
+    .phone {
+      & > div:nth-child(2) {
+        text-align: left !important;
+      }
+      & > div:nth-child(3) {
+        margin-left: 0 !important;
+      }
+    }
+  }
+  .p-grid.p-grid-pad > .p-grid > div,
+  .p-grid,
+  .p-col-2,
+  .p-col-3 {
+    padding: 0.3em 0em !important;
+  }
+}
+@media screen and (max-width: 768px) {
+  .address-form-row {
+    .address-header {
+      display: flex;
+      flex-wrap: wrap;
+      &.facility {
+        margin-top: 0px;
+      }
+      color: #000;
+      width: 70%;
+      .delete {
+        cursor: pointer;
+        float: right;
+        .label {
+          float: right;
+          font-weight: 500;
+        }
+      }
+    }
+    .phone {
+      & > div:nth-child(2) {
+        text-align: right;
+      }
+    }
+  }
+  .p-grid.p-grid-pad > .p-grid > div,
+  .p-grid,
+  .p-col-2,
+  .p-col-3 {
+    padding: 0.3em 0em !important;
+  }
+}

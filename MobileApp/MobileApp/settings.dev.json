@@ -1,0 +1,8 @@
+﻿{
+  "ApiBaseUrl": "https://hmsd-api-dev.azurewebsites.net",
+  "ApiPatientUrl": "https://hmsd-patient-dev.azurewebsites.net",
+  "ApiNotificationUrl": "https://hmsd-notification-dev.azurewebsites.net",
+  "AppCenteriOS": "dbad4b43-9ec2-4c9c-9c4e-c3d029d1ec56",
+  "AppCenterAndroid": "e9cac4e5-8fbb-40d0-bb3a-0552daf089da",
+  "Environment": "dev"
+}

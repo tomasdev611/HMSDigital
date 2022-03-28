@@ -1,0 +1,6 @@
+<div class="p-grid sub p-nogutter">
+  <app-client-services
+    *ngIf="checkPermission('ClientServicesMetrics', 'Read')"></app-client-services>
+
+  <app-operations *ngIf="checkPermission('OperationsMetrics', 'Read')"></app-operations>
+</div>

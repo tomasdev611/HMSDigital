@@ -1,0 +1,22 @@
+<div class="hms-table">
+  <app-body-header
+    displayTitle="Hospices"
+    [listCount]="hospiceResponse?.totalRecordCount"></app-body-header>
+  <app-table-virtual-scroll
+    #hospicesTable
+    [list]="hospiceResponse?.records"
+    [pageSize]="hospiceRequest?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    scrollHeightCustom="calc(100vh - 210px)"
+    [totalRecords]="hospiceResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="headers"
+    [pageNumber]="hospiceResponse?.pageNumber || 0"
+    [totalPage]="hospiceResponse?.totalPageCount || 0"
+    (fetchNext)="getNext($event)"
+    (sort)="sortHospices($event)"
+    (actionBtnHandler)="viewHospiceContracts($event?.object)"
+    >>
+  </app-table-virtual-scroll>
+</div>

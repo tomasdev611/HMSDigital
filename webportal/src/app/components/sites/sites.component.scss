@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  .site-filters {
+    flex: 1;
+  }
+  .p-grid {
+    flex: 1;
+  }
+  .site-tree {
+    width: 85vw;
+    height: 85vh;
+    display: flex;
+    margin-left: -2em;
+  }
+  .view-toggle {
+    display: flex;
+    align-self: center;
+    margin-right: 1em;
+  }
+}

@@ -1,0 +1,104 @@
+<div [ngClass]="{'flyout-open': detailsViewOpen}">
+  <app-table-virtual-scroll
+    [list]="subscriptionResponse?.records"
+    [pageSize]="subscriptionRequest?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    [totalRecords]="subscriptionResponse?.totalRecordCount || 0"
+    filterFields="[]"
+    [headers]="subscriptionHeaders"
+    [pageNumber]="subscriptionResponse?.pageNumber || 0"
+    [totalPage]="subscriptionResponse?.totalPageCount || 0"
+    [selection]="true"
+    (fetchNext)="fetchNext($event)"
+    (rowSelected)="subscriptionSelected($event)">
+  </app-table-virtual-scroll>
+  <div class="flyout">
+    <button class="close-icon" (click)="closeSubscriptionDetails()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="flyout-main">
+      <div class="flyout-label">
+        <span class="flyout-title">{{ selectedSubscription?.name }}</span>
+        <div class="p-d-flex p-jc-between">
+          <a
+            [routerLink]="['./subscription/' + selectedSubscription?.id + '/items']"
+            class="subscription-item-link">
+            View Subscription Items
+          </a>
+          <a
+            [routerLink]="['./subscription/' + selectedSubscription?.id + '/contracts']"
+            class="subscription-item-link">
+            View Subscription Contracts
+          </a>
+        </div>
+      </div>
+      <div class="subscription-detail">
+        <div class="item">
+          <span>Id</span>
+          <span>{{ selectedSubscription?.id }}</span>
+        </div>
+        <div class="item">
+          <span>NetSuite Subscription Id</span>
+          <span>{{ selectedSubscription?.netSuiteSubscriptionId }}</span>
+        </div>
+        <div class="item">
+          <span>NetSuite Customer Id</span>
+          <span>{{ selectedSubscription?.netSuiteCustomerId }}</span>
+        </div>
+        <div class="item">
+          <span>Bill To Customer</span>
+          <span>{{ selectedSubscription?.billToCustomer }}</span>
+        </div>
+        <div class="item">
+          <span>Bill To Entity</span>
+          <span>{{ selectedSubscription?.billToEntity }}</span>
+        </div>
+        <div class="item">
+          <span>Consolidate Billing</span>
+          <span>{{ selectedSubscription?.consolidateBilling }}</span>
+        </div>
+        <div class="item">
+          <span>Start Date</span>
+          <span>{{ selectedSubscription?.startDate | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>End Date</span>
+          <span>{{ selectedSubscription?.endDate | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>Currency</span>
+          <span>{{ selectedSubscription?.currency }}</span>
+        </div>
+        <div class="item">
+          <span>Billing Profile</span>
+          <span>{{ selectedSubscription?.billingProfile }}</span>
+        </div>
+        <div class="item">
+          <span>Charge Schedule</span>
+          <span>{{ selectedSubscription?.chargeSchedule }}</span>
+        </div>
+        <div class="item">
+          <span>Inherit Charge Schedule From Master Contract</span>
+          <span>{{ selectedSubscription?.inheritChargeScheduleFromMasterContract }}</span>
+        </div>
+        <div class="item">
+          <span>Enable LineItem Shipping</span>
+          <span>{{ selectedSubscription?.enableLineItemShipping }}</span>
+        </div>
+        <div class="item">
+          <span>IsInactive</span>
+          <span>{{ selectedSubscription?.isInactive }}</span>
+        </div>
+        <div class="item">
+          <span>Created Date Time</span>
+          <span>{{ selectedSubscription?.createdDateTime | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+        <div class="item">
+          <span>Last Modified Date Time</span>
+          <span>{{ selectedSubscription?.lastModifiedDateTime | date: 'MMM d, y, h:mm a' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

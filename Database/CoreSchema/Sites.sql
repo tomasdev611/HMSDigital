@@ -1,0 +1,28 @@
+﻿CREATE TABLE [core].[Sites]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [SiteCode] INT NULL, 
+    [Name] VARCHAR(MAX) NULL, 
+    [AddressId] INT NULL DEFAULT NULL, 
+    [IsDisabled] BIT NOT NULL DEFAULT 0 ,
+    [NetSuiteLocationId] INT NULL DEFAULT NULL,
+    [ParentNetSuiteLocationId] INT NULL,
+    [VIN] VARCHAR(MAX) NULL, 
+    [CVN] VARCHAR(MAX) NULL, 
+    [LicensePlate] VARCHAR(MAX) NULL, 
+    [Capacity] DECIMAL(15, 4) NULL, 
+    [Length] DECIMAL(15, 4) NULL, 
+    [LocationType] VARCHAR(MAX) NULL,
+    [LocationTypeId] INT NULL, 
+    [CreatedByUserId] INT NULL, 
+    [CreatedDateTime] DATETIME2 NOT NULL, 
+    [UpdatedByUserId] INT NULL, 
+    [UpdatedDateTime] DATETIME2 NOT NULL, 
+    [IsDeleted] BIT NOT NULL DEFAULT 0, 
+    [DeletedByUserId] INT NULL, 
+    [DeletedDateTime] DATETIME2 NOT NULL, 
+    CONSTRAINT [FK_Sites_Users_Created] FOREIGN KEY ([CreatedByUserId]) REFERENCES [core].[Users]([Id]),
+    CONSTRAINT [FK_Sites_Users_Updated] FOREIGN KEY ([UpdatedByUserId]) REFERENCES [core].[Users]([Id]),
+    CONSTRAINT [FK_Sites_Users_Deleted] FOREIGN KEY ([DeletedByUserId]) REFERENCES [core].[Users]([Id]),
+    CONSTRAINT [FK_Sites_Address] FOREIGN KEY ([AddressId]) REFERENCES [core].[Addresses]([Id])
+)

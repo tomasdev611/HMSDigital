@@ -1,0 +1,199 @@
+<div class="forms-wrapper">
+  <div class="main-view" *ngIf="activeStep === 'productCatalog'">
+    <p-dataView
+      #dv
+      [value]="products?.records"
+      [rows]="itemRequest?.pageSize"
+      [lazy]="true"
+      [paginator]="true"
+      (onPage)="pageChange($event)"
+      [totalRecords]="products?.totalRecordCount"
+      layout="list"
+      [loading]="productsLoading">
+      <ng-template pTemplate="header">
+        <div class="p-grid p-nogutter p-jc-start p-mx-1 p-ml-1">
+          <div class="p-col-3 p-pr-2">
+            <div class="p-inputgroup">
+              <input
+                type="text"
+                pInputText
+                placeholder="Search Catalog"
+                (ngModelChange)="searchItems($event)"
+                [(ngModel)]="searchKey" />
+              <button
+                type="button"
+                pButton
+                icon="pi pi-times"
+                style="border-radius: 0 !important"
+                [disabled]="!searchKey"
+                (click)="clearSearch()"></button>
+            </div>
+          </div>
+          <div class="p-col-1 flex-center p-jc-center">
+            <div class="separator"></div>
+          </div>
+          <div class="p-col-3 p-pr-2">
+            <p-dropdown
+              [options]="categories?.records"
+              filter="true"
+              [showClear]="true"
+              placeholder="Select a Category"
+              [panelStyle]="{width: '100%'}"
+              optionLabel="name"
+              [(ngModel)]="selectedCategory"
+              (onChange)="categoryChange($event)"></p-dropdown>
+          </div>
+          <div class="p-col-3 p-pr-2">
+            <p-dropdown
+              *ngIf="selectedCategory?.id"
+              [options]="selectedCategory?.itemSubCategories"
+              filter="true"
+              [showClear]="true"
+              placeholder="Select a Sub-Category"
+              [panelStyle]="{width: '100%'}"
+              optionLabel="name"
+              [(ngModel)]="selectedSubCategory"
+              (onChange)="subCategoryChange($event)"></p-dropdown>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template let-product pTemplate="listItem">
+        <div class="p-col-12">
+          <div class="product-list-item">
+            <div class="p-d-flex p-ai-center">
+              <img
+                src="{{
+                  product?.itemImageUrls?.length
+                    ? product.itemImageUrls[0]
+                    : '/assets/images/png/no-image-available.png'
+                }}"
+                class="order-image"
+                [style]="{height: '100px', width: '100px', float: 'center'}"
+                onError="this.onerror=null;this.src='/assets/images/png/no-image-available.png'" />
+              <div class="product-detail p-ml-3">
+                <div class="product-name">{{ product?.item?.name }}</div>
+                <div class="product-description">${{ product?.rate }}</div>
+              </div>
+            </div>
+            <div class="product-grid-item-bottom">
+              <span class="p-mx-3 flex-center">
+                <i
+                  class="pi pi-minus-circle"
+                  [class.disabled]="checkDisabled(product)"
+                  (click)="!checkDisabled(product) && updateCart('decrement', product)"></i>
+                <span class="cart-count">{{ product?.count }}</span>
+                <i class="pi pi-plus-circle" (click)="updateCart('increment', product)"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template let-product pTemplate="gridItem">
+        <div class="p-col-12 p-md-4 card-wrapper">
+          <div class="product-grid-item card p-mr-2">
+            <div class="product-grid-item-content">
+              <div class="p-d-flex p-jc-center">
+                <img
+                  src="{{
+                    product?.itemImageUrls?.length
+                      ? product.itemImageUrls[0]
+                      : '/assets/images/png/no-image-available.png'
+                  }}"
+                  class="order-image"
+                  [style]="{height: '90px', width: '90px', float: 'center'}"
+                  onError="this.onerror=null;this.src='/assets/images/png/no-image-available.png'" />
+              </div>
+            </div>
+            <div class="p-grid p-nogutter product-detail p-my-3">
+              <div class="p-col-10">
+                <span class="product-name p-pt-2 p-ml-1">{{ product?.item?.name }}</span>
+              </div>
+              <div class="p-col-2 p-d-flex p-jc-center">
+                <strong class="product-price p-ml-1">${{ product?.rate }}</strong>
+              </div>
+            </div>
+            <div class="product-grid-item-bottom">
+              <span class="p-mx-3 flex-center">
+                <i
+                  class="pi pi-minus-circle"
+                  [class.disabled]="checkDisabled(product)"
+                  (click)="!checkDisabled(product) && updateCart('decrement', product)"></i>
+                <span class="cart-count">{{ product?.count }}</span>
+                <i class="pi pi-plus-circle" (click)="updateCart('increment', product)"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-dataView>
+  </div>
+  <app-current-inventory-order
+    class="rightside-view"
+    *ngIf="activeStep === 'productCatalog' && patient?.id"
+    [patientInfo]="patient"
+    [patientInventories]="patientInventories"
+    [cartItems]="cartItems"
+    [editmode]="editmode"
+    (updateCartHandler)="updateCartReceiver($event)"
+    [fulfilledItems]="fulfilledItems">
+    <div class="p-pr-2">
+      <button
+        pButton
+        label="Cancel"
+        class="p-button-secondary p-mt-3"
+        (click)="cancelOrder()"></button>
+    </div>
+    <div>
+      <button
+        [pTooltip]="checkFormValidity()"
+        tooltipPosition="top"
+        [escape]="false"
+        pButton
+        label="Select Delivery Address"
+        class="p-mt-3"
+        (click)="proceedToDeliveryDetails()"
+        [class.btn-disabled]="cartItems.length === 0"></button>
+    </div>
+  </app-current-inventory-order>
+</div>
+<div *ngIf="activeStep === 'deliveryDetails'">
+  <app-delivery-details
+    class="forms-wrapper"
+    *ngIf="shouldShowDeliveryDetailsView()"
+    [editmode]="editmode"
+    [patientUniqueId]="patientUniqueId"
+    [tmpSessionKey]="tmpSessionKey"
+    [hospiceLocations]="hospiceLocations"
+    [patient]="patient"
+    [nurses]="nurses"
+    [storedDeliveryDetails]="deliveryDetails"
+    (updateCartHandler)="updateCartReceiver($event)"
+    [deliveryTimeOptions]="pickupTimeOptions"
+    [orderHeader]="orderHeader"
+    [deliveryAddresses]="patientAddresses"
+    (changeStepHandler)="changeStepReceiver($event)"
+    [cartItems]="cartItems"
+    [patientInventories]="patientInventories">
+  </app-delivery-details>
+</div>
+
+<div *ngIf="activeStep === 'review'">
+  <app-order-review
+    class="forms-wrapper"
+    [storeKey]="storeKey"
+    [pickupTimeOptions]="pickupTimeOptions"
+    [patientInfo]="patient"
+    [nurses]="nurses"
+    [editmode]="editmode"
+    [orderHeader]="orderHeader"
+    [tmpSessionKey]="tmpSessionKey"
+    [cartItems]="cartItems"
+    [patientInventories]="patientInventories"
+    (changeStepHandler)="changeStepReceiver($event)"
+    [deliveryDetails]="deliveryDetails">
+  </app-order-review>
+</div>
+<app-add-ons-equipment-settings
+  #addOnsEquipments
+  [productContext]="selectedProduct"
+  (updateProductHandler)="updateProductReceiver($event)"></app-add-ons-equipment-settings>

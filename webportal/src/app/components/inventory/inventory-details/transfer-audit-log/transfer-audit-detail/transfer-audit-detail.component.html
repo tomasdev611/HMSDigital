@@ -1,0 +1,65 @@
+<div class="sub">
+  <app-body-header displayTitle="Inventory Item Transfer Log" backText="Back"></app-body-header>
+  <p-panel header="General" [style]="{marginTop: '10px'}">
+    <div class="p-grid p-grid-responsive p-grid-pad p-fluid" *ngIf="itemAuditLog">
+      <div class="p-grid">
+        <div class="p-col-2 label">Modified By :</div>
+        <div class="p-col-3">{{ itemAuditLog.user.name }}</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-2 label">Action Type :</div>
+        <div class="p-col-3">{{ itemAuditLog.auditAction }}</div>
+        <div class="p-col-2 label">Modified On :</div>
+        <div class="p-col-3">
+          {{ itemAuditLog.auditDate | date: 'medium' }}
+        </div>
+      </div>
+    </div>
+  </p-panel>
+  <p-panel header="Updates" [style]="{marginTop: '10px'}">
+    <p-table
+      #dt
+      [value]="itemAuditLog.auditData"
+      dataKey="auditId"
+      styleClass="p-table"
+      [rowHover]="true"
+      [loading]="loading"
+      [responsive]="true"
+      [scrollable]="true"
+      *ngIf="itemAuditLog && itemAuditLog.auditData">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="columnName">
+            Field Name <p-sortIcon field="columnName"></p-sortIcon>
+          </th>
+          <th>Original Value</th>
+          <th></th>
+          <th>New Value</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-auditedChange>
+        <tr class="p-selectable-row">
+          <td>
+            <span class="p-column-title">Field Name</span>
+            <div class="cursor-pointer">
+              {{ auditedChange.columnName }}
+            </div>
+          </td>
+          <td>
+            <span class="p-column-title">Original Value</span>
+            {{ auditedChange.originalValue }}
+          </td>
+          <td>
+            <div class="pi pi-arrow-right"></div>
+          </td>
+          <td>
+            <span class="p-column-title">New Value </span>
+            <div>
+              {{ auditedChange.newValue }}
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-panel>
+</div>

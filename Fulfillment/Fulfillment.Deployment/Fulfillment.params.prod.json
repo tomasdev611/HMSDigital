@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": { "value": "HMSDigitalAppPlanProd" },
+    "appServicePlanSkuName": { "value": "P1v3" },
+    "aspNetCoreEnvironment": { "value": "Production" },
+    "coreApiUrl": { "value": "https://hmsd-api-prod.azurewebsites.net/" },
+    "dbAdminLogin": { "value": "##SECRET##" },
+    "dbAdminPassword": { "value": "##SECRET##" },
+    "dbName": { "value": "HMSDigital" },
+    "fulfillmentAppAlwaysOn": { "value": true },
+    "fulfillmentAppName": { "value": "hmsd-fulfillment-prod" },
+    "hmsInternalClientSecret": { "value": "##SECRET##" },
+    "mapsAccessKey": { "value": "##SECRET##" },
+    "sqlserverName": { "value": "hmsdsqlserverprod" },
+    "storageAccountName": { "value": "hmsdstorageprod" },
+    "storageAccountType": { "value": "Standard_RAGRS" }
+  }
+}

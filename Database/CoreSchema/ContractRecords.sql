@@ -1,0 +1,26 @@
+﻿CREATE TABLE [core].[ContractRecords]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [NetSuiteContractRecordId] INT NOT NULL, 
+    [NetSuiteCustomerId] INT NULL, 
+    [NetSuiteSubscriptionId] INT NULL, 
+    [NetSuiteBillingItemId] INT NULL, 
+    [NetSuiteRelatedItemId] INT NULL, 
+    [HospiceId] INT NULL, 
+    [HospiceLocationId] INT NULL, 
+    [ItemId] INT NULL, 
+    [Rate] FLOAT NOT NULL, 
+    [EffectiveStartDate] DATETIME2 NOT NULL, 
+    [EffectiveEndDate] DATETIME2 NOT NULL, 
+    [RiskCapEligible] BIT NOT NULL, 
+    [ShowOnOrderScreen] BIT NOT NULL, 
+    [CreatedByUserId] INT NOT NULL, 
+    [CreatedDateTime] DATETIME2 NOT NULL, 
+    [UpdatedByUserId] INT NULL, 
+    [UpdatedDateTime] DATETIME2 NOT NULL, 
+    CONSTRAINT [FK_ContractRecords_ToHospices] FOREIGN KEY ([HospiceId]) REFERENCES [core].[Hospices]([Id]),
+    CONSTRAINT [FK_ContractRecords_ToHospiceLocations] FOREIGN KEY ([HospiceLocationId]) REFERENCES [core].[HospiceLocations]([Id]),
+    CONSTRAINT [FK_ContractRecords_ToItems] FOREIGN KEY ([ItemId]) REFERENCES [core].[Items]([Id]),
+    CONSTRAINT [FK_ContractRecords_ToUsers_Created] FOREIGN KEY ([CreatedByUserId]) REFERENCES [core].[Users]([Id]),
+    CONSTRAINT [FK_ContractRecords_ToUsers_Updated] FOREIGN KEY ([UpdatedByUserId]) REFERENCES [core].[Users]([Id])
+)

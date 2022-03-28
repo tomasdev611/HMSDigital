@@ -1,0 +1,65 @@
+:host ::ng-deep {
+  .p-table-tbody > tr:focus > td {
+    box-shadow: none !important;
+  }
+  .table-value {
+    &.active {
+      background: #149e14;
+      border-radius: 10px;
+      color: white;
+      padding: 0 5px;
+      margin: 0 20px;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+    &.inactive {
+      background: #ff0000;
+      border-radius: 10px;
+      color: white;
+      padding: 0 5px;
+      margin: 0 20px;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+    &.pending {
+      background: #ffff00;
+      border-radius: 10px;
+      color: black;
+      padding: 0 5px;
+      margin: 0 20px;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+    &.blank {
+      background: #808080;
+      border-radius: 10px;
+      color: white;
+      padding: 0 5px;
+      margin: 0 20px;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+}
+.loading-text {
+  display: block;
+  background-color: #f1f1f1;
+  min-height: 19px;
+  animation: pulse 1s infinite ease-in-out;
+  text-indent: -99999px;
+  overflow: hidden;
+}
+
+p-table.no-scroll {
+  ::ng-deep cdk-virtual-scroll-viewport {
+    overflow-y: hidden !important;
+  }
+}

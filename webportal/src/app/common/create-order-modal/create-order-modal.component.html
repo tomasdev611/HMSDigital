@@ -1,0 +1,92 @@
+<app-modal
+  dialogStyleClass="order-dialog no-footer"
+  header="Create New Order"
+  [visible]="orderingEnabled"
+  *ngIf="orderingEnabled"
+  (hide)="closeCreateOrderModal()">
+  <div class="content-container">
+    <div class="header">Create New Order</div>
+    <div class="body new-order-modal-body">
+      <div class="order-type-list p-grid p-nogutter p-grid-responsive p-grid-pad p-fluid">
+        <div class="p-col">
+          <p class="order-label">Which type of order do you want to create?</p>
+        </div>
+        <div *ngIf="creditHoldMessage" class="p-col info-subtext credit-hold">
+          {{ creditHoldMessage }}
+        </div>
+        <p-selectButton
+          styleClass="p-col order-selections"
+          [options]="orderBtns"
+          [(ngModel)]="orderType">
+          <ng-template let-item>
+            {{ item.name }}
+          </ng-template>
+        </p-selectButton>
+      </div>
+      <div *ngIf="!patientContext" class="p-grid p-nogutter p-grid-responsive patients-list">
+        <div class="p-col p-justify-between select-patient-container">
+          <p class="order-label">Select a Patient</p>
+          <button
+            pButton
+            class="co-add-patient p-button-secondary"
+            label="Add Patient"
+            icon="pi pi-plus-circle"
+            [routerLink]="['/patients/add']"
+            [queryParams]="{orderType: orderType}"></button>
+        </div>
+        <div class="p-col co-patient-search">
+          <app-search-bar (search)="searchPatients($event)"></app-search-bar>
+          <div class="co-patient-filters">
+            <app-patients-filters
+              class="patient-filters"
+              (filter)="filterPatients($event)"></app-patients-filters>
+          </div>
+        </div>
+        <div class="p-col co-patients-list">
+          <p-listbox
+            *ngIf="!patientsLoading"
+            [options]="patientsList"
+            [(ngModel)]="patientSelected"
+            dataKey="id"
+            [listStyle]="{'min-height': '250px', 'max-height': '250px'}"
+            (onClick)="patientSelection($event)">
+            <ng-template let-patient pTemplate="item">
+              <div class="p-helper-clearfix patient-list-item">
+                <span>{{ patient?.label }}</span>
+                <span>{{
+                  patient?.value?.hospiceLocationName
+                    ? '(' + patient.value.hospiceLocationName + ')'
+                    : ''
+                }}</span>
+                <i>{{ patient?.value?.address }}</i>
+              </div>
+            </ng-template>
+          </p-listbox>
+          <p-progressSpinner
+            *ngIf="patientsLoading"
+            [style]="{width: '50px', height: '50px'}"
+            strokeWidth="8"
+            fill="#EEEEEE"
+            animationDuration=".5s"></p-progressSpinner>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <button
+        pButton
+        label="Cancel"
+        (click)="closeCreateOrderModal()"
+        class="p-button-secondary"></button>
+      <button
+        pButton
+        label="Next"
+        (click)="proceedToCreateOrder()"
+        class="p-btn"
+        [disabled]="!(orderType && (patientContext || patientSelected))"></button>
+    </div>
+  </div>
+</app-modal>
+<app-confirm-dialog
+  (accepted)="confirmAccepted()"
+  (rejected)="confirmRejected()"
+  #confirmDialog></app-confirm-dialog>

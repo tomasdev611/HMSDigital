@@ -1,0 +1,51 @@
+<div class="sub">
+  <app-body-header
+    displayTitle="{{ editmode ? 'Edit' : 'Create' }} {{ getTitleCase(orderType) }} Order"
+    backText="Back"></app-body-header>
+
+  <app-add-edit-pickup
+    *ngIf="orderType === 'pickup' && patient && pickupAddresses && nurses && patientInventory"
+    [editmode]="editmode"
+    [patientUniqueId]="patientUniqueId"
+    [hospiceLocations]="hospiceLocations"
+    [patient]="patient"
+    [nurses]="nurses"
+    [pickupTimeOptions]="pickupTimes"
+    [patientAddresses]="pickupAddresses"
+    [patientInventories]="patientInventory">
+  </app-add-edit-pickup>
+
+  <app-add-edit-move
+    *ngIf="orderType === 'move' && patient && pickupAddresses && nurses && patientInventory"
+    [editmode]="editmode"
+    [patientUniqueId]="patientUniqueId"
+    [hospiceLocations]="hospiceLocations"
+    [patient]="patient"
+    [nurses]="nurses"
+    [pickupTimeOptions]="pickupTimes"
+    [addresses]="pickupAddresses"
+    [patientInventory]="patientInventory">
+  </app-add-edit-move>
+
+  <app-add-edit-delivery
+    *ngIf="orderType === 'delivery' && patient && pickupAddresses && nurses && patientInventory"
+    [editmode]="editmode"
+    [patientUniqueId]="patientUniqueId"
+    [hospiceLocations]="hospiceLocations"
+    [patient]="patient"
+    [nurses]="nurses"
+    [pickupTimeOptions]="pickupTimes"
+    [patientAddresses]="pickupAddresses"
+    [patientInventories]="patientInventory">
+  </app-add-edit-delivery>
+
+  <app-add-edit-exchange
+    *ngIf="orderType === 'exchange' && patient && pickupAddresses && nurses && patientInventory"
+    [editmode]="editmode"
+    [patient]="patient"
+    [pickupTimeOptions]="pickupTimes"
+    [patientAddresses]="pickupAddresses"
+    [nurses]="nurses"
+    [patientInventories]="patientInventory">
+  </app-add-edit-exchange>
+</div>

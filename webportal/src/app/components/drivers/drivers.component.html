@@ -1,0 +1,153 @@
+<div [ngClass]="{'flyout-open': editFlyoutOpen, 'hms-table': true}">
+  <app-body-header
+    displayTitle="Drivers"
+    [listCount]="driversResponse?.totalRecordCount"
+    actionBtnUrl="./add"
+    actionBtnText="Add Driver"></app-body-header>
+  <app-table-virtual-scroll
+    #driversTable
+    [list]="driversResponse?.records"
+    scrollHeightCustom="calc(100vh - 210px)"
+    [pageSize]="driversResponse?.pageSize"
+    [loading]="loading"
+    [pageLoadNextOffset]="10"
+    [totalRecords]="driversResponse?.totalRecordCount"
+    filterFields="[]"
+    [headers]="headers"
+    [pageNumber]="driversResponse?.pageNumber"
+    [totalPage]="driversResponse?.totalPageCount"
+    [selection]="true"
+    (fetchNext)="nextDrivers($event)"
+    (rowSelected)="showDriverDetails($event)"
+    (sort)="sortDrivers($event)">
+  </app-table-virtual-scroll>
+  <div class="flyout">
+    <button class="close-icon" (click)="closeFlyout()">
+      <i class="pi pi-times"></i>
+    </button>
+    <div class="edit-driver-label">
+      <span>Edit Driver</span>
+    </div>
+    <form
+      class="edit-driver-form mt-5"
+      [formGroup]="driverForm"
+      (ngSubmit)="onSubmitDriver(driverForm.value)"
+      autocomplete="off">
+      <div class="p-grid p-grid-responsive p-grid-pad p-fluid">
+        <div class="form-item">
+          <label>Email * :</label>
+          <input pInputText id="email" type="email" formControlName="email" />
+        </div>
+        <div class="form-item">
+          <label>First Name * :</label>
+          <input pInputText id="firstName" type="text" size="20" formControlName="firstName" />
+        </div>
+        <div class="form-item">
+          <label>Last Name * :</label>
+          <input pInputText id="lastName" type="text" size="30" formControlName="lastName" />
+        </div>
+        <div class="form-item">
+          <label>Mobile * :</label>
+          <p-inputMask
+            size="20"
+            mask="(999) 999-9999"
+            unmask="true"
+            formControlName="phoneNumber"
+            placeholder="(999) 999-9999"></p-inputMask>
+        </div>
+        <div class="form-item">
+          <label>Current Site :</label>
+          <p-autoComplete
+            autoHighlight="true"
+            name="site"
+            dataKey="id"
+            field="name"
+            [(ngModel)]="site"
+            [suggestions]="sites"
+            (completeMethod)="searchSites($event)"
+            autocomplete="off"
+            (onSelect)="siteSelected($event)"
+            (onClear)="siteSelected($event)"
+            [ngModelOptions]="{standalone: true}">
+          </p-autoComplete>
+        </div>
+        <div class="form-item">
+          <label>Current Vehicle :</label>
+          <p-checkbox
+            [(ngModel)]="showCurrentSiteVehicles"
+            [binary]="true"
+            [ngModelOptions]="{standalone: true}"
+            label="Show {{ site?.name }} vehicles only"
+            name="showCurrentSiteVehiclesCheckbox"
+            ngDefaultControl>
+          </p-checkbox>
+          <div>
+            <p-dropdown
+              [options]="currentSiteVehicles"
+              [(ngModel)]="vehicleId"
+              placeholder="Select a vehicle"
+              *ngIf="currentSiteVehicles && showCurrentSiteVehicles"
+              [ngModelOptions]="{standalone: true}"
+              dataKey="id"
+              (onChange)="currentSiteVechicleSelected($event)"
+              name="vechicleId">
+              <ng-template let-vehicle pTemplate="selectedItem">
+                <div>
+                  {{ getVehicleNameById(vehicleId) }}
+                  <span style="float: right">{{ getVehicleLicensePlateById(vehicleId) }}</span>
+                </div>
+              </ng-template>
+              <ng-template let-item pTemplate="item">
+                <div>
+                  {{ item.name }}
+                  <span style="float: right">{{ item.licensePlate }}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+          <p-autoComplete
+            autoHighlight="true"
+            name="vehicle"
+            dataKey="id"
+            field="name"
+            [(ngModel)]="vehicle"
+            [suggestions]="vehicles"
+            (completeMethod)="searchVehicles($event)"
+            autocomplete="off"
+            (onSelect)="vehicleSelected($event)"
+            (onClear)="vehicleSelected($event)"
+            [ngModelOptions]="{standalone: true}"
+            *ngIf="!showCurrentSiteVehicles">
+            <ng-template let-vehicle pTemplate="item">
+              <div>
+                {{ vehicle?.name }}
+                <span style="float: right">{{ vehicle?.licensePlate }}</span>
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </div>
+        <div class="form-item">
+          <button
+            pButton
+            type="submit"
+            label="Update"
+            icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+            [disabled]="!(driverForm.valid && !formSubmit)"></button>
+          <button
+            pButton
+            type="button"
+            label="Delete"
+            [disabled]="formSubmit || loading"
+            icon="pi pi-trash"
+            class="p-button-secondary mt-5"
+            (click)="deleteDriver()"></button>
+        </div>
+      </div>
+    </form>
+    <div class="manage-account" *ngIf="hasPermission('User', 'Update')">
+      Want to Change Password/Manage Account?
+      <span [routerLink]="['/users/edit/' + selectedDriver?.userId]">&nbsp;Click Here</span>
+    </div>
+  </div>
+</div>
+<app-confirm-dialog (accepted)="deleteConfirmed()" #confirmDialog></app-confirm-dialog>

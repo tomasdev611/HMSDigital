@@ -1,0 +1,236 @@
+<div class="forms-wrapper">
+  <form
+    [formGroup]="exchangeForm"
+    (ngSubmit)="onSubmit(exchangeForm.value)"
+    autocomplete="none"
+    *ngIf="patientInfo">
+    <div class="p-grid p-ai-center" *ngIf="!editmode">
+      <div class="p-col-2">
+        <p-radioButton
+          name="orderMode"
+          [value]="'exchange'"
+          label="Exchange"
+          [(ngModel)]="orderMode"
+          [ngModelOptions]="{standalone: true}">
+        </p-radioButton>
+      </div>
+      <div class="p-col-2">
+        <p-radioButton
+          name="orderMode"
+          [value]="'replace'"
+          label="Replace"
+          [(ngModel)]="orderMode"
+          [ngModelOptions]="{standalone: true}">
+        </p-radioButton>
+      </div>
+    </div>
+
+    <div class="p-grid">
+      <div class="p-col-3 p-pr-2">
+        <h5 class="p-grid p-nogutter p-mb-1">Pickup Date *</h5>
+        <p-calendar
+          [monthNavigator]="true"
+          placeholder="Select a pickup date"
+          [yearNavigator]="true"
+          [autoZIndex]="false"
+          yearRange="2021:2040"
+          [panelStyle]="{'z-index': '11005'}"
+          formControlName="requestedDate"
+          inputStyleClass="inline-edit-calendar"
+          [minDate]="today">
+        </p-calendar>
+      </div>
+      <div class="p-col-3 p-pr-2">
+        <h5 class="p-grid p-nogutter p-mb-1">Pickup Time *</h5>
+        <p-dropdown
+          [options]="pickupTimeOptions"
+          filter="true"
+          [showClear]="true"
+          placeholder="Select a Pickup Time"
+          [panelStyle]="{width: '100%'}"
+          [(ngModel)]="pickupTime"
+          [ngModelOptions]="{standalone: true}">
+        </p-dropdown>
+      </div>
+    </div>
+
+    <div class="p-grid p-nogutter p-jc-start p-pb-3 p-pt-3">
+      <h5 class="p-grid p-mb-2">
+        <span class="p-col-2">Pickup Address * </span>
+        <span class="p-col-2 p-ai-center cursor-pointer" (click)="navigateToAddAddress()">
+          <i class="pi pi-plus-circle"></i> &nbsp;Add Address
+        </span>
+      </h5>
+      <div class="p-grid">
+        <div class="p-p-2 p-mb-1 address-wrapper" *ngFor="let address of pickupAddresses">
+          <p-radioButton
+            name="pickupAddress"
+            inputId="address.address"
+            [value]="address.address"
+            formControlName="pickupAddress"
+            (onClick)="addressChanged(address.address)">
+          </p-radioButton>
+          <label [for]="address.address" class="p-mb-1 p-ml-2"
+            >{{ address.address ? getAddress(address.address) : '' }}
+          </label>
+          <a
+            [routerLink]="['/patients/edit/', patientInfo.id]"
+            style="float: right; font-size: 12px; text-align: center"
+            >Edit
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid p-nogutter p-mb-4 p-mt-4 p-ml-1">
+      <h5 class="p-grid p-nogutter p-mb-1">Select Items to Exchange *</h5>
+      <h5 class="p-grid p-nogutter p-mb-1" *ngIf="patientInventory.length === 0">
+        No patient inventory found
+      </h5>
+      <app-ordering-patient-inventory
+        *ngIf="
+          (editmode === false || (editmode == true && orderHeader)) && patientInventory.length > 0
+        "
+        [patientInventory]="patientInventory"
+        [orderHeader]="orderHeader"
+        [editmode]="editmode"
+        (itemsSelected)="inventorySelectionUpdated($event)">
+      </app-ordering-patient-inventory>
+    </div>
+
+    <p-autoComplete
+      *ngIf="editmode || orderMode === 'replace'"
+      field="item.name"
+      [forceSelection]="true"
+      dropdownIcon="pi pi-search"
+      (onSelect)="selectReplacementItem($event)"
+      emptyMessage="No related search found"
+      placeholder="Search Product Catalog"
+      [suggestions]="itemsList"
+      (completeMethod)="searchItems($event)"
+      [dropdown]="true">
+      <ng-template let-item pTemplate="item">
+        <div class="catalog-item">
+          <img [src]="getImageUrl(item)" class="item-image" />
+          <div>
+            <div class="item-label">{{ item?.item?.name }}</div>
+            <div class="item-cost">{{ item?.rate | currency }}</div>
+          </div>
+        </div>
+      </ng-template>
+    </p-autoComplete>
+
+    <div class="p-grid p-nogutter p-mb-4 p-mt-4 p-ml-1" *ngIf="editmode || orderMode === 'replace'">
+      <h5 class="p-grid p-nogutter p-mb-1">Selected Replace Items*</h5>
+      <p-table
+        [value]="replacementItems"
+        class="flyout-dispatch-table"
+        dataKey="itemId"
+        [rowHover]="true"
+        [responsive]="true"
+        [scrollable]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Item Name</th>
+            <th class="width-per-7">Price (in $)</th>
+            <th class="width-em-12">Quantity</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-value let-index="rowIndex">
+          <tr
+            class="p-selectable-row"
+            [ngClass]="{disabled: isRowDisabled(value, 'delivery')}"
+            [pTooltip]="getRowTooltip(value, 'delivery')"
+            tooltipPosition="bottom">
+            <td>{{ value?.item?.name }}</td>
+            <td class="width-per-7">{{ value?.rate | currency }}</td>
+            <td class="width-em-12">
+              <span class="p-mx-3 flex-center line-item-qty">
+                <i class="qty-inc pi pi-minus-circle" (click)="updateCart(value, -1)"></i>
+                <p-inputNumber
+                  [styleClass]="'delivery-qty'"
+                  class="cart-count"
+                  [(ngModel)]="value.orderQuantity"
+                  [ngModelOptions]="{standalone: true}"
+                  mode="decimal"
+                  [min]="value.fulfilledQuantity || 1"
+                  autocomplete="off"
+                  [disabled]="isRowDisabled(value, 'delivery')">
+                </p-inputNumber>
+                <i class="qty-dec pi pi-plus-circle" (click)="updateCart(value, 1)"></i>
+                <i class="remove-item pi pi-trash" (click)="updateCart(value)"></i>
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="p-pl-3">No Replace Items Selected</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="p-grid p-nogutter p-mt-3">
+      <div class="p-col-4 p-pr-3">
+        <div class="p-grid p-nogutter p-jc-start p-mb-6 p-ml-1">
+          <h5 class="p-grid p-nogutter p-mb-1 p-jc-between">
+            Ordering Nurse *
+            <span class="p-ai-center p-d-flex cursor-pointer" (click)="navigateToAddNurse()">
+              <i class="pi pi-plus-circle"></i> &nbsp;Add Nurse
+            </span>
+          </h5>
+          <p-dropdown
+            [options]="nurses"
+            filter="true"
+            [showClear]="true"
+            class="dropdown-panel"
+            formControlName="hospiceMemberId"
+            placeholder="Select Ordering Nurse"
+            [panelStyle]="{width: '100%'}">
+          </p-dropdown>
+        </div>
+        <div *ngIf="shouldShowTpaOrderField()" class="p-grid p-nogutter p-jc-start p-mb-3 p-ml-1">
+          <h5 class="p-grid p-nogutter p-mb-1">TPA Order #</h5>
+          <input
+            id="tpaOrder"
+            type="text"
+            size="40"
+            pInputText
+            autocomplete="none"
+            formControlName="externalOrderNumber" />
+        </div>
+      </div>
+      <div class="p-col-8 p-pl-3">
+        <app-order-notes
+          formControlName="newOrderNotes"
+          [orderHeaderNotes]="orderHeader?.orderNotes">
+        </app-order-notes>
+      </div>
+    </div>
+
+    <div class="p-grid p-nogutter p-jc-start p-mb-3">
+      <div class="p-col">
+        <span
+          class="btn-right"
+          [pTooltip]="checkFormValidity(exchangeForm)"
+          tooltipPosition="top"
+          [escape]="false">
+          <button
+            pButton
+            class="btn-right"
+            type="submit"
+            [label]="editmode ? 'Update Order' : 'Place Order'"
+            icon="{{ formSubmit ? 'pi pi-spin pi-spinner' : 'pi pi-save' }}"
+            [disabled]="
+              !exchangeForm.valid ||
+              formSubmit ||
+              !pickupTime ||
+              selectedPatientInventory.length === 0 ||
+              (orderMode === 'replace' && replacementItems.length === 0)
+            "></button>
+        </span>
+      </div>
+    </div>
+  </form>
+</div>

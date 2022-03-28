@@ -1,0 +1,37 @@
+<div style="flex: 1">
+  <div class="p-grid p-jc-end p-nogutter">
+    <div class="p-grid p-jc-end p-ai-center p-nogutter" *ngIf="visible">
+      <span class="filter-label p-col-1">Filter By: </span>
+      <ng-container *ngFor="let f of filterConfiguration">
+        <div [ngClass]="f.class || 'p-col-2'">
+          <app-filter-field
+            [label]="f.label"
+            [selectedValue]="selectedValues[f.label]"
+            [operator]="f.operator"
+            [field]="f.field"
+            [fields]="f.fields"
+            [filterType]="f.type"
+            [filterValues]="f.value"
+            (filterChanged)="filterChanged($event)"
+            [datePickerConfig]="f.datePickerConfig"
+            (searchField)="searchField($event)"></app-filter-field>
+        </div>
+      </ng-container>
+      <button
+        pButton
+        class="clear-filter p-button-secondary"
+        *ngIf="visible"
+        icon="pi pi-times"
+        pTooltip="Clear Filter"
+        (click)="clearFilter()"></button>
+    </div>
+    <div class="p-grid p-jc-end p-nogutter mr-5" *ngIf="!visible">
+      <button
+        pButton
+        class="p-button-secondary"
+        label="Filter"
+        (click)="showFilterBar()"
+        [disabled]="disabled"></button>
+    </div>
+  </div>
+</div>

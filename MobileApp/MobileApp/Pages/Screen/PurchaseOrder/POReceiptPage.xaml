@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="MobileApp.Pages.Screen.PurchaseOrder.POReceiptPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:cake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+    xmlns:controls="clr-namespace:MobileApp.Controls"
+    xmlns:converters="clr-namespace:MobileApp.Utils.Converter"
+    Title="{Binding PageTitle}"
+    BackgroundColor="{StaticResource PurchaseOrderBackground}"
+    Visual="Material">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:PurchaseOrderStatusToColorConverter x:Key="ColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto, Auto">
+        <StackLayout>
+            <controls:PurchaseOrderControl Margin="0,16" BindingContext="{Binding PurchaseOrder}" />
+            <Grid Margin="15,10" ColumnDefinitions="6*, 4*">
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding aksjdha}" />
+                    </StackLayout.GestureRecognizers>
+                    <Image
+                        HeightRequest="20"
+                        Source="PurchaseOrderNumberIcon.png"
+                        WidthRequest="20" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="Attach PO Receipt"
+                        TextColor="{StaticResource PrimaryBlueColor}" />
+                </StackLayout>
+                <StackLayout Grid.Column="1">
+                    <Label
+                        FontSize="14"
+                        HorizontalTextAlignment="End"
+                        Text="View all Receipt"
+                        TextColor="{StaticResource PrimaryBlueColor}" />
+                </StackLayout>
+            </Grid>
+            <controls:SearchEntry
+                BorderColor="{StaticResource PrimaryBlueColor}"
+                Placeholder="Search"
+                Style="{StaticResource SearchBarStyle}"
+                Text="{Binding SearchText}" />
+        </StackLayout>
+        <RefreshView
+            Grid.Row="1"
+            Command="{Binding RefreshCommand}"
+            IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView
+                x:Name="LineItemsCollectionView"
+                ItemSizingStrategy="MeasureFirstItem"
+                ItemsSource="{Binding LineItemsList}">
+                <CollectionView.Footer>
+                    <StackLayout Margin="0,15" Spacing="8">
+                        <Button
+                            Margin="16,5"
+                            BackgroundColor="{StaticResource PrimaryBlueColor}"
+                            Command="{Binding CompleteReceiptCommand}"
+                            FontSize="14"
+                            IsEnabled="{Binding CanCompleteReceipt}"
+                            Text="Complete Receipt"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Button
+                            Margin="16,5"
+                            BackgroundColor="{StaticResource SecondaryActionButtonColor}"
+                            Command="{Binding CancelCommand}"
+                            FontSize="14"
+                            Text="Cancel"
+                            TextColor="{StaticResource PrimaryBlueColor}" />
+                    </StackLayout>
+                </CollectionView.Footer>
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentView>
+                            <cake:PancakeView
+                                Margin="16,0"
+                                Background="White"
+                                CornerRadius="4">
+                                <cake:PancakeView.Border>
+                                    <cake:Border Thickness="1" Color="{StaticResource PurchaseOrderElementBorder}" />
+                                </cake:PancakeView.Border>
+                                <StackLayout Margin="16,20">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="16"
+                                        Text="{Binding ItemDescription}"
+                                        TextColor="{StaticResource PrimaryBlueColor}" />
+                                    <Grid ColumnDefinitions="8*,2*">
+                                        <StackLayout Grid.Column="0">
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label
+                                                    FontSize="14"
+                                                    Text="Vendor Modal No:"
+                                                    TextColor="#596167" />
+                                                <Label
+                                                    FontSize="14"
+                                                    Text="{Binding ItemName}"
+                                                    TextColor="#596167" />
+                                            </StackLayout>
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label
+                                                    FontSize="14"
+                                                    Text="Qty:"
+                                                    TextColor="#596167" />
+                                                <Label
+                                                    FontSize="14"
+                                                    Text="{Binding Quantity}"
+                                                    TextColor="#596167" />
+                                            </StackLayout>
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="1" Padding="0,6,12,6">
+                                            <Button
+                                                Margin="-10"
+                                                Padding="0"
+                                                BackgroundColor="{StaticResource PrimaryBlueColor}"
+                                                Command="{Binding BindingContext.ReceiveLineItemCommand, Source={x:Reference Name=LineItemsCollectionView}}"
+                                                CommandParameter="{Binding .}"
+                                                FontSize="14"
+                                                Text="Receive"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
+                                        </StackLayout>
+                                    </Grid>
+                                    <Frame
+                                        Padding="10,5"
+                                        BackgroundColor="{StaticResource Green800}"
+                                        BorderColor="{StaticResource Green800}"
+                                        CornerRadius="12"
+                                        IsVisible="{Binding IsReceived}"
+                                        HasShadow="False"
+                                        HeightRequest="13"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Center">
+                                        <Grid>
+                                            <Label
+                                                FontSize="10"
+                                                Text="Received"
+                                                TextColor="{StaticResource LightGrayColor}"
+                                                VerticalOptions="Center" />
+                                        </Grid>
+                                    </Frame>
+                                </StackLayout>
+                            </cake:PancakeView>
+                        </ContentView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

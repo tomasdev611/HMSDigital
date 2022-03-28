@@ -1,0 +1,31 @@
+<div *ngFor="let facility of address; let i = index" class="address-form-row">
+  <div class="address-header mt-5 facility">
+    Facility Address {{ i + 1 }} :
+    <span class="delete" (click)="deleteAddress(i)">
+      <i class="pi pi-trash"></i><span class="label">Remove Address</span>
+    </span>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-4">Street Address : {{ facility?.address.addressLine1 }}</div>
+    <div class="p-col-4">Apt/Unit/Building : {{ facility?.address.addressLine2 }}</div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-3">City : {{ facility?.address.city }}</div>
+    <div class="p-col-3">State : {{ facility?.address.state }}</div>
+    <div class="p-col-3">
+      Zip Code : {{ facility?.address.zipCode
+      }}{{
+        facility?.address.plus4Code
+          ? ' - ' + facility?.address.plus4Code
+          : facility?.address.plus4Code
+      }}
+    </div>
+  </div>
+  <div class="p-grid phone">
+    <div class="p-col-3">Phone Number : {{ facility?.phoneNumber }}</div>
+    <div class="p-col-2">Patient Room Number:</div>
+    <div class="p-col-3 ml-10">
+      <input pInputText type="text" [(ngModel)]="facility.patientRoomNumber" />
+    </div>
+  </div>
+</div>

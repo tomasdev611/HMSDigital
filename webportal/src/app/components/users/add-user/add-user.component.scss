@@ -1,0 +1,12 @@
+:host ::ng-deep {
+  .hospice-member {
+    display: flex;
+    justify-content: center;
+  }
+  .p-dropdown {
+    .p-dropdown-label {
+      font-size: 16px;
+      min-width: 0;
+    }
+  }
+}

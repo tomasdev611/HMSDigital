@@ -1,0 +1,71 @@
+<app-modal
+  dialogStyleClass="order-dialog no-footer"
+  header="Additional Settings"
+  [visible]="showModal"
+  (hide)="close()">
+  <div class="content-container">
+    <div class="body new-order-modal-body p-flex-column">
+      <div
+        class="p-grid p-nogutter p-grid-responsive settings-list"
+        style="padding-top: 0"
+        *ngIf="product?.equipmentSettings && product?.equipmentSettings.length">
+        <div class="p-col">
+          <div
+            class="p-grid p-nogutter p-mb-2"
+            *ngFor="let setting of product?.equipmentSettings; let i = index">
+            <div class="p-col-6 p-d-flex p-ai-center p-jc-end p-pr-2">{{ setting?.name }} :</div>
+            <div class="p-col-4">
+              <input type="text" pInputText placeholder="Enter value" [(ngModel)]="setting.value" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="p-grid p-nogutter p-grid-responsive settings-list"
+        style="padding-top: 0"
+        *ngIf="product?.item?.addOnGroups && product?.item?.addOnGroups.length">
+        <div class="p-col">
+          <div class="p-mb-1" *ngFor="let group of product?.item?.addOnGroups; let i = index">
+            <div class="p-pb-2">
+              Please select one{{ group.allowMultipleSelection ? ' or more' : '' }} of the options
+              for <b>{{ group?.name }}</b> :
+            </div>
+            <div
+              *ngFor="let addOn of group.addOnGroupProducts; let i = index"
+              class="p-field-checkbox p-ml-2">
+              <p-checkbox
+                name="group{{ i }}"
+                value="addOn"
+                [value]="addOn"
+                [(ngModel)]="group.selected"
+                *ngIf="group.allowMultipleSelection"
+                [inputId]="addOn.itemId"
+                (onChange)="selectValue($event, addOn, group)"></p-checkbox>
+              <p-radioButton
+                name="group{{ i }}"
+                value="addOn"
+                [value]="[addOn]"
+                [(ngModel)]="group.selected"
+                [inputId]="addOn.itemId"
+                (onClick)="selectValue($event, addOn, group)"
+                *ngIf="!group.allowMultipleSelection"></p-radioButton>
+              <label [for]="addOn.itemId">{{ addOn.itemName }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <button pButton label="Cancel" (click)="close()" class="p-button-secondary"></button>
+      <button
+        pButton
+        label="Continue"
+        (click)="submit()"
+        class="p-btn"
+        [escape]="false"
+        [pTooltip]="checkValidity()"
+        tooltipPosition="top"
+        [class.btn-disabled]="checkValidity() ? true : false"></button>
+    </div>
+  </div>
+</app-modal>
